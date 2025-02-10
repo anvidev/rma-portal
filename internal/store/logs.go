@@ -77,7 +77,7 @@ func (s *logStore) ListByID(ctx context.Context, ticketID int64) ([]Log, error) 
 	for rows.Next() {
 		var l Log
 
-		if rows.Scan(
+		if err := rows.Scan(
 			&l.ID,
 			&l.Status,
 			&l.Initiator,

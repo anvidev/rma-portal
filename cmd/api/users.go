@@ -34,7 +34,10 @@ func (api *api) postCreateUser(w http.ResponseWriter, r *http.Request) {
 		Email: payload.Email,
 	}
 
-	user.Hash.Hash(payload.Password)
+	if err := user.Hash.Hash(payload.Password); err != nil {
+		api.badRequestError(w, r, err)
+		return
+	}
 
 	if err := api.store.Users.Create(r.Context(), &user); err != nil {
 		switch err {
