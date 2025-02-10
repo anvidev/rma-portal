@@ -20,9 +20,9 @@ jobs:
       - name: Verify dependencies
         run: go mod verify
       - name: Build
-        run: go build -v ./...
+        run: go build -o ./bin/api ./cmd/api
       - name: Test with the Go CLI
-        run: go test
+        run: go test -v ./...
   lint:
     runs-on: ubuntu-latest
     steps:
