@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  verify-test:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,18 +19,28 @@ jobs:
         run: go mod tidy
       - name: Verify dependencies
         run: go mod verify
+      - name: Vet source code
+        run: go vet cmd/api/*.go
       - name: Build
         run: go build -o ./bin/api ./cmd/api
-      - name: Test with the Go CLI
-        run: go test -v ./...
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: stable
+          go-version: '1.23.4'
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
           version: v1.60
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.4'
+      - name: Test with the Go CLI
+        run: go test -v ./...
