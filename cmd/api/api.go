@@ -87,9 +87,9 @@ func (api *api) mount() http.Handler {
 		})
 
 		r.Route("/tickets", func(r chi.Router) {
-			r.Get("/statuses", nil)
-			r.Get("/categories", nil)
-			r.Get("/{id}", nil)
+			r.Get("/statuses", api.getTicketStatuses)
+			r.Get("/categories", api.getTicketCategories)
+			r.Get("/{id}", api.getPublicTicket)
 		})
 	})
 
