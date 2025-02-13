@@ -1,0 +1,54 @@
+services:
+
+  db:
+    image: postgres:17.2
+    container_name: rma-db
+    restart: unless-stopped
+    shm_size: 128mb
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8081:80
+
+  migrate:
+      image: migrate/migrate
+      depends_on:
+        db:
+          condition: service_healthy
+      volumes:
+        - ./cmd/migrate/migrations:/migrations
+      command:
+        [ "-path", "/migrations", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable", "up" ]
+
+  api:
+    build: .
+    container_name: api
+    restart: unless-stopped
+    environment:
+      SERVER_ENV: production
+      POSTGRES_ADDR: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable
+      AUTH_TOKEN_HOST: rma-portal
+      AUTH_TOKEN_SECRET: megasecret
+    ports:
+      - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:

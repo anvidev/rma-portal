@@ -7,7 +7,11 @@ run:
 
 .PHONY: docker
 docker:
-	@docker-compose up --build --remove-orphans
+	@docker-compose -f docker-compose.dev.yml up --build --remove-orphans
+
+.PHONY: docker-prod
+docker-prod:
+	@docker-compose -f docker-compose.prod.yml up --build --remove-orphans
 
 .PHONY: migration
 migration:
