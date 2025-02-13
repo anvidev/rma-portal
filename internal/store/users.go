@@ -3,9 +3,15 @@ package store
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
+)
+
+var (
+	ErrUserDublicateEmail = errors.New("email already in use")
+	ErrUserNotFound       = errors.New("user does not exist")
 )
 
 type User struct {

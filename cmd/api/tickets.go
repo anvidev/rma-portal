@@ -106,7 +106,7 @@ func (api *api) postCreateLog(w http.ResponseWriter, r *http.Request) {
 		InternalComment: payload.InternalComment,
 	}
 
-	if err := api.store.Logs.Create(r.Context(), &log); err != nil {
+	if err := api.store.Tickets.CreateLog(r.Context(), &log); err != nil {
 		switch err {
 		case store.ErrTicketNotFound:
 			api.conflictError(w, r, err)
@@ -179,7 +179,7 @@ func (api *api) getAdminTicket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logs, err := api.store.Logs.ListByID(r.Context(), id)
+	logs, err := api.store.Tickets.ListInternalLogs(r.Context(), id)
 	if err != nil {
 		api.internalServerError(w, r, err)
 		return
@@ -211,6 +211,78 @@ func (api *api) deleteAdminTicket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+type getPublicTicketResponse struct {
+	Ticket store.Ticket `json:"ticket"`
+}
+
+func (api *api) getPublicTicket(w http.ResponseWriter, r *http.Request) {
+	id, err := parseIntFromPath(r, "id")
+	if err != nil {
+		api.badRequestError(w, r, err)
+		return
+	}
+
+	ctx := r.Context()
+
+	ticket, err := api.store.Tickets.GetByID(ctx, id)
+	if err != nil {
+		switch err {
+		case store.ErrTicketNotFound:
+			api.notFoundError(w, r, err)
+		default:
+			api.internalServerError(w, r, err)
+		}
+		return
+	}
+
+	logs, err := api.store.Tickets.ListExternalLogs(ctx, id)
+	if err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+
+	ticket.Logs = logs
+
+	if err := writeJSON(w, http.StatusOK, getPublicTicketResponse{*ticket}); err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+}
+
+type getTicketStatusesResponse struct {
+	Statuses []string `json:"statuses"`
+}
+
+func (api *api) getTicketStatuses(w http.ResponseWriter, r *http.Request) {
+	var statuses []string
+
+	for _, v := range store.Statuses {
+		statuses = append(statuses, v)
+	}
+
+	if err := writeJSON(w, http.StatusOK, getTicketStatusesResponse{statuses}); err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+}
+
+type getTicketCategoriesResponse struct {
+	Categories []string `json:"categories"`
+}
+
+func (api *api) getTicketCategories(w http.ResponseWriter, r *http.Request) {
+	var categories []string
+
+	for _, v := range store.Categories {
+		categories = append(categories, v)
+	}
+
+	if err := writeJSON(w, http.StatusOK, getTicketCategoriesResponse{categories}); err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
 }
 
 func parseIntFromPath(r *http.Request, key string) (int64, error) {
