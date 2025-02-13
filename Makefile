@@ -5,6 +5,10 @@ MIGRATIONS_PATH = ./cmd/migrate/migrations
 run:
 	@go run cmd/api/*.go
 
+.PHONY: test
+test:
+	@go test -v ./...
+
 .PHONY: docker
 docker:
 	@docker-compose -f docker-compose.dev.yml up --build --remove-orphans
