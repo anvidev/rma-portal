@@ -258,7 +258,7 @@ type Sender struct {
 type Ticket struct {
 	ID         int64      `json:"id"`
 	Status     Status     `json:"status"`
-	Categories []Category `json:"category"`
+	Categories []Category `json:"categories"`
 	Issue      string     `json:"issue"`
 	Sender     Sender     `json:"sender"`
 	Inserted   string     `json:"inserted"`
