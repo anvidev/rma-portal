@@ -4,4 +4,4 @@
 	export let data: PageData
 </script>
 
-<h1>{data.ticket.sender.name}</h1>
+<h1>{data.ticket?.sender.name}</h1>

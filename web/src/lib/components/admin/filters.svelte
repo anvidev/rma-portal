@@ -2,11 +2,14 @@
 	import { goto } from '$app/navigation'
 	import { SvelteURLSearchParams } from 'svelte/reactivity'
 
-	let searchParams = new SvelteURLSearchParams()
-	let query: string = $state('')
-	let status: string = $state('')
-	let categories = $state([])
+	let { searchParams }: { searchParams: SvelteURLSearchParams } = $props()
+
+	let query = $state(searchParams.get('query') || '')
+	let status = $state(searchParams.get('status') || '')
+	let categories = $state(searchParams.getAll('categories') || [])
 	let debounceTimer: ReturnType<typeof setTimeout>
+
+	$inspect(searchParams)
 
 	function handleFilterChange(key: string, value: any, waitMS: number = 300) {
 		clearTimeout(debounceTimer)
@@ -25,8 +28,18 @@
 	}
 </script>
 
-<input type="text" bind:value={query} onkeyup={() => handleFilterChange('query', query)} />
-<select bind:value={status} onchange={() => handleFilterChange('status', status, 0)}>
+<input
+	class="h-9 rounded-sm border border-slate-700 px-2"
+	placeholder="Søg efter sager..."
+	type="text"
+	bind:value={query}
+	onkeyup={() => handleFilterChange('query', query)}
+/>
+<select
+	class="h-9 rounded-sm border border-slate-700 px-2"
+	bind:value={status}
+	onchange={() => handleFilterChange('status', status, 0)}
+>
 	<option value="">Alle</option>
 	<option value="åben">Åben</option>
 	<option value="lukket">Lukket</option>
