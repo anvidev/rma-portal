@@ -59,8 +59,7 @@ func (api *api) mount() http.Handler {
 	r.Route("/v1", func(r chi.Router) {
 		r.Route("/auth", func(r chi.Router) {
 			r.Post("/login", api.postLoginUser)
-			r.Post("/logout", api.postLogoutUser)
-			r.Post("/refresh", nil)
+			r.Get("/validate", api.postValidateUser)
 		})
 
 		r.Route("/admin", func(r chi.Router) {
