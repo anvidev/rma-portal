@@ -504,14 +504,15 @@ func (s *ticketStore) createLog(ctx context.Context, l *Log) error {
 func (s *ticketStore) updateTicketStatus(ctx context.Context, ID int64, status Status) error {
 	stmt := `
 		UPDATE tickets
-		SET status = $1
-		WHERE id = $2
+		SET status = $1, updated = $2
+		WHERE id = $3
 	`
 
 	res, err := s.db.ExecContext(
 		ctx,
 		stmt,
 		status,
+		time.Now(),
 		ID,
 	)
 	if err != nil {
