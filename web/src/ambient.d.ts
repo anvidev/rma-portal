@@ -1,3 +1,11 @@
+type User = {
+	id: number
+	name: string
+	email: string
+	isActive: boolean
+	inserted: string
+}
+
 type Ticket = {
 	id: number
 	status: string
