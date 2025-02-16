@@ -9,10 +9,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type tokenKey string
-
-const accessTokenKey tokenKey = "access_token"
-
 type loginRequestPayload struct {
 	Email    string `json:"email" validate:"required"`
 	Password string `json:"password" validate:"required"`
@@ -166,15 +162,4 @@ func (api *api) postValidateUser(w http.ResponseWriter, r *http.Request) {
 		api.internalServerError(w, r, err)
 		return
 	}
-}
-
-func (api *api) postLogoutUser(w http.ResponseWriter, _ *http.Request) {
-	emptyCookie := http.Cookie{
-		Name:   string(accessTokenKey),
-		Value:  "",
-		MaxAge: -1,
-		Secure: true,
-	}
-	http.SetCookie(w, &emptyCookie)
-	w.WriteHeader(http.StatusNoContent)
 }
