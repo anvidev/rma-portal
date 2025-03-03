@@ -1,0 +1,20 @@
+{{define "sidebar"}}
+<aside>
+	<h2>Endpoints</h2>
+	{{range $tag, $tagEndpoints := .Endpoints}}
+	<details open>
+		<summary>{{$tag}}</summary>
+		<ul>
+			{{range $path, $endpoint := $tagEndpoints}}
+			<li>
+				<a href="#{{$endpoint.Summary}}">
+					<p>{{$endpoint.Summary}}</p>
+					<span data-method="{{$endpoint.Method}}">{{$endpoint.Method}}</span>
+				</a>
+			</li>
+			{{end}}
+		</ul>
+	</details>
+	{{end}}
+</aside>
+{{end}}

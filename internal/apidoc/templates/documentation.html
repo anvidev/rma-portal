@@ -1,0 +1,27 @@
+{{define "body"}}
+<main>
+	<header>
+		<p>API Documentation</p>
+	</header>
+	<section>
+		<div>
+			<span>{{.Info.Version}}</span>
+			<h1>{{.Info.Title}}</h1>
+			<p>{{.Info.Description}}</p>
+		</div>
+	</section>
+	<section>
+		<article>
+			{{range $tag, $tagEndpoints := .Endpoints}}
+			<h3>{{$tag}}</h3>
+			{{range $path, $endpoint := $tagEndpoints}}
+			<div>
+				<p>{{$endpoint.Summary}}</p>
+				<span data-method="{{$endpoint.Method}}" data-method="{{$endpoint.Method}}">{{$endpoint.Method}}</span>
+			</div>
+			{{end}}
+			{{end}}
+		</article>
+	</section>
+</main>
+{{end}}
