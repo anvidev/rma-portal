@@ -192,7 +192,7 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 		}
 	}
 
-	maxDate := time.Date(9999, 12, 31, 0, 0, 0, 0, time.UTC)
+	maxDate := time.Date(9999, 12, 31, 23, 59, 59, 0, time.UTC)
 	formattedTimeQuery := make([]time.Time, 2)
 	formattedTimeQuery[0] = time.Time{}
 	formattedTimeQuery[1] = maxDate
@@ -201,7 +201,6 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 	if q.Has("inserted") {
 		fullTimeQuery := q.Get("inserted")
 		timeSplit := strings.SplitN(fullTimeQuery, ":", 2)
-		formattedTimeQuery := make([]time.Time, 2)
 		for index, timeQuery := range timeSplit {
 			if timeQuery != "" {
 				datetime, err := time.Parse(time.DateOnly, timeQuery)
@@ -226,7 +225,6 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 	if q.Has("updated") {
 		fullTimeQuery := q.Get("updated")
 		timeSplit := strings.SplitN(fullTimeQuery, ":", 2)
-		formattedTimeQuery := make([]time.Time, 2)
 		for index, timeQuery := range timeSplit {
 			if timeQuery != "" {
 				datetime, err := time.Parse(time.DateOnly, timeQuery)
