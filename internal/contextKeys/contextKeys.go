@@ -1,7 +1,7 @@
 package contextkeys
 
-type contextKey string
+type contextkey string
 
 const (
-	UserKey contextKey = "user"
+	UserKey contextkey = "user"
 )

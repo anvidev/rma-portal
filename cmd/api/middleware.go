@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	contextkeys "github.com/anvidev/rma-portal/internal/contextKeys"
+	"github.com/anvidev/rma-portal/internal/contextkeys"
 	"github.com/anvidev/rma-portal/internal/store"
 	"github.com/golang-jwt/jwt/v5"
 )
