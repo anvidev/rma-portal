@@ -1,6 +1,5 @@
 package apidoc
 
-type ParamType string
 type Method string
 
 const (
@@ -9,44 +8,71 @@ const (
 	MethodPut           = "PUT"
 	MethodDelete        = "DELETE"
 	MethodPatch         = "PATCH"
-
-	ParamTypePath ParamType = "path"
-	ParamTypeBody           = "body"
-	ParamTypeForm           = "formData"
 )
 
 type APIDocumentation struct {
-	Info      Info                 `json:"info"`
-	Endpoints map[string]*Endpoint `json:"endpoints"`
+	Info Info   `json:"info"`
+	Tags []*Tag `json:"tags"`
+}
+
+type Tag struct {
+	Name      string     `json:"name"`
+	Endpoints []Endpoint `json:"endpoints"`
 }
 
 type Endpoint struct {
-	Summary    string     `json:"summary"`
-	Method     Method     `json:"method"`
-	Params     []Param    `json:"params,omitempty"`
-	Responses  []Response `json:"responses"`
-	Tag        string     `json:"tag"`
-	Deprecated bool       `json:"deprecated"`
+	Path    string       `json:"path"`
+	Summary string       `json:"summary"`
+	Method  Method       `json:"method"`
+	Query   []QueryParam `json:"queries"`
+	Form    []FormField  `json:"formdata"`
+	Body    []BodyField  `json:"body"`
+	// Responses  []Response `json:"responses"`
+	Deprecated bool `json:"deprecated"`
 }
 
-type Response struct {
-	StatusCode  int         `json:"statusCode"`
-	Description string      `json:"description"`
-	Schema      interface{} `json:"schema"`
-	Examples    []Example   `json:"examples"`
+// type Response struct {
+// 	StatusCode  int         `json:"statusCode"`
+// 	Description string      `json:"description"`
+// 	Schema      interface{} `json:"schema"`
+// 	Examples    []Example   `json:"examples"`
+// }
+
+// type Example struct {
+// 	Name  string      `json:"name"`
+// 	Value interface{} `json:"value"`
+// }
+
+type BodyField struct {
+	Name        string
+	Type        string
+	JSONName    string
+	Description string
+	Required    bool
+	Validation  map[string]string
+	Fields      []BodyField
 }
 
-type Example struct {
-	Name  string      `json:"name"`
-	Value interface{} `json:"value"`
+type FormField struct {
+	Name        string `json:"name"`
+	Schema      any    `json:"schema"`
+	Type        string `json:"type"`
+	Description string `json:"description"`
+	Required    bool   `json:"required"`
 }
 
-type Param struct {
-	Name        string      `json:"name"`
-	Schema      interface{} `json:"schema"`
-	ParamType   ParamType   `json:"paramType"`
-	Description string      `json:"description"`
-	Required    bool        `json:"required"`
+type QueryParam struct {
+	Name        string          `json:"name"`
+	Type        string          `json:"type"`
+	Description string          `json:"description"`
+	Validation  ParamValidation `json:"validation"`
+}
+
+type ParamValidation struct {
+	Required bool `json:"required"`
+	Default  any  `json:"default"`
+	Min      int  `json:"min"`
+	Max      int  `json:"max"`
 }
 
 type Info struct {

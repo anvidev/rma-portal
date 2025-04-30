@@ -20,58 +20,87 @@ func init() {
 
 func NewDocumentation(info Info) *APIDocumentation {
 	return &APIDocumentation{
-		Info:      info,
-		Endpoints: make(map[string]*Endpoint),
+		Info: info,
+		Tags: []*Tag{},
 	}
 }
 
-func (d *APIDocumentation) AddEndpoint(path string, method Method) *Endpoint {
-	endpoint := &Endpoint{Method: method}
-	d.Endpoints[path] = endpoint
-	return endpoint
+func (docs *APIDocumentation) AddTag(name string) *Tag {
+	tag := &Tag{Name: name}
+	docs.Tags = append(docs.Tags, tag)
+	return tag
 }
 
-func (e *Endpoint) WithSummary(summary string) *Endpoint {
-	e.Summary = summary
-	return e
+type EndpointOption func(e *Endpoint)
+
+func (tag *Tag) AddEndpoint(method Method, path, summary string, opts ...EndpointOption) {
+	endpoint := Endpoint{
+		Path:    path,
+		Summary: summary,
+		Method:  method,
+	}
+
+	for _, opt := range opts {
+		opt(&endpoint)
+	}
+
+	tag.Endpoints = append(tag.Endpoints, endpoint)
 }
 
-func (e *Endpoint) WithParam(param Param) *Endpoint {
-	e.Params = append(e.Params, param)
-	return e
+func WithBody(data any) EndpointOption {
+	return func(e *Endpoint) {
+		e.Body = structToSlice(data)
+	}
 }
 
-func (e *Endpoint) WithResponse(response Response) *Endpoint {
-	e.Responses = append(e.Responses, response)
-	return e
+func (end *Endpoint) WithForm(formdata FormField) *Endpoint {
+	end.Form = append(end.Form, formdata)
+	return end
 }
 
-func (e *Endpoint) WithTag(tag string) *Endpoint {
-	e.Tag = tag
-	return e
+func (end *Endpoint) WithDeprecate(deprecated bool) *Endpoint {
+	end.Deprecated = deprecated
+	return end
 }
 
-func (e *Endpoint) WithDeprecated(deprecated bool) *Endpoint {
-	e.Deprecated = deprecated
-	return e
+type ParamOption func(q *QueryParam)
+
+func WithRequired(b bool) ParamOption {
+	return func(q *QueryParam) {
+		q.Validation.Required = b
+	}
+}
+
+func WithDefault(i any) ParamOption {
+	return func(q *QueryParam) {
+		q.Validation.Default = i
+	}
+}
+
+func WithMin(min int) ParamOption {
+	return func(q *QueryParam) {
+		q.Validation.Min = min
+	}
+}
+
+func WithMax(max int) ParamOption {
+	return func(q *QueryParam) {
+		q.Validation.Max = max
+	}
+}
+
+func WithQuery(name, typ string, opts ...ParamOption) EndpointOption {
+	return func(e *Endpoint) {
+		query := QueryParam{Name: name, Type: typ}
+		for _, opt := range opts {
+			opt(&query)
+		}
+		e.Query = append(e.Query, query)
+	}
 }
 
 func (d *APIDocumentation) Serve(w http.ResponseWriter, r *http.Request) {
-	endpointsByTags := make(map[string][]*Endpoint)
-
-	for _, e := range d.Endpoints {
-		endpointsByTags[e.Tag] = append(endpointsByTags[e.Tag], e)
-	}
-
-	data := struct {
-		Info      Info
-		Endpoints map[string][]*Endpoint
-	}{
-		Info:      d.Info,
-		Endpoints: endpointsByTags,
-	}
-
-	if err := tmpl.ExecuteTemplate(w, "base.html", data); err != nil {
+	if err := tmpl.ExecuteTemplate(w, "base.html", d); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

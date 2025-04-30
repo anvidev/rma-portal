@@ -30,7 +30,8 @@ export const actions: Actions = {
 			evt.cookies.set('token', accessToken, {
 				path: '/',
 				secure: true,
-				httpOnly: true
+				httpOnly: true,
+				maxAge: 60 * 60 * 24 * 3
 			})
 
 			throw redirect(301, '/admin/tickets')

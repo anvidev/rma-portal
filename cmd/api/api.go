@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/anvidev/rma-portal/internal/apidoc"
 	"github.com/anvidev/rma-portal/internal/auth"
 	"github.com/anvidev/rma-portal/internal/store"
 	"github.com/go-chi/chi/v5"
@@ -12,10 +13,11 @@ import (
 )
 
 type api struct {
-	logger *zap.SugaredLogger
-	config config
-	store  store.Store
-	auth   auth.Authenticator
+	logger        *zap.SugaredLogger
+	config        config
+	store         store.Store
+	auth          auth.Authenticator
+	documentation *apidoc.APIDocumentation
 }
 
 type config struct {
@@ -56,7 +58,9 @@ func (api *api) mount() http.Handler {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.StripSlashes)
 
+	r.Get("/docs", api.documentation.Serve)
 	r.Route("/v1", func(r chi.Router) {
+
 		r.Route("/auth", func(r chi.Router) {
 			r.Post("/login", api.postLoginUser)
 			r.Get("/validate", api.postValidateUser)

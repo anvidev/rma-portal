@@ -98,7 +98,7 @@ func (c *Category) UnmarshalJSON(data []byte) error {
 	return ErrCategoryNotImplemented
 }
 
-func (c *Category) Scan(value interface{}) error {
+func (c *Category) Scan(value any) error {
 	switch v := value.(type) {
 	case []byte:
 		src := string(value.([]byte))
@@ -256,24 +256,24 @@ type Sender struct {
 }
 
 type Ticket struct {
-	ID         int64      `json:"id"`
-	Status     Status     `json:"status"`
-	Categories []Category `json:"categories"`
-	Issue      string     `json:"issue"`
-	Sender     Sender     `json:"sender"`
-	Inserted   string     `json:"inserted"`
-	Updated    string     `json:"updated"`
+	ID         int64      `json:"id" apidoc:"ignore"`
+	Status     Status     `json:"status" validate:"required"`
+	Categories []Category `json:"categories" validate:"required,min=1"`
+	Issue      string     `json:"issue" validate:"required,max=300,min=50" description:"Description of the issue related to the device. Be as descriptive as possbile."`
+	Sender     Sender     `json:"sender" validate:"required"`
+	Inserted   string     `json:"inserted" apidoc:"ignore"`
+	Updated    string     `json:"updated" apidoc:"ignore"`
 	Logs       []Log      `json:"logs,omitempty"`
 }
 
 type Log struct {
-	ID              int64  `json:"id"`
+	ID              int64  `json:"id" apidoc:"ignore"`
 	TicketID        int64  `json:"ticket_id,omitempty"`
 	Status          Status `json:"status"`
-	Initiator       string `json:"initiator"`
+	Initiator       string `json:"initiator" description:"Name of the user. Sender name if triggered by ticket owner. User name if triggered by Admin user."`
 	ExternalComment string `json:"external_comment"`
 	InternalComment string `json:"internal_comment,omitempty"`
-	Inserted        string `json:"inserted"`
+	Inserted        string `json:"inserted" apidoc:"ignore"`
 }
 
 type ticketStore struct {

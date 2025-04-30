@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 
+	"github.com/anvidev/rma-portal/internal/apidoc"
 	"github.com/anvidev/rma-portal/internal/auth"
 	"github.com/anvidev/rma-portal/internal/database"
 	"github.com/anvidev/rma-portal/internal/env"
@@ -34,6 +35,16 @@ func main() {
 		},
 	}
 
+	documentation := apidoc.NewDocumentation(apidoc.Info{
+		Title:       "RMA Portal",
+		Description: "Backend API for Skancode A/S RMA service portal",
+		Version:     "0.0.1",
+		Contact: apidoc.InfoContact{
+			Name:  "anvi",
+			Email: "hello@anvi.dev",
+		},
+	})
+
 	logger := zap.Must(zap.NewProduction()).Sugar()
 	defer logger.Sync()
 
@@ -55,12 +66,14 @@ func main() {
 	)
 
 	api := &api{
-		logger: logger,
-		config: config,
-		store:  store,
-		auth:   authenticator,
+		logger:        logger,
+		config:        config,
+		store:         store,
+		auth:          authenticator,
+		documentation: documentation,
 	}
 
+	api.addDocs()
 	mux := api.mount()
 
 	logger.Fatal(api.run(mux))
