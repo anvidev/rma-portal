@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -136,7 +135,6 @@ func (api *api) getListTickets(w http.ResponseWriter, r *http.Request) {
 		api.badRequestError(w, r, err)
 		return
 	}
-	fmt.Printf("filters are: %+v\n", filters)
 
 	tickets, total, err := api.store.Tickets.List(r.Context(), filters)
 	if err != nil {
