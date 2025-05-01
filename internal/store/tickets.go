@@ -250,6 +250,14 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 type Sender struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
+	Phone   string `json:"phone"`
+	Address string `json:"address"`
+}
+
+type Billing struct {
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Phone   string `json:"phone"`
 	Address string `json:"address"`
 }
 
@@ -259,6 +267,7 @@ type Ticket struct {
 	Categories []Category `json:"categories" validate:"required,min=1"`
 	Issue      string     `json:"issue" validate:"required,max=300,min=50" description:"Description of the issue related to the device. Be as descriptive as possbile."`
 	Sender     Sender     `json:"sender" validate:"required"`
+	Billing    Billing    `json:"billing" vaildate:"required"`
 	Inserted   string     `json:"inserted" apidoc:"ignore"`
 	Updated    string     `json:"updated" apidoc:"ignore"`
 	Logs       []Log      `json:"logs,omitempty"`
@@ -280,8 +289,20 @@ type ticketStore struct {
 
 func (s *ticketStore) Create(ctx context.Context, t *Ticket) error {
 	stmt := `
-		INSERT INTO tickets (status, categories, issue, sender_name, sender_email, sender_address)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO tickets (
+			status,
+			categories,
+			issue,
+			sender_name,
+			sender_email,
+			sender_address,
+			sender_phone,
+			billing_name,
+			billing_email,
+			billing_address,
+			billing_phone
+		)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		RETURNING id, inserted, updated
 	`
 
@@ -297,6 +318,11 @@ func (s *ticketStore) Create(ctx context.Context, t *Ticket) error {
 		t.Sender.Name,
 		t.Sender.Email,
 		t.Sender.Address,
+		t.Sender.Phone,
+		t.Billing.Name,
+		t.Billing.Email,
+		t.Billing.Address,
+		t.Billing.Phone,
 	).Scan(
 		&t.ID,
 		&t.Inserted,
@@ -319,6 +345,11 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 					sender_name,
 					sender_email,
 					sender_address,
+					sender_phone,
+					billing_name,
+					billing_email,
+					billing_address,
+					billing_phone,
 					inserted,
 					updated
 			FROM tickets
@@ -338,6 +369,11 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			   sender_name,
 			   sender_email,
 			   sender_address,
+				 sender_phone,
+				 billing_name,
+				 billing_email,
+				 billing_address,
+				 billing_phone,
 			   inserted,
 			   updated,
 			   (SELECT COUNT(*) FROM filtered_tickets) AS total_count
@@ -379,6 +415,11 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			&t.Sender.Name,
 			&t.Sender.Email,
 			&t.Sender.Address,
+			&t.Sender.Phone,
+			&t.Billing.Name,
+			&t.Billing.Email,
+			&t.Billing.Address,
+			&t.Billing.Phone,
 			&t.Inserted,
 			&t.Updated,
 			&totalCount,
@@ -398,7 +439,21 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 
 func (s *ticketStore) GetByID(ctx context.Context, ID int64) (*Ticket, error) {
 	stmt := `
-		SELECT id, status, categories, issue, sender_name, sender_email, sender_address, inserted, updated
+		SELECT
+			id,
+			status,
+			categories,
+			issue,
+			sender_name,
+			sender_email,
+			sender_address,
+			sender_phone,
+			billing_name,
+			billing_email,
+			billing_address,
+			billing_phone,
+			inserted,
+			updated
 		FROM tickets
 		WHERE id = $1
 	`
@@ -420,6 +475,11 @@ func (s *ticketStore) GetByID(ctx context.Context, ID int64) (*Ticket, error) {
 		&t.Sender.Name,
 		&t.Sender.Email,
 		&t.Sender.Address,
+		&t.Sender.Phone,
+		&t.Billing.Name,
+		&t.Billing.Email,
+		&t.Billing.Address,
+		&t.Billing.Phone,
 		&t.Inserted,
 		&t.Updated,
 	)

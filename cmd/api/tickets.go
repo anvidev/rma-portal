@@ -8,11 +8,16 @@ import (
 )
 
 type createTicketPayload struct {
-	SenderName    string           `json:"sender_name" validate:"required,min=3,max=50"`
-	SenderEmail   string           `json:"sender_email" validate:"required,email"`
-	SenderAddress string           `json:"sender_address" validate:"required,max=255"`
-	Issue         string           `json:"issue" validate:"required,min=50,max=500"`
-	Categories    []store.Category `json:"categories" validate:"required,gt=0"`
+	SenderName     string           `json:"sender_name" validate:"required,min=3,max=50"`
+	SenderEmail    string           `json:"sender_email" validate:"required,email"`
+	SenderAddress  string           `json:"sender_address" validate:"required,max=255"`
+	SenderPhone    string           `json:"sender_phone" validate:"required,max=60"`
+	BillingName    string           `json:"billing_name" validate:"required,min=3,max=50"`
+	BillingEmail   string           `json:"billing_email" validate:"required,email"`
+	BillingAddress string           `json:"billing_address" validate:"required,max=255"`
+	BillingPhone   string           `json:"billing_phone" validate:"required,max=60"`
+	Issue          string           `json:"issue" validate:"required,min=50,max=500"`
+	Categories     []store.Category `json:"categories" validate:"required,gt=0"`
 }
 
 type createTicketResponse struct {
@@ -47,6 +52,13 @@ func (api *api) postCreateTicket(w http.ResponseWriter, r *http.Request) {
 			Name:    payload.SenderName,
 			Email:   payload.SenderEmail,
 			Address: payload.SenderAddress,
+			Phone:   payload.SenderPhone,
+		},
+		Billing: store.Billing{
+			Name:    payload.BillingName,
+			Email:   payload.BillingEmail,
+			Phone:   payload.BillingPhone,
+			Address: payload.BillingAddress,
 		},
 		Logs: []store.Log{},
 	}
