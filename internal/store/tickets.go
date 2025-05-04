@@ -286,6 +286,28 @@ type ticketStore struct {
 }
 
 func (s *ticketStore) Create(ctx context.Context, t *Ticket) error {
+	return withTx(ctx, s.db, func(tx *sql.Tx) error {
+		if err := s.create(ctx, t); err != nil {
+			return err
+		}
+
+		createdLog := &Log{
+			TicketID:        t.ID,
+			Status:          OPEN,
+			Initiator:       t.Sender.Name,
+			ExternalComment: "Sag er blevet oprettet.",
+			InternalComment: "",
+		}
+
+		if err := s.createLog(ctx, createdLog); err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 	stmt := `
 		INSERT INTO tickets (
 			status,
