@@ -247,30 +247,28 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 	return nil
 }
 
-type Sender struct {
+type Contact struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
 	Phone   string `json:"phone"`
-	Address string `json:"address"`
-}
-
-type Billing struct {
-	Name    string `json:"name"`
-	Email   string `json:"email"`
-	Phone   string `json:"phone"`
-	Address string `json:"address"`
+	Street  string `json:"street"`
+	City    string `json:"city"`
+	Zip     string `json:"zip"`
+	Country string `json:"country"`
 }
 
 type Ticket struct {
-	ID         int64      `json:"id" apidoc:"ignore"`
-	Status     Status     `json:"status" validate:"required"`
-	Categories []Category `json:"categories" validate:"required,min=1"`
-	Issue      string     `json:"issue" validate:"required,max=300,min=50" description:"Description of the issue related to the device. Be as descriptive as possbile."`
-	Sender     Sender     `json:"sender" validate:"required"`
-	Billing    Billing    `json:"billing" vaildate:"required"`
-	Inserted   string     `json:"inserted" apidoc:"ignore"`
-	Updated    string     `json:"updated" apidoc:"ignore"`
-	Logs       []Log      `json:"logs,omitempty"`
+	ID           int64      `json:"id" apidoc:"ignore"`
+	Status       Status     `json:"status"`
+	Categories   []Category `json:"categories"`
+	Issue        string     `json:"issue" description:"Description of the issue related to the device. Be as descriptive as possbile."`
+	Model        *string    `json:"model"`
+	SerialNumber *string    `json:"serial_number"`
+	Sender       Contact    `json:"sender"`
+	Billing      Contact    `json:"billing"`
+	Inserted     string     `json:"inserted" apidoc:"ignore"`
+	Updated      string     `json:"updated" apidoc:"ignore"`
+	Logs         []Log      `json:"logs,omitempty"`
 }
 
 type Log struct {
@@ -288,21 +286,51 @@ type ticketStore struct {
 }
 
 func (s *ticketStore) Create(ctx context.Context, t *Ticket) error {
+	return withTx(ctx, s.db, func(tx *sql.Tx) error {
+		if err := s.create(ctx, t); err != nil {
+			return err
+		}
+
+		createdLog := &Log{
+			TicketID:        t.ID,
+			Status:          OPEN,
+			Initiator:       t.Sender.Name,
+			ExternalComment: "Sag er blevet oprettet.",
+			InternalComment: "",
+		}
+
+		if err := s.createLog(ctx, createdLog); err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 	stmt := `
 		INSERT INTO tickets (
 			status,
 			categories,
 			issue,
+			model,
+			serial_number,
 			sender_name,
 			sender_email,
-			sender_address,
 			sender_phone,
+			sender_street,
+			sender_city,
+			sender_zip,
+			sender_country,
 			billing_name,
 			billing_email,
-			billing_address,
-			billing_phone
+			billing_phone,
+			billing_street,
+			billing_city,
+			billing_zip,
+			billing_country
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
 		RETURNING id, inserted, updated
 	`
 
@@ -315,14 +343,22 @@ func (s *ticketStore) Create(ctx context.Context, t *Ticket) error {
 		t.Status,
 		pq.Array(t.Categories),
 		t.Issue,
+		t.Model,
+		t.SerialNumber,
 		t.Sender.Name,
 		t.Sender.Email,
-		t.Sender.Address,
 		t.Sender.Phone,
+		t.Sender.Street,
+		t.Sender.City,
+		t.Sender.Zip,
+		t.Sender.Country,
 		t.Billing.Name,
 		t.Billing.Email,
-		t.Billing.Address,
 		t.Billing.Phone,
+		t.Billing.Street,
+		t.Billing.City,
+		t.Billing.Zip,
+		t.Billing.Country,
 	).Scan(
 		&t.ID,
 		&t.Inserted,
@@ -338,45 +374,45 @@ func (s *ticketStore) Create(ctx context.Context, t *Ticket) error {
 func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket, int, error) {
 	stmt := `
 		WITH filtered_tickets AS
-			(SELECT id,
-					status,
-					categories,
-					issue,
-					sender_name,
-					sender_email,
-					sender_address,
-					sender_phone,
-					billing_name,
-					billing_email,
-					billing_address,
-					billing_phone,
-					inserted,
-					updated
-			FROM tickets
-			WHERE (sender_name ILIKE '%' || $1 || '%'
+			(
+				SELECT *
+				FROM tickets
+				WHERE (sender_name ILIKE '%' || $1 || '%'
 					OR sender_email ILIKE '%' || $1 || '%'
-					OR sender_address ILIKE '%' || $1 || '%')
-				AND ($2 = 0
-					  OR status = $2)
-				AND ($3::int[] IS NULL
-					  OR categories && $3::int[])
-				AND (inserted >= $4 
-					  AND inserted <= $5))
+					OR sender_street ILIKE '%' || $1 || '%'
+					OR sender_city ILIKE '%' || $1 || '%'
+					OR sender_zip ILIKE '%' || $1 || '%'
+					OR sender_country ILIKE '%' || $1 || '%')
+					AND ($2 = 0
+						OR status = $2)
+					AND ($3::int[] IS NULL
+						OR categories && $3::int[])
+					AND (inserted >= $4 
+						AND inserted <= $5)
+			)
 		SELECT id,
-			   status,
-			   categories,
-			   issue,
-			   sender_name,
-			   sender_email,
-			   sender_address,
-				 sender_phone,
-				 billing_name,
-				 billing_email,
-				 billing_address,
-				 billing_phone,
-			   inserted,
-			   updated,
-			   (SELECT COUNT(*) FROM filtered_tickets) AS total_count
+			status,
+			categories,
+			issue,
+			model,
+			serial_number,
+			sender_name,
+			sender_email,
+			sender_phone,
+			sender_street,
+			sender_city,
+			sender_zip,
+			sender_country,
+			billing_name,
+			billing_email,
+			billing_phone,
+			billing_street,
+			billing_city,
+			billing_zip,
+			billing_country,
+			inserted,
+			updated,
+			(SELECT COUNT(*) FROM filtered_tickets) AS total_count
 		FROM filtered_tickets
 		ORDER BY inserted DESC
 		LIMIT $6
@@ -412,14 +448,22 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			&t.Status,
 			pq.Array(&t.Categories),
 			&t.Issue,
+			&t.Model,
+			&t.SerialNumber,
 			&t.Sender.Name,
 			&t.Sender.Email,
-			&t.Sender.Address,
 			&t.Sender.Phone,
+			&t.Sender.Street,
+			&t.Sender.City,
+			&t.Sender.Zip,
+			&t.Sender.Country,
 			&t.Billing.Name,
 			&t.Billing.Email,
-			&t.Billing.Address,
 			&t.Billing.Phone,
+			&t.Billing.Street,
+			&t.Billing.City,
+			&t.Billing.Zip,
+			&t.Billing.Country,
 			&t.Inserted,
 			&t.Updated,
 			&totalCount,
@@ -444,14 +488,22 @@ func (s *ticketStore) GetByID(ctx context.Context, ID int64) (*Ticket, error) {
 			status,
 			categories,
 			issue,
+			model,
+			serial_number,
 			sender_name,
 			sender_email,
-			sender_address,
 			sender_phone,
+			sender_street,
+			sender_city,
+			sender_zip,
+			sender_country,
 			billing_name,
 			billing_email,
-			billing_address,
 			billing_phone,
+			billing_street,
+			billing_city,
+			billing_zip,
+			billing_country,
 			inserted,
 			updated
 		FROM tickets
@@ -472,14 +524,22 @@ func (s *ticketStore) GetByID(ctx context.Context, ID int64) (*Ticket, error) {
 		&t.Status,
 		pq.Array(&t.Categories),
 		&t.Issue,
+		&t.Model,
+		&t.SerialNumber,
 		&t.Sender.Name,
 		&t.Sender.Email,
-		&t.Sender.Address,
 		&t.Sender.Phone,
+		&t.Sender.Street,
+		&t.Sender.City,
+		&t.Sender.Zip,
+		&t.Sender.Country,
 		&t.Billing.Name,
 		&t.Billing.Email,
-		&t.Billing.Address,
 		&t.Billing.Phone,
+		&t.Billing.Street,
+		&t.Billing.City,
+		&t.Billing.Zip,
+		&t.Billing.Country,
 		&t.Inserted,
 		&t.Updated,
 	)
