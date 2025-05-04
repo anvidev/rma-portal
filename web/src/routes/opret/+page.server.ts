@@ -15,17 +15,23 @@ import { valibot } from 'sveltekit-superforms/adapters'
 import { fail } from '@sveltejs/kit'
 
 const schema = object({
-	senderName: pipe(string(), maxLength(60)),
-	senderAddress: pipe(string(), maxLength(255)),
-	senderPhone: pipe(string(), maxLength(60)),
-	senderEmail: pipe(string(), email()),
-	billingName: pipe(string(), maxLength(60)),
-	billingAddress: pipe(string(), maxLength(255)),
-	billingPhone: pipe(string(), maxLength(60)),
-	billingEmail: pipe(string(), email()),
+	senderName: pipe(string(), maxLength(60), nonEmpty()),
+	senderPhone: pipe(string(), maxLength(60), nonEmpty()),
+	senderEmail: pipe(string(), email(), nonEmpty()),
+	senderStreet: pipe(string(), maxLength(255), nonEmpty()),
+	senderCity: pipe(string(), maxLength(255), nonEmpty()),
+	senderZip: pipe(string(), maxLength(255), nonEmpty()),
+	senderCountry: pipe(string(), maxLength(255), nonEmpty()),
+	billingName: pipe(string(), maxLength(60), nonEmpty()),
+	billingPhone: pipe(string(), maxLength(60), nonEmpty()),
+	billingEmail: pipe(string(), email(), nonEmpty()),
+	billingStreet: pipe(string(), maxLength(255), nonEmpty()),
+	billingCity: pipe(string(), maxLength(255), nonEmpty()),
+	billingZip: pipe(string(), maxLength(255), nonEmpty()),
+	billingCountry: pipe(string(), maxLength(255), nonEmpty()),
 	model: optional(string()),
 	serial: optional(string()),
-	categories: array(string()),
+	categories: pipe(array(string()), minLength(1)),
 	issue: pipe(string(), nonEmpty(), minLength(50), maxLength(500))
 })
 
