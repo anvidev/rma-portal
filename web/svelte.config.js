@@ -1,5 +1,5 @@
-import adapter from '@sveltejs/adapter-node';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import adapter from '@sveltejs/adapter-auto'
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -12,7 +12,19 @@ const config = {
 		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter()
-	}
-};
+	},
 
-export default config;
+	compilerOptions: {
+		runes: true
+	},
+
+	vitePlugin: {
+		dynamicCompileOptions({ filename }) {
+			if (filename.includes('node_modules')) {
+				return { runes: undefined } // or false, check what works
+			}
+		}
+	}
+}
+
+export default config
