@@ -8,16 +8,27 @@ import (
 )
 
 type createTicketPayload struct {
-	SenderName     string           `json:"sender_name" validate:"required,min=3,max=50"`
-	SenderEmail    string           `json:"sender_email" validate:"required,email"`
-	SenderAddress  string           `json:"sender_address" validate:"required,max=255"`
-	SenderPhone    string           `json:"sender_phone" validate:"required,max=60"`
-	BillingName    string           `json:"billing_name" validate:"required,min=3,max=50"`
-	BillingEmail   string           `json:"billing_email" validate:"required,email"`
-	BillingAddress string           `json:"billing_address" validate:"required,max=255"`
-	BillingPhone   string           `json:"billing_phone" validate:"required,max=60"`
-	Issue          string           `json:"issue" validate:"required,min=50,max=500"`
-	Categories     []store.Category `json:"categories" validate:"required,gt=0"`
+	// sender info
+	SenderName    string `json:"sender_name" validate:"required,min=3,max=100"`
+	SenderEmail   string `json:"sender_email" validate:"required,email,max=100"`
+	SenderPhone   string `json:"sender_phone" validate:"required,max=30"`
+	SenderStreet  string `json:"sender_street" validate:"required,max=100"`
+	SenderCity    string `json:"sender_city" validate:"required,max=50"`
+	SenderZip     string `json:"sender_zip" validate:"required,max=20,alphanum"`
+	SenderCountry string `json:"sender_country" validate:"required,iso3166_1_alpha2"`
+	// billing info
+	BillingName    string `json:"billing_name" validate:"required,min=3,max=100"`
+	BillingEmail   string `json:"billing_email" validate:"required,email,max=100"`
+	BillingPhone   string `json:"billing_phone" validate:"required,max=30"`
+	BillingStreet  string `json:"billing_street" validate:"required,max=100"`
+	BillingCity    string `json:"billing_city" validate:"required,max=50"`
+	BillingZip     string `json:"billing_zip" validate:"required,max=20,alphanum"`
+	BillingCountry string `json:"billing_country" validate:"required,iso3166_1_alpha2"`
+	// ticket info
+	Issue        string           `json:"issue" validate:"required,min=50,max=500"`
+	Categories   []store.Category `json:"categories" validate:"required,gt=0,max=5"`
+	Model        *string          `json:"model" validate:"omitempty,max=50"`
+	SerialNumber *string          `json:"serial_number" validate:"omitempty,max=50"`
 }
 
 type createTicketResponse struct {
@@ -45,22 +56,29 @@ func (api *api) postCreateTicket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ticket := store.Ticket{
-		Status:     store.OPEN,
-		Categories: payload.Categories,
-		Issue:      payload.Issue,
-		Sender: store.Sender{
+		Status:       store.OPEN,
+		Categories:   payload.Categories,
+		Issue:        payload.Issue,
+		Model:        payload.Model,
+		SerialNumber: payload.SerialNumber,
+		Sender: store.Contact{
 			Name:    payload.SenderName,
 			Email:   payload.SenderEmail,
-			Address: payload.SenderAddress,
 			Phone:   payload.SenderPhone,
+			Street:  payload.SenderStreet,
+			City:    payload.SenderCity,
+			Zip:     payload.SenderZip,
+			Country: payload.SenderCountry,
 		},
-		Billing: store.Billing{
+		Billing: store.Contact{
 			Name:    payload.BillingName,
 			Email:   payload.BillingEmail,
 			Phone:   payload.BillingPhone,
-			Address: payload.BillingAddress,
+			Street:  payload.BillingStreet,
+			City:    payload.BillingCity,
+			Zip:     payload.BillingZip,
+			Country: payload.BillingCountry,
 		},
-		Logs: []store.Log{},
 	}
 
 	if err := api.store.Tickets.Create(r.Context(), &ticket); err != nil {
