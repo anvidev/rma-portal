@@ -38,14 +38,22 @@ export const load: PageServerLoad = async () => {
 }
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	default: async ({ request, fetch }) => {
 		const form = await superValidate(request, valibot(schema))
 		console.log(form)
 
 		if (!form.valid) return fail(400, { form })
 
-		// insert into db
+		// endpoint not implmented yet
+		const response = await fetch('http://localhost:8080/v1/tickets', {
+			method: 'post',
+			body: JSON.stringify(form.data)
+		})
 
-		return message(form, 'form submitted')
+		if (!response.ok) {
+			return fail(response.status, { form })
+		}
+
+		return message(form, 'ticket created')
 	}
 }
