@@ -7,24 +7,19 @@ import (
 	"github.com/anvidev/rma-portal/internal/store"
 )
 
+type contactPayload struct {
+	Name    string `json:"name" validate:"required,min=3,max=100"`
+	Email   string `json:"email" validate:"required,email,max=100"`
+	Phone   string `json:"phone" validate:"required,max=30"`
+	Street  string `json:"street" validate:"required,max=100"`
+	City    string `json:"city" validate:"required,max=50"`
+	Zip     string `json:"zip" validate:"required,max=20,alphanum"`
+	Country string `json:"country" validate:"required,iso3166_1_alpha2"`
+}
+
 type createTicketPayload struct {
-	// sender info
-	SenderName    string `json:"sender_name" validate:"required,min=3,max=100"`
-	SenderEmail   string `json:"sender_email" validate:"required,email,max=100"`
-	SenderPhone   string `json:"sender_phone" validate:"required,max=30"`
-	SenderStreet  string `json:"sender_street" validate:"required,max=100"`
-	SenderCity    string `json:"sender_city" validate:"required,max=50"`
-	SenderZip     string `json:"sender_zip" validate:"required,max=20,alphanum"`
-	SenderCountry string `json:"sender_country" validate:"required,iso3166_1_alpha2"`
-	// billing info
-	BillingName    string `json:"billing_name" validate:"required,min=3,max=100"`
-	BillingEmail   string `json:"billing_email" validate:"required,email,max=100"`
-	BillingPhone   string `json:"billing_phone" validate:"required,max=30"`
-	BillingStreet  string `json:"billing_street" validate:"required,max=100"`
-	BillingCity    string `json:"billing_city" validate:"required,max=50"`
-	BillingZip     string `json:"billing_zip" validate:"required,max=20,alphanum"`
-	BillingCountry string `json:"billing_country" validate:"required,iso3166_1_alpha2"`
-	// ticket info
+	Sender       contactPayload   `json:"sender" validate:"required"`
+	Billing      contactPayload   `json:"billing" validate:"required"`
 	Issue        string           `json:"issue" validate:"required,min=50,max=500"`
 	Categories   []store.Category `json:"categories" validate:"required,gt=0,max=5"`
 	Model        *string          `json:"model" validate:"omitempty,max=50"`
@@ -62,22 +57,22 @@ func (api *api) postCreateTicket(w http.ResponseWriter, r *http.Request) {
 		Model:        payload.Model,
 		SerialNumber: payload.SerialNumber,
 		Sender: store.Contact{
-			Name:    payload.SenderName,
-			Email:   payload.SenderEmail,
-			Phone:   payload.SenderPhone,
-			Street:  payload.SenderStreet,
-			City:    payload.SenderCity,
-			Zip:     payload.SenderZip,
-			Country: payload.SenderCountry,
+			Name:    payload.Sender.Name,
+			Email:   payload.Sender.Email,
+			Phone:   payload.Sender.Phone,
+			Street:  payload.Sender.Street,
+			City:    payload.Sender.City,
+			Zip:     payload.Sender.Zip,
+			Country: payload.Sender.Country,
 		},
 		Billing: store.Contact{
-			Name:    payload.BillingName,
-			Email:   payload.BillingEmail,
-			Phone:   payload.BillingPhone,
-			Street:  payload.BillingStreet,
-			City:    payload.BillingCity,
-			Zip:     payload.BillingZip,
-			Country: payload.BillingCountry,
+			Name:    payload.Billing.Name,
+			Email:   payload.Billing.Email,
+			Phone:   payload.Billing.Phone,
+			Street:  payload.Billing.Street,
+			City:    payload.Billing.City,
+			Zip:     payload.Billing.Zip,
+			Country: payload.Billing.Country,
 		},
 	}
 
