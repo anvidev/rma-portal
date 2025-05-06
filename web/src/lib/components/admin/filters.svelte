@@ -1,28 +1,28 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { SvelteURLSearchParams } from 'svelte/reactivity';
+	import { goto } from '$app/navigation'
+	import { SvelteURLSearchParams } from 'svelte/reactivity'
 
-	let { searchParams }: { searchParams: SvelteURLSearchParams } = $props();
+	let { searchParams }: { searchParams: SvelteURLSearchParams } = $props()
 
-	let query = $state(searchParams.get('query') || '');
-	let status = $state(searchParams.get('status') || '');
-	let categories = $state(searchParams.getAll('categories') || []);
-	let debounceTimer: ReturnType<typeof setTimeout>;
+	let query = $state(searchParams.get('query') || '')
+	let status = $state(searchParams.get('status') || '')
+	let categories = $state(searchParams.getAll('categories') || [])
+	let debounceTimer: ReturnType<typeof setTimeout>
 
 	function handleFilterChange(key: string, value: any, waitMS: number = 300) {
-		clearTimeout(debounceTimer);
+		clearTimeout(debounceTimer)
 
 		if (Array.isArray(value) && value.length == 0) {
-			searchParams.delete(key);
+			searchParams.delete(key)
 		} else if (typeof value == 'string' && value == '') {
-			searchParams.delete(key);
+			searchParams.delete(key)
 		} else {
-			searchParams.set(key, value);
+			searchParams.set(key, value)
 		}
 
 		debounceTimer = setTimeout(() => {
-			goto(`?${searchParams.toString()}`, { keepFocus: true });
-		}, waitMS);
+			goto(`?${searchParams.toString()}`, { keepFocus: true })
+		}, waitMS)
 	}
 </script>
 

@@ -1,58 +1,49 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import type { SvelteURLSearchParams } from 'svelte/reactivity';
+	import * as Table from '$lib/components/ui/table/index.js'
+	import { Badge } from '$lib/components/ui/badge/index.js'
+	import { goto } from '$app/navigation'
+	import type { SvelteURLSearchParams } from 'svelte/reactivity'
 
 	let { tickets, searchParams }: { tickets: Ticket[]; searchParams: SvelteURLSearchParams } =
-		$props();
+		$props()
 
 	function handleSortingChange(key: string, direction: 'asc' | 'desc') {
-		searchParams.set('sorting', key);
-		searchParams.set('direction', direction);
-		goto(`?${searchParams.toString()}`);
+		searchParams.set('sorting', key)
+		searchParams.set('direction', direction)
+		goto(`?${searchParams.toString()}`)
 	}
 </script>
 
-<div class="overflow-x-auto">
-	<table class="min-w-full divide-y-2 divide-gray-200 text-sm">
-		<thead class="ltr:text-left rtl:text-right">
-			<tr>
-				<th
-					onclick={() => handleSortingChange('id', 'asc')}
-					class="cursor-pointer whitespace-nowrap px-4 py-2 font-medium"
-					>Sags ID
-				</th>
-				<th class="whitespace-nowrap px-4 py-2 font-medium">Status</th>
-				<th class="whitespace-nowrap px-4 py-2 font-medium">Kategorier</th>
-				<th class="whitespace-nowrap px-4 py-2 font-medium">Afsender</th>
-				<th class="whitespace-nowrap px-4 py-2 font-medium">Oprettet</th>
-				<th class="whitespace-nowrap px-4 py-2 font-medium">Opdateret</th>
-			</tr>
-		</thead>
-
-		<tbody class="divide-y divide-gray-200">
+<div class="rounded-md border">
+	<Table.Root>
+		<Table.Caption class="m-0 p-4">Oversigt over alle RMA sager</Table.Caption>
+		<Table.Header>
+			<Table.Row>
+				<Table.Head onclick={() => handleSortingChange('id', 'asc')}>Sags ID</Table.Head>
+				<Table.Head>Status</Table.Head>
+				<Table.Head>Kategorier</Table.Head>
+				<Table.Head>Afsender firma</Table.Head>
+				<Table.Head>Afsender e-mail</Table.Head>
+				<Table.Head>Oprettet</Table.Head>
+				<Table.Head>Sidste ændring</Table.Head>
+			</Table.Row>
+		</Table.Header>
+		<Table.Body class="border-b">
 			{#each tickets as ticket (ticket.id)}
-				<tr>
-					<td class="whitespace-nowrap px-4 py-2 font-medium">
-						<a href={`/admin/tickets/${ticket.id}`}>{ticket.id}</a>
-					</td>
-					<td class="whitespace-nowrap px-4 py-2 capitalize">{ticket.status}</td>
-					<td class="space-x-2 whitespace-nowrap px-4 py-2">
+				<Table.Row>
+					<Table.Cell class="font-medium">{ticket.id}</Table.Cell>
+					<Table.Cell class="capitalize">{ticket.status}</Table.Cell>
+					<Table.Cell class="flex items-center gap-1">
 						{#each ticket.categories as category}
-							<span
-								class="rounded-sm border border-purple-600 bg-purple-950 px-1.5 py-1 uppercase text-purple-600"
-								>{category.substring(0, 1)}</span
-							>
+							<Badge variant="secondary" class="">{category}</Badge>
 						{/each}
-					</td>
-					<td class="whitespace-nowrap px-4 py-2">{ticket.sender.name}</td>
-					<td class="whitespace-nowrap px-4 py-2"
-						>{new Date(ticket.inserted).toLocaleString('en-GB')}</td
-					>
-					<td class="whitespace-nowrap px-4 py-2"
-						>{new Date(ticket.updated).toLocaleString('en-GB')}</td
-					>
-				</tr>
+					</Table.Cell>
+					<Table.Cell>{ticket.sender.name}</Table.Cell>
+					<Table.Cell>{ticket.sender.email}</Table.Cell>
+					<Table.Cell>{new Date(ticket.inserted).toLocaleString('en-GB')}</Table.Cell>
+					<Table.Cell>{new Date(ticket.updated).toLocaleString('en-GB')}</Table.Cell>
+				</Table.Row>
 			{/each}
-		</tbody>
-	</table>
+		</Table.Body>
+	</Table.Root>
 </div>
