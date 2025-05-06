@@ -13,6 +13,7 @@ import {
 import { superValidate, message } from 'sveltekit-superforms'
 import { valibot } from 'sveltekit-superforms/adapters'
 import { fail } from '@sveltejs/kit'
+import { API_URL } from '$lib/server/env'
 
 const contact = object({
 	name: pipe(
@@ -78,7 +79,7 @@ export const actions: Actions = {
 
 		if (!form.valid) return fail(400, { form })
 
-		const response = await fetch('http://localhost:8080/v1/tickets', {
+		const response = await fetch(`${API_URL}/v1/tickets`, {
 			method: 'post',
 			body: JSON.stringify(form.data),
 		})
