@@ -1,7 +1,8 @@
 import { redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
+import { API_URL } from '$lib/server/env'
 
-export const load: PageServerLoad = async (evt) => {
+export const load: PageServerLoad = async evt => {
 	const accessToken = evt.cookies.get('token')
 
 	if (accessToken) {
@@ -10,17 +11,17 @@ export const load: PageServerLoad = async (evt) => {
 }
 
 export const actions: Actions = {
-	default: async (evt) => {
+	default: async evt => {
 		const form = await evt.request.formData()
 		const email = form.get('email')
 		const password = form.get('password')
 
-		const response = await fetch('http://localhost:8080/v1/auth/login', {
+		const response = await fetch(`${API_URL}/v1/auth/login`, {
 			method: 'post',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ email, password })
+			body: JSON.stringify({ email, password }),
 		})
 
 		const data = await response.json()
@@ -31,10 +32,10 @@ export const actions: Actions = {
 				path: '/',
 				secure: true,
 				httpOnly: true,
-				maxAge: 60 * 60 * 24 * 3
+				maxAge: 60 * 60 * 24 * 3,
 			})
 
 			throw redirect(301, '/admin/tickets')
 		}
-	}
+	},
 }
