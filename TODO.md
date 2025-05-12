@@ -1,7 +1,5 @@
 # TODOs
 
-- [ ] Redesign ticket struct
-    - [ ] Include Billing address
-    - [ ] Want quote if over 450 dkk
-    - [ ] Product information (brand/model)
-    - [ ] Company name instead of just name
+ - [ ] Add "Accept terms & conditions" checkbox to create form
+ - [ ] Add "I accept if the offer is above XX DKK" checkbox to create form
+ - [ ] Add Skancode logo to create page
