@@ -668,6 +668,7 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID int64) ([]Log, er
 		SELECT id, status, initiator, external_comment, internal_comment, inserted
 		FROM logs
 		WHERE ticket_id = $1
+		ORDER BY id DESC
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, queryTimeoutDuration)

@@ -1,4 +1,5 @@
 import { API_URL } from '$lib/server/env'
+import type { AdminTicket } from '$lib/types'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ cookies, params }) => {
@@ -19,6 +20,6 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 	const { ticket } = await response.json()
 
 	return {
-		ticket: ticket as Ticket,
+		ticket: ticket as AdminTicket,
 	}
 }
