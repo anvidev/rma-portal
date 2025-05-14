@@ -15,7 +15,7 @@ func main() {
 	config := config{
 		server: serverConfig{
 			env:          env.GetString("SERVER_ENV", "development"),
-			addr:         env.GetString("SERVER_ADDR", ":8080"),
+			addr:         env.GetString("SERVER_ADDR", ":9090"),
 			readTimeout:  env.GetDuration("SERVER_READ_TIMEOUT", time.Second*10),
 			writeTimeout: env.GetDuration("SERVER_WRITE_TIMEOUT", time.Second*30),
 			idleTimeout:  env.GetDuration("SERVER_IDLE_TIMEOUT", time.Minute),

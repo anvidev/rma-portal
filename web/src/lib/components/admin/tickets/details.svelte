@@ -1,25 +1,29 @@
 <script lang="ts">
 	import type { AdminTicket } from '$lib/types'
+	import { cn } from '$lib/utils'
 
 	let { ticket }: { ticket: AdminTicket } = $props()
 </script>
 
-<div class="w-1/2 space-y-1 rounded-md border bg-white px-3 py-2">
-	<h3 class="text-lg font-medium leading-tight">Sags detaljer</h3>
+<div class="w-1/2 space-y-2 rounded-lg border bg-white p-3 shadow-sm">
 	<div>
-		<small class="text-muted-foreground text-sm font-medium">Model</small>
-		<p>
+		<h3 class="font-4xl font-semibold leading-tight">Sags detaljer</h3>
+		<p class="text-muted-foreground text-sm">Vare og problem beskrivelse</p>
+	</div>
+	<div>
+		<small class="text-sm font-medium capitalize leading-tight">Model</small>
+		<p class={cn(ticket.model == null && 'text-muted-foreground italic')}>
 			{#if ticket.model}{ticket.model}{:else}Ikke angivet{/if}
 		</p>
 	</div>
 	<div>
-		<small class="text-muted-foreground text-sm font-medium">Serienr.</small>
-		<p>
+		<small class="text-sm font-medium capitalize leading-tight">Serienr.</small>
+		<p class={cn(ticket.serial_number == null && 'text-muted-foreground italic')}>
 			{#if ticket.serial_number}{ticket.serial_number}{:else}Ikke angivet{/if}
 		</p>
 	</div>
 	<div>
-		<small class="text-muted-foreground text-sm font-medium">Problem beskrivelse</small>
-		<p>{ticket.issue}</p>
+		<small class="text-sm font-medium capitalize leading-tight">Problem beskrivelse</small>
+		<p class="text-pretty">{ticket.issue}</p>
 	</div>
 </div>
