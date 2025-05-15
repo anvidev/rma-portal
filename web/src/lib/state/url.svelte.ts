@@ -36,7 +36,7 @@ export class URLParams<T extends Record<string, URLParamConfig>> {
 				if (val === undefined || val === null) return
 
 				const paramConfig = this.config[key]
-				if (!paramConfig) return // skip unconfigured params
+				if (!paramConfig) return
 
 				const shouldInclude =
 					(typeof val === 'string' && val !== '') ||
