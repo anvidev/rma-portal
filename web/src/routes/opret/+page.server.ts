@@ -1,10 +1,8 @@
 import type { Actions, PageServerLoad } from './$types'
 import {
 	array,
-	boolean,
 	email,
 	enum_,
-	literal,
 	maxLength,
 	minLength,
 	nonEmpty,
@@ -101,7 +99,5 @@ export const actions: Actions = {
 		const data = (await response.json()) as { ticket: Ticket }
 
 		redirect(303, `/admin/tickets/${data.ticket.id}`)
-
-		// return message(form, `ticket id ${data.ticket.id} created`)
 	},
 }

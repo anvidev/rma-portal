@@ -41,12 +41,22 @@
 	}
 </script>
 
-<form method="POST" use:enhance class="mx-auto max-w-3xl space-y-4 rounded-xl border p-6">
-	<h1 class="text-lg font-medium">Opret RMA</h1>
+<form method="POST" use:enhance class="mx-auto max-w-3xl space-y-4 p-6">
+	<div>
+		<h1 class="text-lg font-semibold leading-tight">Opret RMA</h1>
+		<p class="text-sm text-muted-foreground">
+			Udfyld formen og vedlæg den downloadede PDF-fil efter oprettelse.
+		</p>
+	</div>
 	{#if $message}
 		<p>{$message}</p>
 	{/if}
-	<h2 class="text-sm font-medium">Afsender Information</h2>
+	<div>
+		<h2 class="font-semibold leading-tight">Afsender Information</h2>
+		<p class="text-sm text-muted-foreground">
+			Denne information bruges til evt. til kommunikation ang. RMA og som returaddresse.
+		</p>
+	</div>
 	<div class="grid gap-2">
 		<Label for="senderName">Firma<span class="text-red-500">*</span></Label>
 		<Input
@@ -54,7 +64,7 @@
 			bind:value={$form.sender.name}
 			aria-invalid={$errors?.sender?.name ? 'true' : undefined}
 		/>
-		{#if $errors?.sender?.name}<span class="text-destructive text-sm">{$errors.sender?.name}</span
+		{#if $errors?.sender?.name}<span class="text-sm text-destructive">{$errors.sender?.name}</span
 			>{/if}
 	</div>
 
@@ -67,7 +77,7 @@
 				bind:value={$form.sender.email}
 				aria-invalid={$errors?.sender?.email ? 'true' : undefined}
 			/>
-			{#if $errors?.sender?.email}<span class="text-destructive text-sm"
+			{#if $errors?.sender?.email}<span class="text-sm text-destructive"
 					>{$errors.sender?.email}</span
 				>{/if}
 		</div>
@@ -80,7 +90,7 @@
 				bind:value={$form.sender.phone}
 				aria-invalid={$errors?.sender?.phone ? 'true' : undefined}
 			/>
-			{#if $errors?.sender?.phone}<span class="text-destructive text-sm"
+			{#if $errors?.sender?.phone}<span class="text-sm text-destructive"
 					>{$errors.sender?.phone}</span
 				>{/if}
 		</div>
@@ -93,7 +103,7 @@
 			bind:value={$form.sender.street}
 			aria-invalid={$errors?.sender?.street ? 'true' : undefined}
 		/>
-		{#if $errors?.sender?.street}<span class="text-destructive text-sm"
+		{#if $errors?.sender?.street}<span class="text-sm text-destructive"
 				>{$errors.sender?.street}</span
 			>{/if}
 	</div>
@@ -106,7 +116,7 @@
 				bind:value={$form.sender.city}
 				aria-invalid={$errors?.sender?.city ? 'true' : undefined}
 			/>
-			{#if $errors?.sender?.city}<span class="text-destructive text-sm">{$errors.sender?.city}</span
+			{#if $errors?.sender?.city}<span class="text-sm text-destructive">{$errors.sender?.city}</span
 				>{/if}
 		</div>
 
@@ -117,7 +127,7 @@
 				bind:value={$form.sender.zip}
 				aria-invalid={$errors?.sender?.zip ? 'true' : undefined}
 			/>
-			{#if $errors?.sender?.zip}<span class="text-destructive text-sm">{$errors.sender?.zip}</span
+			{#if $errors?.sender?.zip}<span class="text-sm text-destructive">{$errors.sender?.zip}</span
 				>{/if}
 		</div>
 
@@ -135,13 +145,16 @@
 					{/each}
 				</Select.Content>
 			</Select.Root>
-			{#if $errors?.sender?.country}<span class="text-destructive text-sm"
+			{#if $errors?.sender?.country}<span class="text-sm text-destructive"
 					>{$errors.sender?.country}</span
 				>{/if}
 		</div>
 	</div>
 
-	<h2 class="text-sm font-medium">Fakturerings Information</h2>
+	<div>
+		<h2 class="font-semibold leading-tight">Fakturerings Information</h2>
+		<p class="text-sm text-muted-foreground">Denne information bruges til fakturering.</p>
+	</div>
 	<div class="flex items-center gap-2">
 		<Checkbox
 			id="billing-checkbox"
@@ -159,7 +172,7 @@
 			bind:value={$form.billing.name}
 			aria-invalid={$errors?.billing?.name ? 'true' : undefined}
 		/>
-		{#if $errors?.billing?.name}<span class="text-destructive text-sm">{$errors.billing?.name}</span
+		{#if $errors?.billing?.name}<span class="text-sm text-destructive">{$errors.billing?.name}</span
 			>{/if}
 	</div>
 
@@ -173,7 +186,7 @@
 				bind:value={$form.billing.email}
 				aria-invalid={$errors?.billing?.email ? 'true' : undefined}
 			/>
-			{#if $errors?.billing?.email}<span class="text-destructive text-sm"
+			{#if $errors?.billing?.email}<span class="text-sm text-destructive"
 					>{$errors.billing?.email}</span
 				>{/if}
 		</div>
@@ -187,7 +200,7 @@
 				bind:value={$form.billing.phone}
 				aria-invalid={$errors?.billing?.phone ? 'true' : undefined}
 			/>
-			{#if $errors?.billing?.phone}<span class="text-destructive text-sm"
+			{#if $errors?.billing?.phone}<span class="text-sm text-destructive"
 					>{$errors.billing?.phone}</span
 				>{/if}
 		</div>
@@ -201,7 +214,7 @@
 			bind:value={$form.billing.street}
 			aria-invalid={$errors?.billing?.street ? 'true' : undefined}
 		/>
-		{#if $errors?.billing?.street}<span class="text-destructive text-sm"
+		{#if $errors?.billing?.street}<span class="text-sm text-destructive"
 				>{$errors.billing?.street}</span
 			>{/if}
 	</div>
@@ -215,7 +228,7 @@
 				bind:value={$form.billing.city}
 				aria-invalid={$errors?.billing?.city ? 'true' : undefined}
 			/>
-			{#if $errors?.billing?.city}<span class="text-destructive text-sm"
+			{#if $errors?.billing?.city}<span class="text-sm text-destructive"
 					>{$errors.billing?.city}</span
 				>{/if}
 		</div>
@@ -228,7 +241,7 @@
 				bind:value={$form.billing.zip}
 				aria-invalid={$errors?.billing?.zip ? 'true' : undefined}
 			/>
-			{#if $errors?.billing?.zip}<span class="text-destructive text-sm">{$errors.billing?.zip}</span
+			{#if $errors?.billing?.zip}<span class="text-sm text-destructive">{$errors.billing?.zip}</span
 				>{/if}
 		</div>
 
@@ -246,13 +259,16 @@
 					{/each}
 				</Select.Content>
 			</Select.Root>
-			{#if $errors?.billing?.country}<span class="text-destructive text-sm"
+			{#if $errors?.billing?.country}<span class="text-sm text-destructive"
 					>{$errors.billing?.country}</span
 				>{/if}
 		</div>
 	</div>
 
-	<h2 class="text-sm font-medium">RMA Information</h2>
+	<div>
+		<h2 class="font-semibold leading-tight">RMA Information</h2>
+		<p class="text-sm text-muted-foreground">Beskriv problemet så detaljeret som muligt.</p>
+	</div>
 	<div class="grid gap-2">
 		<Label for="categorties">Kategorier<span class="text-red-500">*</span></Label>
 		<div class="flex items-center gap-2">
@@ -274,7 +290,7 @@
 				</Label>
 			{/each}
 		</div>
-		{#if $errors?.categories}<span class="text-destructive text-sm"
+		{#if $errors?.categories}<span class="text-sm text-destructive"
 				>{$errors.categories._errors?.join('. ')}</span
 			>{/if}
 	</div>
@@ -287,7 +303,7 @@
 				bind:value={$form.model}
 				aria-invalid={$errors?.model ? 'true' : undefined}
 			/>
-			{#if $errors?.model}<span class="text-destructive text-sm">{$errors.model}</span>{/if}
+			{#if $errors?.model}<span class="text-sm text-destructive">{$errors.model}</span>{/if}
 		</div>
 		<div class="grid w-2/4 gap-2">
 			<Label for="serial">Serienummer</Label>
@@ -296,7 +312,7 @@
 				bind:value={$form.serial}
 				aria-invalid={$errors?.serial ? 'true' : undefined}
 			/>
-			{#if $errors?.serial}<span class="text-destructive text-sm">{$errors.serial}</span>{/if}
+			{#if $errors?.serial}<span class="text-sm text-destructive">{$errors.serial}</span>{/if}
 		</div>
 	</div>
 
@@ -307,11 +323,11 @@
 			bind:value={$form.issue}
 			aria-invalid={$errors?.issue ? 'true' : undefined}
 		/>
-		{#if $errors?.issue}<span class="text-destructive text-sm">{$errors.issue}</span>{/if}
+		{#if $errors?.issue}<span class="text-sm text-destructive">{$errors.issue}</span>{/if}
 	</div>
 
 	<h2 class="text-sm font-medium">Præmisser</h2>
-	<p class="text-muted-foreground text-sm">
+	<p class="text-sm text-muted-foreground">
 		Skancode A/S dækker reparation og returfragt i garantisager. For øvrige henvendelser pålægges en
 		minimumspris på 450 DKK pr. indsendt enhed, ekskl. fragt.
 	</p>
@@ -329,7 +345,7 @@
 			</Label>
 		</div>
 	</RadioGroup.Root>
-	{#if $errors?.wantsQuote}<span class="text-destructive text-sm">{$errors.wantsQuote}</span>{/if}
+	{#if $errors?.wantsQuote}<span class="text-sm text-destructive">{$errors.wantsQuote}</span>{/if}
 
 	<div class="flex w-full items-center justify-end gap-2">
 		<Button variant="secondary" type="button" onclick={() => reset()}>Nulstil</Button>

@@ -295,7 +295,7 @@ func (s *ticketStore) Create(ctx context.Context, t *Ticket) error {
 			TicketID:        t.ID,
 			Status:          OPEN,
 			Initiator:       t.Sender.Name,
-			ExternalComment: "Sag er blevet oprettet.",
+			ExternalComment: "Sagen er blevet oprettet. Skancode A/S afventer modtagelsen af RMA.",
 			InternalComment: "",
 		}
 

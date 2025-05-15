@@ -3,6 +3,8 @@
 	import { Badge } from '$lib/components/ui/badge/index.js'
 	import { goto } from '$app/navigation'
 	import type { SvelteURLSearchParams } from 'svelte/reactivity'
+	import StatusBadge from '../common/status-badge.svelte'
+	import CategoryBadge from '../common/category-badge.svelte'
 
 	let { tickets, searchParams }: { tickets: Ticket[]; searchParams: SvelteURLSearchParams } =
 		$props()
@@ -14,7 +16,7 @@
 	}
 </script>
 
-<div class="rounded-md border">
+<div class="rounded-md border bg-white shadow-sm">
 	<Table.Root>
 		<Table.Caption class="m-0 p-4">Oversigt over alle RMA sager</Table.Caption>
 		<Table.Header>
@@ -31,11 +33,13 @@
 		<Table.Body class="border-b">
 			{#each tickets as ticket (ticket.id)}
 				<Table.Row>
-					<Table.Cell class="font-medium">{ticket.id}</Table.Cell>
-					<Table.Cell class="capitalize">{ticket.status}</Table.Cell>
+					<Table.Cell class="font-medium">
+						<a href={`/admin/tickets/${ticket.id}`}>#{ticket.id}</a>
+					</Table.Cell>
+					<Table.Cell><StatusBadge status={ticket.status} /></Table.Cell>
 					<Table.Cell class="flex items-center gap-1">
 						{#each ticket.categories as category}
-							<Badge variant="secondary" class="">{category}</Badge>
+							<CategoryBadge {category} />
 						{/each}
 					</Table.Cell>
 					<Table.Cell>{ticket.sender.name}</Table.Cell>
