@@ -24,7 +24,7 @@
 				<Table.Head onclick={() => handleSortingChange('id', 'asc')}>Sags ID</Table.Head>
 				<Table.Head>Status</Table.Head>
 				<Table.Head>Kategorier</Table.Head>
-				<Table.Head>Afsender firma</Table.Head>
+				<Table.Head class="max-w-60 truncate">Afsender firma</Table.Head>
 				<Table.Head>Afsender e-mail</Table.Head>
 				<Table.Head>Oprettet</Table.Head>
 				<Table.Head>Sidste ændring</Table.Head>
@@ -42,7 +42,7 @@
 							<CategoryBadge {category} />
 						{/each}
 					</Table.Cell>
-					<Table.Cell>{ticket.sender.name}</Table.Cell>
+					<Table.Cell class="max-w-60 truncate">{ticket.sender.name}</Table.Cell>
 					<Table.Cell>{ticket.sender.email}</Table.Cell>
 					<Table.Cell>{new Date(ticket.inserted).toLocaleString('en-GB')}</Table.Cell>
 					<Table.Cell>{new Date(ticket.updated).toLocaleString('en-GB')}</Table.Cell>
