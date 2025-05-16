@@ -1,24 +1,19 @@
 import { goto } from '$app/navigation'
 import { SvelteURLSearchParams } from 'svelte/reactivity'
 
-const activeParams = new Set<string>()
-let debounceTimer = 0
+let debounceTimer: number | undefined = 0
 
 function updateUrl(searchParams: URLSearchParams) {
 	clearTimeout(debounceTimer)
-	console.log('active', activeParams, searchParams)
-
-	let empty = $derived(searchParams.values().every(v => v == ''))
-
-	if (searchParams.toString() === '') {
-		goto('', { keepFocus: true, noScroll: true })
-		return
-	}
 
 	debounceTimer = setTimeout(() => {
 		const query = searchParams.toString()
-		goto(query ? `?${query}` : '', { keepFocus: true, noScroll: true })
-	}, 2000)
+		const url = query !== '' ? `?${query}` : '?'
+		goto(url, {
+			keepFocus: true,
+			noScroll: true,
+		})
+	}, 300)
 }
 
 function createQueryState<T>(
@@ -34,29 +29,23 @@ function createQueryState<T>(
 		default?: T
 	},
 ) {
-	activeParams.add(key)
-
 	const initial = searchParams.has(key) ? parse(searchParams.get(key)!) : defaultValue
 	let value = $state(initial)
-	let empty = $derived(searchParams.values().every(v => v == ''))
 
 	$effect(() => {
-		console.log(key, value, searchParams)
-		if (value === undefined || value === null || value === '') {
-			console.log('delete me', key)
+		const serialized = serialize(value)
+		if (
+			serialized === undefined ||
+			serialized === null ||
+			serialized === '' ||
+			(Array.isArray(value) && Array.from(value).length === 0)
+		) {
 			searchParams.delete(key)
 		} else {
-			console.log('set me', key)
-			searchParams.set(key, serialize(value))
+			searchParams.set(key, serialized)
 		}
 
-		// Special handling when last parameter is cleared
-		if (empty) {
-			console.log('effect is empty')
-			goto('', { keepFocus: true, noScroll: true })
-		} else {
-			updateUrl(searchParams)
-		}
+		updateUrl(searchParams)
 	})
 
 	return {
@@ -66,6 +55,29 @@ function createQueryState<T>(
 		set value(v) {
 			value = v
 		},
+		...(!isNaN(value)
+			? {
+					increment() {
+						value = (value || 0) + 1
+					},
+					decrement() {
+						value = (value || 0) - 1
+					},
+				}
+			: {}),
+		...(Array.isArray(initial)
+			? {
+					add(item: any) {
+						value = [...value, item]
+					},
+					remove(item: any) {
+						value = value.filter((v: any) => v !== item)
+					},
+					clear() {
+						value = []
+					},
+				}
+			: {}),
 	}
 }
 

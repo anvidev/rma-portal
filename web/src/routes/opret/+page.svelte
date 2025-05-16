@@ -317,7 +317,7 @@
 	</div>
 
 	<div class="grid gap-2">
-		<Label for="issue">Problem<span class="text-red-500">*</span></Label>
+		<Label for="issue">Fejlbeskrivelse<span class="text-red-500">*</span></Label>
 		<Textarea
 			id="issue"
 			bind:value={$form.issue}

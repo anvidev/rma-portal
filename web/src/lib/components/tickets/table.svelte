@@ -16,7 +16,7 @@
 	}
 </script>
 
-<div class="rounded-md border bg-white shadow-sm">
+<div class="rounded-lg border bg-white shadow-sm">
 	<Table.Root>
 		<Table.Caption class="m-0 p-4">Oversigt over alle RMA sager</Table.Caption>
 		<Table.Header>
