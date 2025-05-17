@@ -21,3 +21,5 @@
  - [ ] Add sorting/direction to filters
  - [x] Modals for terms and coditions
  - [x] Ability to log out
+ - [x] Show quote and warranty data on details page
+ - [ ] Thank you page after ticket creation (different redirect if user is logged in)

@@ -21,6 +21,10 @@ export type Ticket = {
 	status: string
 	categories: string[]
 	issue: string
+	model: string | null
+	serial_number: string | null
+	quote: 'yes' | 'no'
+	warranty: 'yes' | 'no' | 'unknown'
 	inserted: string
 	updated: string
 	sender: Contact
