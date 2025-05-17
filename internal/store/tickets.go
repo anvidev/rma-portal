@@ -17,14 +17,15 @@ type Status int
 type Category int
 
 const (
-	OPEN Status = iota + 1
+	CREATED Status = iota + 1
 	CLOSED
-	EXT_REPAIR
-	INT_REPAIR
+	RECEIVED
+	EXTERNAL_REPAIR
+	INTERNAL_REPAIR
+	AWAITING_PARTS
 	QUOTE_SENT
-	QUOTE_ACCEPT
-	QOUTE_REJECT_RETURN
-	QUOTE_REJECT_DESTROY
+	QUOTE_ACCEPTED
+	REJECTED
 )
 
 const (
@@ -39,14 +40,15 @@ var (
 )
 
 var Statuses = map[Status]string{
-	OPEN:                 "åben",
-	CLOSED:               "lukket",
-	EXT_REPAIR:           "ekstern reperation",
-	INT_REPAIR:           "intern reperation",
-	QUOTE_SENT:           "tilbud sendt",
-	QUOTE_ACCEPT:         "tilbud accepteret",
-	QOUTE_REJECT_RETURN:  "tilbud afvist (sendes tilbage)",
-	QUOTE_REJECT_DESTROY: "tilbud afvist (kasseres)",
+	CREATED:         "registreret",
+	RECEIVED:        "modtaget",
+	CLOSED:          "lukket",
+	EXTERNAL_REPAIR: "ekstern reparation",
+	INTERNAL_REPAIR: "intern reparation",
+	AWAITING_PARTS:  "afventer reservedele",
+	QUOTE_SENT:      "tilbud sendt",
+	QUOTE_ACCEPTED:  "tilbud accepteret",
+	REJECTED:        "afvist",
 }
 
 var Categories = map[Category]string{
@@ -299,7 +301,7 @@ func (s *ticketStore) Create(ctx context.Context, t *Ticket) error {
 
 		createdLog := &Log{
 			TicketID:        t.ID,
-			Status:          OPEN,
+			Status:          CREATED,
 			Initiator:       t.Sender.Name,
 			ExternalComment: "Sagen er blevet oprettet. Skancode A/S afventer modtagelsen af RMA.",
 			InternalComment: "",

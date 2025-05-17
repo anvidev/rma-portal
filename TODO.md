@@ -6,7 +6,7 @@
  - [x] Add "I accept if the offer is above XX DKK" checkbox to create form
  - [ ] Add Skancode logo to create page
  - [ ] Add "wantQuote" data to ticket table
- - [ ] Add new status "modtaget"
+ - [x] Add new status "modtaget"
  - [ ] Expand search field to billing information, model and serial number
  - [ ] Ability to edit ticket on details page
  - [ ] Add "Vare er garanti", "Vare er ikke garanti", "Ved ikke" to create form

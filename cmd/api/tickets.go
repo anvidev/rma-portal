@@ -51,7 +51,7 @@ func (api *api) postCreateTicket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ticket := store.Ticket{
-		Status:       store.OPEN,
+		Status:       store.CREATED,
 		Categories:   payload.Categories,
 		Issue:        payload.Issue,
 		Model:        payload.Model,

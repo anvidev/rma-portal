@@ -5,27 +5,51 @@
 
 	function getStatusBadgeBackgroundColor(status: string): string {
 		switch (status) {
-			case 'ekstern reperation':
-				return 'bg-amber-100 text-amber-600'
-			case 'intern reperation':
-				return 'bg-emerald-100 text-emerald-600'
+			case 'registreret':
+				return 'bg-gray-100 text-gray-600'
+			case 'modtaget':
+				return 'bg-green-100 text-green-600'
+
 			case 'lukket':
-				return 'bg-stone-100 text-stone-600'
+			case 'afvist':
+				return 'bg-red-100 text-red-600'
+
+			case 'intern reparation':
+			case 'ekstern reparation':
+				return 'bg-amber-100 text-amber-600'
+
+			case 'afventer reservedele':
+			case 'tilbud accepteret':
+			case 'tilbud sendt':
+				return 'bg-sky-100 text-sky-600'
+
 			default:
-				return 'bg-sky-100 text-sky-700'
+				return 'bg-gray-100 text-gray-600'
 		}
 	}
 
 	function getStatusDotBackgroundColor(status: string): string {
 		switch (status) {
-			case 'ekstern reperation':
-				return 'bg-amber-600'
-			case 'intern reperation':
-				return 'bg-emerald-600'
+			case 'registreret':
+				return 'bg-gray-600'
+			case 'modtaget':
+				return 'bg-green-600'
+
 			case 'lukket':
-				return 'bg-stone-600'
+			case 'afvist':
+				return 'bg-red-600'
+
+			case 'intern reparation':
+			case 'ekstern reparation':
+				return 'bg-amber-600'
+
+			case 'afventer reservedele':
+			case 'tilbud accepteret':
+			case 'tilbud sendt':
+				return 'bg-sky-600'
+
 			default:
-				return 'bg-sky-700'
+				return 'bg-gray-600'
 		}
 	}
 </script>
