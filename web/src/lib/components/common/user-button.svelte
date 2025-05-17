@@ -3,6 +3,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js'
 	import * as Avatar from '$lib/components/ui/avatar/index.js'
 	import type { User } from '$lib/types'
+	import { LogOut } from '@lucide/svelte'
 
 	let { user }: { user: User } = $props()
 	let initials = $derived(user.name[0] + user.name[user.name.length - 1])
@@ -18,7 +19,7 @@
 			</Button>
 		{/snippet}
 	</DropdownMenu.Trigger>
-	<DropdownMenu.Content class="w-56" align="end">
+	<DropdownMenu.Content class="w-48" align="end">
 		<DropdownMenu.Label class="font-normal">
 			<div class="flex flex-col space-y-1">
 				<p class="text-sm font-medium leading-none">{user.name}</p>
@@ -28,9 +29,9 @@
 		<DropdownMenu.Separator />
 		<form method="POST" action="/log-ud?/logout">
 			<button class="w-full">
-				<DropdownMenu.Item class="!text-destructive">
-					Log out
-					<DropdownMenu.Shortcut>⇧⌘Q</DropdownMenu.Shortcut>
+				<DropdownMenu.Item class="!text-destructive flex items-center justify-between">
+					Log ud
+					<LogOut class="size-3.5" />
 				</DropdownMenu.Item>
 			</button>
 		</form>

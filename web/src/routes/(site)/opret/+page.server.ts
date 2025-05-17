@@ -64,7 +64,7 @@ export const load: PageServerLoad = async () => {
 }
 
 export const actions: Actions = {
-	default: async ({ request, fetch }) => {
+	default: async ({ request, fetch, locals }) => {
 		const form = await superValidate(request, zod(schema))
 
 		if (!form.valid) return fail(400, { form })
@@ -80,6 +80,10 @@ export const actions: Actions = {
 
 		const data = (await response.json()) as { ticket: Ticket }
 
-		redirect(303, `/admin/tickets/${data.ticket.id}`)
+		const redirectUrl = locals.user
+			? `/admin/tickets/${data.ticket.id}`
+			: `/tak?rma=${data.ticket.id}`
+
+		redirect(303, redirectUrl)
 	},
 }

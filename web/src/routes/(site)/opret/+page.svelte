@@ -348,13 +348,13 @@
 	<RadioGroup.Root bind:value={$form.quote}>
 		<div class="flex items-center space-x-2">
 			<RadioGroup.Item value="yes" id="quote-yes" />
-			<Label for="qoute-yes"
+			<Label for="quote-yes"
 				>Jeg ønsker at modtage et tilbud hvis reparation overstiger minimumsprisen</Label
 			>
 		</div>
 		<div class="flex items-center space-x-2">
 			<RadioGroup.Item value="no" id="quote-no" />
-			<Label for="qoute-no">
+			<Label for="quote-no">
 				Jeg ønsker <span class="font-bold">IKKE</span> at modtage et tilbud hvis reparation overstiger
 				minimumsprisen
 			</Label>
