@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge/index.js'
 	import { cn } from '$lib/utils'
-	let { status }: { status: string } = $props()
+	let { status, onclick }: { status: string; onclick?: () => void } = $props()
 
 	function getStatusBadgeBackgroundColor(status: string): string {
 		switch (status) {
@@ -54,7 +54,14 @@
 	}
 </script>
 
-<Badge class={cn('flex items-center gap-2 capitalize', getStatusBadgeBackgroundColor(status))}>
+<Badge
+	onclick={onclick ? onclick : () => {}}
+	class={cn(
+		'flex items-center gap-2 capitalize',
+		getStatusBadgeBackgroundColor(status),
+		onclick && 'cursor-pointer',
+	)}
+>
 	<span class={cn('block size-1.5 rounded-full', getStatusDotBackgroundColor(status))}></span>
 	{status}</Badge
 >

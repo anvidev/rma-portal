@@ -5,9 +5,19 @@
 	import StatusBadge from '../common/status-badge.svelte'
 	import CategoryBadge from '../common/category-badge.svelte'
 	import type { Ticket } from '$lib/types'
+	import { stringArrayQueryState, type QueryState } from '$lib/query-state.svelte'
 
-	let { tickets, searchParams }: { tickets: Ticket[]; searchParams: SvelteURLSearchParams } =
-		$props()
+	let {
+		tickets,
+		searchParams,
+		statusQuery,
+		categoriesQuery,
+	}: {
+		tickets: Ticket[]
+		searchParams: SvelteURLSearchParams
+		statusQuery: QueryState<string[]>
+		categoriesQuery: QueryState<string[]>
+	} = $props()
 
 	function handleSortingChange(key: string, direction: 'asc' | 'desc') {
 		searchParams.set('sorting', key)
@@ -36,10 +46,15 @@
 					<Table.Cell class="font-medium">
 						<a href={`/admin/tickets/${ticket.id}`}>#{ticket.id}</a>
 					</Table.Cell>
-					<Table.Cell><StatusBadge status={ticket.status} /></Table.Cell>
+					<Table.Cell
+						><StatusBadge
+							onclick={() => statusQuery.set([ticket.status])}
+							status={ticket.status}
+						/></Table.Cell
+					>
 					<Table.Cell class="flex items-center gap-1">
 						{#each ticket.categories as category}
-							<CategoryBadge {category} />
+							<CategoryBadge onclick={() => categoriesQuery.set([category])} {category} />
 						{/each}
 					</Table.Cell>
 					<Table.Cell class="max-w-60 truncate">{ticket.sender.name}</Table.Cell>

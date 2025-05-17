@@ -1,20 +1,23 @@
 <script lang="ts">
-	import { numberQueryState } from '$lib/query-state.svelte'
-	import type { SvelteURLSearchParams } from 'svelte/reactivity'
+	import { type QueryState } from '$lib/query-state.svelte'
 	import Button from '../ui/button/button.svelte'
 	import { Minus, Plus } from '@lucide/svelte'
 	import * as Select from '$lib/components/ui/select/index.js'
 
 	let {
-		searchParams,
 		total,
 		limit,
 		limitOptions,
-	}: { searchParams: SvelteURLSearchParams; total: number; limit: number; limitOptions: number[] } =
-		$props()
+		pageQuery,
+		limitQuery,
+	}: {
+		total: number
+		limit: number
+		limitOptions: number[]
+		pageQuery: QueryState<number | null>
+		limitQuery: QueryState<number | null>
+	} = $props()
 
-	const pageQuery = numberQueryState(searchParams, 'page')
-	const limitQuery = numberQueryState(searchParams, 'limit')
 	const totalPages = $derived(total > 0 ? Math.ceil(total / (limitQuery.value ?? 25)) : 1)
 </script>
 
@@ -43,7 +46,7 @@
 			size="icon"
 			variant="outline"
 			disabled={(pageQuery.value ?? 1) <= 1}
-			onclick={() => pageQuery.decrement()}
+			onclick={() => pageQuery.set((pageQuery.value ?? 1) - 1)}
 			aria-label="Forrige side"
 		>
 			<Minus class="size-3.5" />
@@ -52,7 +55,7 @@
 			size="icon"
 			variant="outline"
 			disabled={(pageQuery.value ?? 1) >= totalPages}
-			onclick={() => pageQuery.increment()}
+			onclick={() => pageQuery.set((pageQuery.value ?? 1) + 1)}
 			aria-label="Næste side"
 		>
 			<Plus class="size-3.5" />
