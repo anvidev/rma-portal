@@ -119,7 +119,7 @@ func (c *Category) Scan(value any) error {
 
 type TicketFilters struct {
 	Query      string      `json:"query"`
-	Status     Status      `json:"status"`
+	Status     []Status    `json:"status"`
 	Categories []Category  `json:"categories"`
 	Inserted   []time.Time `json:"inserted"`
 	Updated    []time.Time `json:"updated"`
@@ -159,39 +159,24 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 	}
 
 	if q.Has("status") {
-		statusQuery := q.Get("status")
-		statusFound := false
-		for status, label := range Statuses {
-			if label == statusQuery {
-				f.Status = status
-				statusFound = true
+		statusQuery := strings.Split(q.Get("status"), ",")
+		for _, query := range statusQuery {
+			if query == "" {
 				break
 			}
-		}
-		if !statusFound {
-			return ErrStatusNotImplemented
+			statusFound := false
+			for status, label := range Statuses {
+				if label == query {
+					f.Status = append(f.Status, status)
+					statusFound = true
+					break
+				}
+			}
+			if !statusFound {
+				return ErrStatusNotImplemented
+			}
 		}
 	}
-
-	// if q.Has("status") {
-	// 	statusQuery := strings.Split(q.Get("status"), ",")
-	// 	for _, query := range statusQuery {
-	// 		if query == "" {
-	// 			break
-	// 		}
-	// 		statusFound := false
-	// 		for status, label := range Statuses {
-	// 			if label == query {
-	// 				f.Status = append(f.Status, status)
-	// 				statusFound = true
-	// 				break
-	// 			}
-	// 		}
-	// 		if !statusFound {
-	// 			return ErrStatusNotImplemented
-	// 		}
-	// 	}
-	// }
 
 	if q.Has("categories") {
 		categoryQuery := strings.Split(q.Get("categories"), ",")
@@ -394,24 +379,35 @@ func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 
 func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket, int, error) {
 	stmt := `
-		WITH filtered_tickets AS
-			(
-				SELECT *
-				FROM tickets
-				WHERE (sender_name ILIKE '%' || $1 || '%'
+		WITH filtered_tickets AS (
+			SELECT *
+			FROM tickets
+			WHERE (
+				$1 = '' OR (
+					sender_name ILIKE '%' || $1 || '%'
 					OR sender_email ILIKE '%' || $1 || '%'
 					OR sender_street ILIKE '%' || $1 || '%'
 					OR sender_city ILIKE '%' || $1 || '%'
 					OR sender_zip ILIKE '%' || $1 || '%'
-					OR sender_country ILIKE '%' || $1 || '%')
-					AND ($2 = 0
-						OR status = $2)
-					AND ($3::int[] IS NULL
-						OR categories && $3::int[])
-					AND (inserted >= $4 
-						AND inserted <= $5)
+					OR sender_country ILIKE '%' || $1 || '%'
+					)
+				)
+				AND (
+					$2::integer[] IS NULL 
+					OR cardinality($2::integer[]) = 0 
+					OR status = ANY($2::integer[])
+				)
+				AND (
+					$3::integer[] IS NULL 
+					OR cardinality($3::integer[]) = 0 
+					OR categories && $3::integer[]
+				)
+				AND (
+					inserted BETWEEN $4 AND $5
+				)
 			)
-		SELECT id,
+		SELECT 
+			id,
 			status,
 			categories,
 			issue,
@@ -436,9 +432,8 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			(SELECT COUNT(*) FROM filtered_tickets) AS total_count
 		FROM filtered_tickets
 		ORDER BY inserted DESC
-		LIMIT $6
-		OFFSET $7
-	`
+		LIMIT $6 OFFSET $7
+    `
 
 	ctx, cancel := context.WithTimeout(ctx, queryTimeoutDuration)
 	defer cancel()
@@ -450,7 +445,7 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 		ctx,
 		stmt,
 		filters.Query,
-		filters.Status,
+		pq.Array(filters.Status),
 		pq.Array(filters.Categories),
 		filters.Inserted[0],
 		filters.Inserted[1],

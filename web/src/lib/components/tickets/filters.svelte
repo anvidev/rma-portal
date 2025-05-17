@@ -17,7 +17,7 @@
 	<Input class="max-w-52 rounded-lg" placeholder="Søg..." bind:value={query.value} />
 
 	<Select.Root type="multiple" bind:value={status.value}>
-		<Select.Trigger class="max-w-40 rounded-lg capitalize"
+		<Select.Trigger class="w-fit min-w-40 rounded-lg capitalize"
 			>{statusText ? statusText : 'Status'}</Select.Trigger
 		>
 		<Select.Content>
@@ -28,7 +28,7 @@
 	</Select.Root>
 
 	<Select.Root type="multiple" bind:value={categories.value}>
-		<Select.Trigger class="w-fit min-w-40 max-w-52 rounded-lg capitalize transition-all"
+		<Select.Trigger class="w-fit min-w-40 rounded-lg capitalize"
 			>{categoriesText ? categoriesText : 'Kategori'}</Select.Trigger
 		>
 		<Select.Content>
