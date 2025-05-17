@@ -4,7 +4,7 @@
 
  - [x] Add "Accept terms & conditions" checkbox to create form
  - [x] Add "I accept if the offer is above XX DKK" checkbox to create form
- - [ ] Add Skancode logo to create page
+ - [x] Add Skancode logo to create page
  - [x] Add "wantQuote" data to ticket table
  - [x] Add new status "modtaget"
  - [x] Expand search field to billing information, model and serial number

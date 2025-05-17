@@ -12,7 +12,7 @@
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
 			<Button variant="ghost" class="relative h-8 w-8 rounded-full" {...props}>
-				<Avatar.Root class="bg-muted/20 h-8 w-8 rounded-lg border">
+				<Avatar.Root class="bg-muted/20 size-8 rounded-lg border">
 					<Avatar.Fallback>{initials.toUpperCase()}</Avatar.Fallback>
 				</Avatar.Root>
 			</Button>
