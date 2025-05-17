@@ -19,5 +19,5 @@
     - Autoincrement number combined with 5 random uppercase letters
  - [x] Update frontend for login page
  - [ ] Add sorting/direction to filters
- - [ ] Modals for terms and coditions
+ - [x] Modals for terms and coditions
  - [x] Ability to log out

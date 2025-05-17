@@ -6,7 +6,8 @@
 	import { Input } from '$lib/components/ui/input/index.js'
 	import { Button } from '$lib/components/ui/button/index.js'
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js'
-	import SuperDebug, { superForm } from 'sveltekit-superforms'
+	import * as Dialog from '$lib/components/ui/dialog/index.js'
+	import { superForm } from 'sveltekit-superforms'
 
 	let { data } = $props()
 	let isBillingSame = $state(false)
@@ -41,6 +42,11 @@
 	}
 
 	let acceptTerms = $state(false)
+
+	let modalContent = $state<'terms' | 'privacy' | null>(null)
+	function openModal(content: 'terms' | 'privacy') {
+		modalContent = content
+	}
 </script>
 
 <form method="POST" use:enhance class="mx-auto max-w-3xl space-y-4 p-6">
@@ -395,9 +401,22 @@
 			for="terms"
 			class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 		>
-			Jeg accepterer <span class="cursor-pointer font-medium underline">vilkår og betingelser</span>
+			Jeg accepterer
+			<button
+				type="button"
+				class="hover:text-primary cursor-pointer font-medium underline"
+				onclick={() => openModal('terms')}
+			>
+				vilkår og betingelser
+			</button>
 			og
-			<span class="cursor-pointer font-medium underline">privatlivspolitik</span>.
+			<button
+				type="button"
+				class="hover:text-primary cursor-pointer font-medium underline"
+				onclick={() => openModal('privacy')}
+			>
+				privatlivspolitik
+			</button>.
 		</Label>
 	</div>
 
@@ -407,4 +426,30 @@
 	</div>
 </form>
 
-<SuperDebug data={$form} />
+<Dialog.Root open={modalContent === 'terms'} onOpenChange={open => (modalContent = null)}>
+	<Dialog.DialogContent>
+		<Dialog.DialogHeader>
+			<Dialog.DialogTitle>Vilkår og betingelser</Dialog.DialogTitle>
+			<Dialog.DialogDescription>
+				Her er vores vilkår og betingelser for RMA-processen.
+			</Dialog.DialogDescription>
+		</Dialog.DialogHeader>
+		<div class="max-h-[60vh] overflow-y-auto">
+			<p>Vilkår og betingelser her...</p>
+		</div>
+	</Dialog.DialogContent>
+</Dialog.Root>
+
+<Dialog.Root open={modalContent === 'privacy'} onOpenChange={open => (modalContent = null)}>
+	<Dialog.DialogContent>
+		<Dialog.DialogHeader>
+			<Dialog.DialogTitle>Privatlivspolitik</Dialog.DialogTitle>
+			<Dialog.DialogDescription>
+				Sådan håndterer vi dine personoplysninger.
+			</Dialog.DialogDescription>
+		</Dialog.DialogHeader>
+		<div class="max-h-[60vh] overflow-y-auto">
+			<p>Privatlivspolitik her...</p>
+		</div>
+	</Dialog.DialogContent>
+</Dialog.Root>
