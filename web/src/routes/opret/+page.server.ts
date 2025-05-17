@@ -69,7 +69,7 @@ const schema = object({
 	issue: pipe(
 		string('Skal være tekst'),
 		nonEmpty('Problem er påkrævet'),
-		minLength(50, 'Beskrivelse skal være mindst 50 tegn'),
+		minLength(20, 'Beskrivelse skal være mindst 50 tegn'),
 		maxLength(500, 'Beskrivelse må maks være 500 tegn'),
 	),
 	wantsQuote: enum_(WantQuote, 'Vælg om du ønsker tilbud ved pris over minimum'),

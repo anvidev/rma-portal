@@ -10,7 +10,7 @@
  - [ ] Expand search field to billing information, model and serial number
  - [ ] Ability to edit ticket on details page
  - [ ] Add "Vare er garanti", "Vare er ikke garanti", "Ved ikke" to create form
- - [ ] Change "issue" min length to 20 characters
+ - [x] Change "issue" min length to 20 characters
  - [ ] Change filter for status to be multiple
  - [ ] Fetch status and categories in frontend
  - [ ] Show total in table footer

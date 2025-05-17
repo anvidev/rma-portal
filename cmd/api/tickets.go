@@ -20,7 +20,7 @@ type contactPayload struct {
 type createTicketPayload struct {
 	Sender       contactPayload   `json:"sender" validate:"required"`
 	Billing      contactPayload   `json:"billing" validate:"required"`
-	Issue        string           `json:"issue" validate:"required,min=50,max=500"`
+	Issue        string           `json:"issue" validate:"required,min=20,max=500"`
 	Categories   []store.Category `json:"categories" validate:"required,gt=0,max=5"`
 	Model        *string          `json:"model" validate:"omitempty,max=50"`
 	SerialNumber *string          `json:"serial_number" validate:"omitempty,max=50"`
