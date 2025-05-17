@@ -19,7 +19,7 @@
 </script>
 
 <div class="flex items-center justify-between">
-	<div>
+	<div class="flex items-center gap-4">
 		<Select.Root type="single" bind:value={limitQuery.value}>
 			<Select.Trigger class="w-20 rounded-lg capitalize"
 				>{limitQuery.value ? limitQuery.value : limit}</Select.Trigger
@@ -30,6 +30,9 @@
 				{/each}
 			</Select.Content>
 		</Select.Root>
+		<span class="text-muted-foreground text-sm">
+			{total} Total rækker
+		</span>
 	</div>
 
 	<div class="flex items-center gap-2">
