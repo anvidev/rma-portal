@@ -17,6 +17,7 @@
  - [ ] Add max height on ticket table
  - [x] Change ticket id to something like "00001-FKJSHF"
     - Autoincrement number combined with 5 random uppercase letters
- - [ ] Update frontend for login page
+ - [x] Update frontend for login page
  - [ ] Add sorting/direction to filters
  - [ ] Modals for terms and coditions
+ - [x] Ability to log out
