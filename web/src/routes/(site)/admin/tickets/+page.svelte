@@ -28,6 +28,8 @@
 	}
 </script>
 
+<title>RMA Sags Oversigt - Skancode RMA Service Portal</title>
+
 <section class="space-y-4">
 	<div>
 		<h1 class="text-lg font-semibold leading-tight">Sags oversigt</h1>

@@ -4,6 +4,8 @@
 	import Label from '$lib/components/ui/label/label.svelte'
 </script>
 
+<title>Log ind - Skancode RMA Service Portal</title>
+
 <section class="w-72 space-y-4">
 	<div>
 		<h1 class="text-lg font-semibold leading-tight">Velkommen tilbage!</h1>

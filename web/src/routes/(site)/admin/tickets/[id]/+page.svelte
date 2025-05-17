@@ -10,6 +10,8 @@
 	const form = data.form
 </script>
 
+<title>RMA Sag #{data.ticket.id} - Skancode RMA Service Portal</title>
+
 <article class="space-y-4">
 	<Title {ticket} />
 	<div class="flex flex-col gap-4 md:flex-row">

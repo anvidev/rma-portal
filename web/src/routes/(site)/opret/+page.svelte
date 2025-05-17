@@ -49,6 +49,8 @@
 	}
 </script>
 
+<title>Opret RMA - Skancode RMA Service Portal</title>
+
 <form method="POST" use:enhance class="mx-auto max-w-3xl space-y-4 p-6">
 	<div>
 		<h1 class="text-lg font-semibold leading-tight">Opret RMA</h1>
@@ -426,7 +428,7 @@
 	</div>
 </form>
 
-<Dialog.Root open={modalContent === 'terms'} onOpenChange={open => (modalContent = null)}>
+<Dialog.Root open={modalContent === 'terms'} onOpenChange={_open => (modalContent = null)}>
 	<Dialog.DialogContent>
 		<Dialog.DialogHeader>
 			<Dialog.DialogTitle>Vilkår og betingelser</Dialog.DialogTitle>
@@ -440,7 +442,7 @@
 	</Dialog.DialogContent>
 </Dialog.Root>
 
-<Dialog.Root open={modalContent === 'privacy'} onOpenChange={open => (modalContent = null)}>
+<Dialog.Root open={modalContent === 'privacy'} onOpenChange={_open => (modalContent = null)}>
 	<Dialog.DialogContent>
 		<Dialog.DialogHeader>
 			<Dialog.DialogTitle>Privatlivspolitik</Dialog.DialogTitle>

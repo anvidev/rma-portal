@@ -81,12 +81,12 @@ export function stringQueryState(
 export function numberQueryState(
 	searchParams: SvelteURLSearchParams,
 	key: string,
-	options: { default?: number | null } = {},
+	options: { default?: number } = {},
 ) {
-	return createQueryState<number | null>(searchParams, key, {
-		parse: v => (v === '' ? null : Number(v)),
-		serialize: v => (v === null ? '' : String(v)),
-		default: options.default ?? null,
+	return createQueryState<number | undefined>(searchParams, key, {
+		parse: v => (v === '' ? undefined : Number(v)),
+		serialize: v => (v === undefined ? '' : String(v)),
+		default: options.default,
 	})
 }
 
