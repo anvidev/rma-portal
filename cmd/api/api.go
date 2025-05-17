@@ -67,7 +67,7 @@ func (api *api) mount() http.Handler {
 		})
 
 		r.Route("/admin", func(r chi.Router) {
-			// r.Use(api.bearerAuthorization)
+			r.Use(api.bearerAuthorization)
 			r.Route("/users", func(r chi.Router) {
 				r.Get("/", api.getListUsers)
 				r.Post("/", api.postCreateUser)

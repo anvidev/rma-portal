@@ -125,12 +125,13 @@ type TicketFilters struct {
 	Updated    []time.Time `json:"updated"`
 	Limit      int         `json:"limit"`
 	Offset     int         `json:"offset"`
+	Page       int         `json:"page"`
 }
 
 func (f *TicketFilters) Parse(r *http.Request) error {
 	q := r.URL.Query()
 
-	f.Limit = 50
+	f.Limit = 25
 	f.Offset = 0
 
 	if q.Has("limit") {
@@ -145,12 +146,12 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 		f.Limit = int
 	}
 
-	if q.Has("offset") {
-		int, err := strconv.Atoi(q.Get("offset"))
+	if q.Has("page") {
+		page, err := strconv.Atoi(q.Get("page"))
 		if err != nil {
-			return err
+			return fmt.Errorf("page param kunne ikke konverteres til et nummer: %s", q.Get("page"))
 		}
-		f.Offset = int
+		f.Offset = (page - 1) * f.Limit
 	}
 
 	if q.Has("query") {
@@ -171,6 +172,26 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 			return ErrStatusNotImplemented
 		}
 	}
+
+	// if q.Has("status") {
+	// 	statusQuery := strings.Split(q.Get("status"), ",")
+	// 	for _, query := range statusQuery {
+	// 		if query == "" {
+	// 			break
+	// 		}
+	// 		statusFound := false
+	// 		for status, label := range Statuses {
+	// 			if label == query {
+	// 				f.Status = append(f.Status, status)
+	// 				statusFound = true
+	// 				break
+	// 			}
+	// 		}
+	// 		if !statusFound {
+	// 			return ErrStatusNotImplemented
+	// 		}
+	// 	}
+	// }
 
 	if q.Has("categories") {
 		categoryQuery := strings.Split(q.Get("categories"), ",")
@@ -295,7 +316,7 @@ func (s *ticketStore) Create(ctx context.Context, t *Ticket) error {
 			TicketID:        t.ID,
 			Status:          OPEN,
 			Initiator:       t.Sender.Name,
-			ExternalComment: "Sag er blevet oprettet.",
+			ExternalComment: "Sagen er blevet oprettet. Skancode A/S afventer modtagelsen af RMA.",
 			InternalComment: "",
 		}
 
@@ -668,6 +689,7 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID int64) ([]Log, er
 		SELECT id, status, initiator, external_comment, internal_comment, inserted
 		FROM logs
 		WHERE ticket_id = $1
+		ORDER BY id DESC
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, queryTimeoutDuration)

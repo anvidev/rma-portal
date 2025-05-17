@@ -15,13 +15,13 @@ func main() {
 	config := config{
 		server: serverConfig{
 			env:          env.GetString("SERVER_ENV", "development"),
-			addr:         env.GetString("SERVER_ADDR", ":8080"),
+			addr:         env.GetString("SERVER_ADDR", ":9090"),
 			readTimeout:  env.GetDuration("SERVER_READ_TIMEOUT", time.Second*10),
 			writeTimeout: env.GetDuration("SERVER_WRITE_TIMEOUT", time.Second*30),
 			idleTimeout:  env.GetDuration("SERVER_IDLE_TIMEOUT", time.Minute),
 		},
 		database: databaseConfig{
-			addr:         env.GetString("POSTGRES_ADDR", "postgres://admin:adminpassword@localhost/rma-portal?sslmode=disable"),
+			addr:         env.GetString("POSTGRES_ADDR", "postgres://admin:adminpassword@localhost/rma-db?sslmode=disable"),
 			maxOpenConns: env.GetInt("POSTGRES_MAX_OPEN_CONNS", 30),
 			maxIdleConns: env.GetInt("POSTGRES_MAX_IDLE_CONNS", 30),
 			maxIdleTime:  env.GetDuration("POSTGRES_MAX_IDLE_TIME", time.Minute*15),

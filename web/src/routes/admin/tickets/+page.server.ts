@@ -1,4 +1,5 @@
 import { API_URL } from '$lib/server/env'
+import type { Ticket } from '$lib/types'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ cookies, url }) => {
@@ -9,9 +10,11 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			Authorization: `Bearer ${cookies.get('token')}`,
 		},
 	})
-	const { tickets } = await response.json()
+	const { tickets, total, limit } = await response.json()
 
 	return {
 		tickets: tickets as Ticket[],
+		total: total as number,
+		limit: limit as number,
 	}
 }

@@ -5,16 +5,16 @@
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js'
 	import { Input } from '$lib/components/ui/input/index.js'
 	import { Button } from '$lib/components/ui/button/index.js'
-	import SuperDebug from 'sveltekit-superforms'
+	import * as RadioGroup from '$lib/components/ui/radio-group/index.js'
 	import { superForm } from 'sveltekit-superforms'
 
 	let { data } = $props()
 	let isBillingSame = $state(false)
 
-	const { form, enhance, errors, constraints } = superForm(data.form, {
-		resetForm: false,
+	const { form, enhance, errors, reset, message } = superForm(data.form, {
+		resetForm: true,
 		clearOnSubmit: 'errors-and-message',
-		dataType: 'json'
+		dataType: 'json',
 	})
 
 	function handleIsBillingSame(checked: boolean) {
@@ -29,7 +29,7 @@
 		SE: 'Sverige (SE)',
 		NO: 'Norge (NO)',
 		DE: 'Tyskland (DE)',
-		PL: 'Polen (PL)'
+		PL: 'Polen (PL)',
 	}
 
 	function addItem(category: string) {
@@ -37,13 +37,28 @@
 	}
 
 	function removeItem(category: string) {
-		$form.categories = $form.categories.filter((cat) => cat !== category)
+		$form.categories = $form.categories.filter(cat => cat !== category)
 	}
+
+	let acceptTerms = $state(false)
 </script>
 
-<form method="POST" use:enhance class="mx-auto max-w-3xl space-y-4 rounded-xl border p-6">
-	<h1 class="text-lg font-medium">Opret RMA</h1>
-	<h2 class="text-sm font-medium">Afsender Information</h2>
+<form method="POST" use:enhance class="mx-auto max-w-3xl space-y-4 p-6">
+	<div>
+		<h1 class="text-lg font-semibold leading-tight">Opret RMA</h1>
+		<p class="text-sm text-muted-foreground">
+			Udfyld formularen og vedlæg den genererede PDF-fil, når du sender varen retur.
+		</p>
+	</div>
+	{#if $message}
+		<p>{$message}</p>
+	{/if}
+	<div>
+		<h2 class="font-semibold leading-tight">Afsender Information</h2>
+		<p class="text-sm text-muted-foreground">
+			Disse oplysninger bruges til kommunikation vedrørende din RMA og som returadresse.
+		</p>
+	</div>
 	<div class="grid gap-2">
 		<Label for="senderName">Firma<span class="text-red-500">*</span></Label>
 		<Input
@@ -138,12 +153,15 @@
 		</div>
 	</div>
 
-	<h2 class="text-sm font-medium">Fakturering Information</h2>
+	<div>
+		<h2 class="font-semibold leading-tight">Fakturerings Information</h2>
+		<p class="text-sm text-muted-foreground">Disse oplysninger bruges til fakturering.</p>
+	</div>
 	<div class="flex items-center gap-2">
 		<Checkbox
 			id="billing-checkbox"
 			bind:checked={isBillingSame}
-			onCheckedChange={(checked) => handleIsBillingSame(checked)}
+			onCheckedChange={checked => handleIsBillingSame(checked)}
 		/>
 		<Label class="font-normal" for="billing-checkbox">Fakturering er den samme som afsender</Label>
 	</div>
@@ -249,7 +267,12 @@
 		</div>
 	</div>
 
-	<h2 class="text-sm font-medium">RMA Information</h2>
+	<div>
+		<h2 class="font-semibold leading-tight">RMA Information</h2>
+		<p class="text-sm text-muted-foreground">
+			Beskriv problemet så præcist og detaljeret som muligt.
+		</p>
+	</div>
 	<div class="grid gap-2">
 		<Label for="categorties">Kategorier<span class="text-red-500">*</span></Label>
 		<div class="flex items-center gap-2">
@@ -259,7 +282,7 @@
 					<Checkbox
 						value={category}
 						{checked}
-						onCheckedChange={(checked) => {
+						onCheckedChange={checked => {
 							if (checked) {
 								addItem(category)
 							} else {
@@ -271,7 +294,9 @@
 				</Label>
 			{/each}
 		</div>
-		{#if $errors?.categories}<span class="text-sm text-destructive">{$errors.categories._errors?.join(". ")}</span>{/if}
+		{#if $errors?.categories}<span class="text-sm text-destructive"
+				>{$errors.categories._errors?.join('. ')}</span
+			>{/if}
 	</div>
 
 	<div class="flex items-center justify-stretch gap-4">
@@ -296,7 +321,7 @@
 	</div>
 
 	<div class="grid gap-2">
-		<Label for="issue">Problem<span class="text-red-500">*</span></Label>
+		<Label for="issue">Fejlbeskrivelse<span class="text-red-500">*</span></Label>
 		<Textarea
 			id="issue"
 			bind:value={$form.issue}
@@ -305,8 +330,51 @@
 		{#if $errors?.issue}<span class="text-sm text-destructive">{$errors.issue}</span>{/if}
 	</div>
 
-	<Button variant="secondary" type="reset">Nulstil</Button>
-	<Button type="submit">Opret</Button>
-</form>
+	<div>
+		<h2 class="text-sm font-medium">Præmisser</h2>
+		<p class="text-sm text-muted-foreground">
+			Skancode A/S dækker reparation og returfragt ved garantisager. Ved øvrige henvendelser
+			pålægges en minimumspris på 450 DKK pr. enhed, ekskl. fragt.
+		</p>
+	</div>
+	<RadioGroup.Root bind:value={$form.wantsQuote}>
+		<div class="flex items-center space-x-2">
+			<RadioGroup.Item value="Yes" id="option-one" />
+			<Label for="option-one"
+				>Jeg ønsker at modtage et tilbud hvis reparation overstiger minimumsprisen</Label
+			>
+		</div>
+		<div class="flex items-center space-x-2">
+			<RadioGroup.Item value="No" id="option-two" />
+			<Label for="option-two">
+				Jeg ønsker <span class="font-bold">IKKE</span> at modtage et tilbud hvis reparation overstiger
+				minimumsprisen
+			</Label>
+		</div>
+	</RadioGroup.Root>
+	{#if $errors?.wantsQuote}<span class="text-sm text-destructive">{$errors.wantsQuote}</span>{/if}
 
-<SuperDebug data={$form} />
+	<div>
+		<h2 class="text-sm font-medium">Betingelser</h2>
+		<p class="text-sm text-muted-foreground">
+			For at indsende en RMA skal du acceptere vores vilkår samt privatlivspolitik.
+		</p>
+	</div>
+	<div class="flex items-center space-x-2">
+		<Checkbox id="terms" bind:checked={acceptTerms} aria-labelledby="terms-label" />
+		<Label
+			id="terms-label"
+			for="terms"
+			class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+		>
+			Jeg accepterer <span class="cursor-pointer font-medium underline">vilkår og betingelser</span>
+			og
+			<span class="cursor-pointer font-medium underline">privatlivspolitik</span>.
+		</Label>
+	</div>
+
+	<div class="flex w-full items-center justify-end gap-2">
+		<Button variant="secondary" type="button" onclick={() => reset()}>Nulstil</Button>
+		<Button type="submit" disabled={!acceptTerms}>Opret</Button>
+	</div>
+</form>
