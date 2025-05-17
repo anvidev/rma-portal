@@ -10,10 +10,11 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			Authorization: `Bearer ${cookies.get('token')}`,
 		},
 	})
-	const { tickets, total } = await response.json()
+	const { tickets, total, limit } = await response.json()
 
 	return {
 		tickets: tickets as Ticket[],
 		total: total as number,
+		limit: limit as number,
 	}
 }

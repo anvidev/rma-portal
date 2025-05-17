@@ -58,23 +58,10 @@ function createQueryState<T>(
 		...(!isNaN(value)
 			? {
 					increment() {
-						value = (value || 0) + 1
+						value = (value ?? 1) + 1
 					},
 					decrement() {
-						value = (value || 0) - 1
-					},
-				}
-			: {}),
-		...(Array.isArray(initial)
-			? {
-					add(item: any) {
-						value = [...value, item]
-					},
-					remove(item: any) {
-						value = value.filter((v: any) => v !== item)
-					},
-					clear() {
-						value = []
+						value = (value ?? 1) - 1
 					},
 				}
 			: {}),
