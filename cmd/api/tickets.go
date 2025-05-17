@@ -24,6 +24,8 @@ type createTicketPayload struct {
 	Categories   []store.Category `json:"categories" validate:"required,gt=0,max=5"`
 	Model        *string          `json:"model" validate:"omitempty,max=50"`
 	SerialNumber *string          `json:"serial_number" validate:"omitempty,max=50"`
+	Quote        string           `json:"quote" validate:"required,oneof=yes no"`
+	Warranty     string           `json:"warranty" validate:"required,oneof=yes no unknown"`
 }
 
 type createTicketResponse struct {
@@ -56,6 +58,8 @@ func (api *api) postCreateTicket(w http.ResponseWriter, r *http.Request) {
 		Issue:        payload.Issue,
 		Model:        payload.Model,
 		SerialNumber: payload.SerialNumber,
+		Quote:        payload.Quote,
+		Warranty:     payload.Warranty,
 		Sender: store.Contact{
 			Name:    payload.Sender.Name,
 			Email:   payload.Sender.Email,
@@ -100,10 +104,7 @@ type createLogResponse struct {
 func (api *api) postCreateLog(w http.ResponseWriter, r *http.Request) {
 	loggedInUser, _ := api.getAuthenticatedUser(r)
 
-	ticketID, err := parseIntFromPath(r, "id")
-	if err != nil {
-		api.badRequestError(w, r, err)
-	}
+	ticketID := r.PathValue("id")
 
 	var payload createLogPayload
 
@@ -185,11 +186,7 @@ type getAdminTicketResponse struct {
 }
 
 func (api *api) getAdminTicket(w http.ResponseWriter, r *http.Request) {
-	id, err := parseIntFromPath(r, "id")
-	if err != nil {
-		api.badRequestError(w, r, err)
-		return
-	}
+	id := r.PathValue("id")
 
 	ticket, err := api.store.Tickets.GetByID(r.Context(), id)
 	if err != nil {
@@ -217,11 +214,7 @@ func (api *api) getAdminTicket(w http.ResponseWriter, r *http.Request) {
 }
 
 func (api *api) deleteAdminTicket(w http.ResponseWriter, r *http.Request) {
-	id, err := parseIntFromPath(r, "id")
-	if err != nil {
-		api.badRequestError(w, r, err)
-		return
-	}
+	id := r.PathValue("id")
 
 	if err := api.store.Tickets.DeleteByID(r.Context(), id); err != nil {
 		switch err {
@@ -241,11 +234,7 @@ type getPublicTicketResponse struct {
 }
 
 func (api *api) getPublicTicket(w http.ResponseWriter, r *http.Request) {
-	id, err := parseIntFromPath(r, "id")
-	if err != nil {
-		api.badRequestError(w, r, err)
-		return
-	}
+	id := r.PathValue(("id"))
 
 	ctx := r.Context()
 

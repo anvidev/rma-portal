@@ -6,6 +6,16 @@ export type User = {
 	inserted: string
 }
 
+export type Contact = {
+	name: string
+	email: string
+	phone: string
+	street: string
+	city: string
+	zip: string
+	country: string
+}
+
 export type Ticket = {
 	id: number
 	status: string
@@ -13,11 +23,8 @@ export type Ticket = {
 	issue: string
 	inserted: string
 	updated: string
-	sender: {
-		name: string
-		email: string
-		address: string
-	}
+	sender: Contact
+	billing: Contact
 }
 
 export interface AdminTicket extends Ticket {

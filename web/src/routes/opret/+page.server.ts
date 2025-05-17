@@ -46,7 +46,7 @@ const schema = z.object({
 	sender: contactZod,
 	billing: contactZod,
 	model: z.string().optional(),
-	serial: z.string().optional(),
+	serial_number: z.string().optional(),
 	categories: z.array(z.string()).min(1, { message: 'Vælg minimum én af mulighederne' }),
 	issue: z
 		.string()

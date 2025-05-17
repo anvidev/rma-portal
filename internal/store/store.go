@@ -31,12 +31,12 @@ type userStorer interface {
 
 type ticketStorer interface {
 	Create(ctx context.Context, t *Ticket) error
-	GetByID(ctx context.Context, ID int64) (*Ticket, error)
+	GetByID(ctx context.Context, ID string) (*Ticket, error)
 	List(ctx context.Context, filters TicketFilters) ([]Ticket, int, error)
-	DeleteByID(ctx context.Context, ID int64) error
+	DeleteByID(ctx context.Context, ID string) error
 	CreateLog(ctx context.Context, l *Log) error
-	ListInternalLogs(ctx context.Context, ID int64) ([]Log, error)
-	ListExternalLogs(ctx context.Context, ID int64) ([]Log, error)
+	ListInternalLogs(ctx context.Context, ID string) ([]Log, error)
+	ListExternalLogs(ctx context.Context, ID string) ([]Log, error)
 }
 
 func withTx(ctx context.Context, db *sql.DB, fn func(tx *sql.Tx) error) error {

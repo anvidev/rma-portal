@@ -313,10 +313,12 @@
 			<Label for="serial">Serienummer</Label>
 			<Input
 				id="serial"
-				bind:value={$form.serial}
-				aria-invalid={$errors?.serial ? 'true' : undefined}
+				bind:value={$form.serial_number}
+				aria-invalid={$errors?.serial_number ? 'true' : undefined}
 			/>
-			{#if $errors?.serial}<span class="text-destructive text-sm">{$errors.serial}</span>{/if}
+			{#if $errors?.serial_number}<span class="text-destructive text-sm"
+					>{$errors.serial_number}</span
+				>{/if}
 		</div>
 	</div>
 

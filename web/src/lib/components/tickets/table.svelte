@@ -1,10 +1,10 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table/index.js'
-	import { Badge } from '$lib/components/ui/badge/index.js'
 	import { goto } from '$app/navigation'
 	import type { SvelteURLSearchParams } from 'svelte/reactivity'
 	import StatusBadge from '../common/status-badge.svelte'
 	import CategoryBadge from '../common/category-badge.svelte'
+	import type { Ticket } from '$lib/types'
 
 	let { tickets, searchParams }: { tickets: Ticket[]; searchParams: SvelteURLSearchParams } =
 		$props()
