@@ -12,7 +12,7 @@
  - [x] Add "Vare er garanti", "Vare er ikke garanti", "Ved ikke" to create form
  - [x] Change "issue" min length to 20 characters
  - [x] Change filter for status to be multiple
- - [ ] Fetch status and categories in frontend
+ - [x] Fetch status and categories in frontend
  - [x] Show total in pagination
  - [ ] Add max height on ticket table
  - [x] Change ticket id to something like "00001-FKJSHF"

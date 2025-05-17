@@ -5,15 +5,26 @@ import type { PageServerLoad } from './$types'
 export const load: PageServerLoad = async ({ cookies, url }) => {
 	const searchParams = url.searchParams
 
-	const response = await fetch(new URL(`${API_URL}/v1/admin/tickets?${searchParams.toString()}`), {
-		headers: {
-			Authorization: `Bearer ${cookies.get('token')}`,
+	const ticketsResponse = await fetch(
+		new URL(`${API_URL}/v1/admin/tickets?${searchParams.toString()}`),
+		{
+			headers: {
+				Authorization: `Bearer ${cookies.get('token')}`,
+			},
 		},
-	})
-	const { tickets, total, limit } = await response.json()
+	)
+	const { tickets, total, limit } = await ticketsResponse.json()
+
+	const statusResponse = await fetch(`${API_URL}/v1/tickets/statuses`)
+	const categoriesResponse = await fetch(`${API_URL}/v1/tickets/categories`)
+
+	const { statuses } = await statusResponse.json()
+	const { categories } = await categoriesResponse.json()
 
 	return {
 		tickets: tickets as Ticket[],
+		statuses: statuses as string[],
+		categories: categories as string[],
 		total: total as number,
 		limit: limit as number,
 	}

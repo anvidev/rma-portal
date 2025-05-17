@@ -18,7 +18,7 @@
 			Se alle dine RMA-sager samlet ét sted, og brug filtre til hurtigt at finde det, du søger
 		</p>
 	</div>
-	<Filters {searchParams} />
+	<Filters {searchParams} statuses={data.statuses} categories={data.categories} />
 	<Table {searchParams} tickets={data.tickets} />
 	<Pagination {searchParams} total={data.total} limit={data.limit} {limitOptions} />
 </section>
