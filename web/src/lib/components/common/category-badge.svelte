@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge/index.js'
 	import { cn } from '$lib/utils'
-	let { category }: { category: string } = $props()
+	let { category, onclick }: { category: string; onclick?: () => void } = $props()
 
 	function getCategoryBadgeBackgroundColor(status: string): string {
 		switch (status) {
@@ -18,7 +18,14 @@
 	}
 </script>
 
-<Badge class={cn('flex items-center gap-2 capitalize', getCategoryBadgeBackgroundColor(category))}>
+<Badge
+	onclick={onclick ? onclick : () => {}}
+	class={cn(
+		'flex items-center gap-2 capitalize',
+		getCategoryBadgeBackgroundColor(category),
+		onclick && 'cursor-pointer',
+	)}
+>
 	<span class={cn('block size-1.5 rounded-full', getCategoryDotBackgroundColor(category))}></span>
 	{category}</Badge
 >

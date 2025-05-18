@@ -10,6 +10,7 @@
 	} from '$lib/query-state.svelte'
 	import Input from '$lib/components/ui/input/input.svelte'
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte'
+	import StatusBadge from '$lib/components/common/status-badge.svelte'
 
 	const searchParams = new SvelteURLSearchParams($page.url.searchParams)
 
@@ -43,3 +44,9 @@ Categories: {JSON.stringify(categories.value)}
 Active Only: {activeOnly.value}
 Age: {age.value}
 </pre>
+
+<div class="mt-4 space-y-1">
+	{#each ['registreret', 'modtaget', 'lukket', 'afvist', 'ekstern reparation', 'intern reparation', 'afventer reservedele', 'tilbud sendt', 'tilbud accepteret'] as status}
+		<StatusBadge {status} />
+	{/each}
+</div>

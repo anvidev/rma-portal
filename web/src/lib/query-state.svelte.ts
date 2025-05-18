@@ -1,6 +1,11 @@
 import { goto } from '$app/navigation'
 import { SvelteURLSearchParams } from 'svelte/reactivity'
 
+export type QueryState<T> = {
+	set(v: T): void
+	value: T | undefined
+}
+
 let debounceTimer: number | undefined = 0
 
 function updateUrl(searchParams: URLSearchParams) {
@@ -28,7 +33,7 @@ function createQueryState<T>(
 		serialize: (value: T) => string
 		default?: T
 	},
-) {
+): QueryState<T> {
 	const initial = searchParams.has(key) ? parse(searchParams.get(key)!) : defaultValue
 	let value = $state(initial)
 
@@ -55,16 +60,9 @@ function createQueryState<T>(
 		set value(v) {
 			value = v
 		},
-		...(!isNaN(value)
-			? {
-					increment() {
-						value = (value ?? 1) + 1
-					},
-					decrement() {
-						value = (value ?? 1) - 1
-					},
-				}
-			: {}),
+		set(v: T) {
+			value = v
+		},
 	}
 }
 
@@ -83,12 +81,12 @@ export function stringQueryState(
 export function numberQueryState(
 	searchParams: SvelteURLSearchParams,
 	key: string,
-	options: { default?: number | null } = {},
+	options: { default?: number } = {},
 ) {
-	return createQueryState<number | null>(searchParams, key, {
-		parse: v => (v === '' ? null : Number(v)),
-		serialize: v => (v === null ? '' : String(v)),
-		default: options.default ?? null,
+	return createQueryState<number | undefined>(searchParams, key, {
+		parse: v => (v === '' ? undefined : Number(v)),
+		serialize: v => (v === undefined ? '' : String(v)),
+		default: options.default,
 	})
 }
 

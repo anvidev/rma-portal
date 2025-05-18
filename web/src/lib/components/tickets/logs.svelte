@@ -28,14 +28,26 @@
 
 	function getStatusBorderColor(status: string): string {
 		switch (status) {
-			case 'ekstern reperation':
-				return 'border-l-amber-600'
-			case 'intern reperation':
-				return 'border-l-emerald-600'
+			case 'registreret':
+				return 'border-l-gray-600'
+			case 'modtaget':
+				return 'border-l-green-600'
+
 			case 'lukket':
-				return 'border-l-stone-600'
+			case 'afvist':
+				return 'border-l-red-600'
+
+			case 'intern reparation':
+			case 'ekstern reparation':
+				return 'border-l-amber-600'
+
+			case 'afventer reservedele':
+			case 'tilbud accepteret':
+			case 'tilbud sendt':
+				return 'border-l-sky-600'
+
 			default:
-				return 'border-l-sky-700'
+				return 'border-l-gray-600'
 		}
 	}
 
@@ -55,7 +67,7 @@
 <div class="flex items-center justify-between">
 	<div>
 		<h3 class="font-semibold leading-tight">Seneste opdateringer</h3>
-		<p class="text-sm text-muted-foreground">Følg status og opdateringer på din RMA sag</p>
+		<p class="text-muted-foreground text-sm">Følg status og opdateringer på din RMA sag</p>
 	</div>
 
 	<Dialog.Root {open} onOpenChange={val => (open = val)}>
@@ -88,13 +100,13 @@
 								{/each}
 							</Select.Content>
 						</Select.Root>
-						{#if $errors?.status}<span class="text-sm text-destructive">{$errors.status}</span>{/if}
+						{#if $errors?.status}<span class="text-destructive text-sm">{$errors.status}</span>{/if}
 					</div>
 
 					<div class="grid flex-1 gap-2">
 						<Label for="external">Ekstern kommentar<span class="text-red-500">*</span></Label>
 						<Textarea id="external" bind:value={$form.external_comment} />
-						{#if $errors?.external_comment}<span class="text-sm text-destructive"
+						{#if $errors?.external_comment}<span class="text-destructive text-sm"
 								>{$errors.external_comment}</span
 							>{/if}
 					</div>
@@ -102,10 +114,10 @@
 					<div class="grid flex-1 gap-2">
 						<Label for="internal">Intern kommentar</Label>
 						<Textarea id="internal" bind:value={$form.internal_comment} />
-						<p class="text-sm text-muted-foreground">
+						<p class="text-muted-foreground text-sm">
 							Denne kommentar er kun synlig for Skancode A/S
 						</p>
-						{#if $errors?.internal_comment}<span class="text-sm text-destructive"
+						{#if $errors?.internal_comment}<span class="text-destructive text-sm"
 								>{$errors.internal_comment}</span
 							>{/if}
 					</div>
@@ -134,8 +146,8 @@
 				<p class="text-sm">{log.external_comment}</p>
 			</div>
 			{#if log.internal_comment}
-				<div class="mt-3 rounded-lg border bg-muted/40 p-3">
-					<div class="mb-1 flex items-center gap-1 text-sm text-muted-foreground">
+				<div class="bg-muted/40 mt-3 rounded-lg border p-3">
+					<div class="text-muted-foreground mb-1 flex items-center gap-1 text-sm">
 						<Shield class="size-3.5" />
 						<span class="font-medium">Intern kommentar</span>
 					</div>

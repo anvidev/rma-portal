@@ -17,14 +17,15 @@ type Status int
 type Category int
 
 const (
-	OPEN Status = iota + 1
+	CREATED Status = iota + 1
 	CLOSED
-	EXT_REPAIR
-	INT_REPAIR
+	RECEIVED
+	EXTERNAL_REPAIR
+	INTERNAL_REPAIR
+	AWAITING_PARTS
 	QUOTE_SENT
-	QUOTE_ACCEPT
-	QOUTE_REJECT_RETURN
-	QUOTE_REJECT_DESTROY
+	QUOTE_ACCEPTED
+	REJECTED
 )
 
 const (
@@ -39,14 +40,15 @@ var (
 )
 
 var Statuses = map[Status]string{
-	OPEN:                 "åben",
-	CLOSED:               "lukket",
-	EXT_REPAIR:           "ekstern reperation",
-	INT_REPAIR:           "intern reperation",
-	QUOTE_SENT:           "tilbud sendt",
-	QUOTE_ACCEPT:         "tilbud accepteret",
-	QOUTE_REJECT_RETURN:  "tilbud afvist (sendes tilbage)",
-	QUOTE_REJECT_DESTROY: "tilbud afvist (kasseres)",
+	CREATED:         "registreret",
+	RECEIVED:        "modtaget",
+	CLOSED:          "lukket",
+	EXTERNAL_REPAIR: "ekstern reparation",
+	INTERNAL_REPAIR: "intern reparation",
+	AWAITING_PARTS:  "afventer reservedele",
+	QUOTE_SENT:      "tilbud sendt",
+	QUOTE_ACCEPTED:  "tilbud accepteret",
+	REJECTED:        "afvist",
 }
 
 var Categories = map[Category]string{
@@ -119,7 +121,7 @@ func (c *Category) Scan(value any) error {
 
 type TicketFilters struct {
 	Query      string      `json:"query"`
-	Status     Status      `json:"status"`
+	Status     []Status    `json:"status"`
 	Categories []Category  `json:"categories"`
 	Inserted   []time.Time `json:"inserted"`
 	Updated    []time.Time `json:"updated"`
@@ -159,39 +161,24 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 	}
 
 	if q.Has("status") {
-		statusQuery := q.Get("status")
-		statusFound := false
-		for status, label := range Statuses {
-			if label == statusQuery {
-				f.Status = status
-				statusFound = true
+		statusQuery := strings.Split(q.Get("status"), ",")
+		for _, query := range statusQuery {
+			if query == "" {
 				break
 			}
-		}
-		if !statusFound {
-			return ErrStatusNotImplemented
+			statusFound := false
+			for status, label := range Statuses {
+				if label == query {
+					f.Status = append(f.Status, status)
+					statusFound = true
+					break
+				}
+			}
+			if !statusFound {
+				return ErrStatusNotImplemented
+			}
 		}
 	}
-
-	// if q.Has("status") {
-	// 	statusQuery := strings.Split(q.Get("status"), ",")
-	// 	for _, query := range statusQuery {
-	// 		if query == "" {
-	// 			break
-	// 		}
-	// 		statusFound := false
-	// 		for status, label := range Statuses {
-	// 			if label == query {
-	// 				f.Status = append(f.Status, status)
-	// 				statusFound = true
-	// 				break
-	// 			}
-	// 		}
-	// 		if !statusFound {
-	// 			return ErrStatusNotImplemented
-	// 		}
-	// 	}
-	// }
 
 	if q.Has("categories") {
 		categoryQuery := strings.Split(q.Get("categories"), ",")
@@ -279,12 +266,14 @@ type Contact struct {
 }
 
 type Ticket struct {
-	ID           int64      `json:"id" apidoc:"ignore"`
+	ID           string     `json:"id" apidoc:"ignore"`
 	Status       Status     `json:"status"`
 	Categories   []Category `json:"categories"`
 	Issue        string     `json:"issue" description:"Description of the issue related to the device. Be as descriptive as possbile."`
 	Model        *string    `json:"model"`
 	SerialNumber *string    `json:"serial_number"`
+	Quote        string     `json:"quote"`
+	Warranty     string     `json:"warranty"`
 	Sender       Contact    `json:"sender"`
 	Billing      Contact    `json:"billing"`
 	Inserted     string     `json:"inserted" apidoc:"ignore"`
@@ -294,7 +283,7 @@ type Ticket struct {
 
 type Log struct {
 	ID              int64  `json:"id" apidoc:"ignore"`
-	TicketID        int64  `json:"ticket_id,omitempty"`
+	TicketID        string `json:"ticket_id,omitempty"`
 	Status          Status `json:"status"`
 	Initiator       string `json:"initiator" description:"Name of the user. Sender name if triggered by ticket owner. User name if triggered by Admin user."`
 	ExternalComment string `json:"external_comment"`
@@ -314,9 +303,9 @@ func (s *ticketStore) Create(ctx context.Context, t *Ticket) error {
 
 		createdLog := &Log{
 			TicketID:        t.ID,
-			Status:          OPEN,
+			Status:          CREATED,
 			Initiator:       t.Sender.Name,
-			ExternalComment: "Sagen er blevet oprettet. Skancode A/S afventer modtagelsen af RMA.",
+			ExternalComment: "Sagen er registreret. Skancode A/S afventer modtagelse af RMA-enheden.",
 			InternalComment: "",
 		}
 
@@ -336,6 +325,8 @@ func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 			issue,
 			model,
 			serial_number,
+			quote,
+			warranty,
 			sender_name,
 			sender_email,
 			sender_phone,
@@ -351,7 +342,7 @@ func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 			billing_zip,
 			billing_country
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
 		RETURNING id, inserted, updated
 	`
 
@@ -366,6 +357,8 @@ func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 		t.Issue,
 		t.Model,
 		t.SerialNumber,
+		t.Quote,
+		t.Warranty,
 		t.Sender.Name,
 		t.Sender.Email,
 		t.Sender.Phone,
@@ -394,29 +387,50 @@ func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 
 func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket, int, error) {
 	stmt := `
-		WITH filtered_tickets AS
-			(
-				SELECT *
-				FROM tickets
-				WHERE (sender_name ILIKE '%' || $1 || '%'
+		WITH filtered_tickets AS (
+			SELECT *
+			FROM tickets
+			WHERE (
+				$1 = '' OR (
+					sender_name ILIKE '%' || $1 || '%'
 					OR sender_email ILIKE '%' || $1 || '%'
 					OR sender_street ILIKE '%' || $1 || '%'
 					OR sender_city ILIKE '%' || $1 || '%'
 					OR sender_zip ILIKE '%' || $1 || '%'
-					OR sender_country ILIKE '%' || $1 || '%')
-					AND ($2 = 0
-						OR status = $2)
-					AND ($3::int[] IS NULL
-						OR categories && $3::int[])
-					AND (inserted >= $4 
-						AND inserted <= $5)
+					OR sender_country ILIKE '%' || $1 || '%'
+					OR billing_name ILIKE '%' || $1 || '%'
+					OR billing_email ILIKE '%' || $1 || '%'
+					OR billing_street ILIKE '%' || $1 || '%'
+					OR billing_city ILIKE '%' || $1 || '%'
+					OR billing_zip ILIKE '%' || $1 || '%'
+					OR billing_country ILIKE '%' || $1 || '%'
+					OR model ILIKE '%' || $1 || '%'
+					OR serial_number ILIKE '%' || $1 || '%'
+					)
+				)
+				AND (
+					$2::integer[] IS NULL 
+					OR cardinality($2::integer[]) = 0 
+					OR status = ANY($2::integer[])
+				)
+				AND (
+					$3::integer[] IS NULL 
+					OR cardinality($3::integer[]) = 0 
+					OR categories && $3::integer[]
+				)
+				AND (
+					inserted BETWEEN $4 AND $5
+				)
 			)
-		SELECT id,
+		SELECT 
+			id,
 			status,
 			categories,
 			issue,
 			model,
 			serial_number,
+			quote,
+			warranty,
 			sender_name,
 			sender_email,
 			sender_phone,
@@ -436,9 +450,8 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			(SELECT COUNT(*) FROM filtered_tickets) AS total_count
 		FROM filtered_tickets
 		ORDER BY inserted DESC
-		LIMIT $6
-		OFFSET $7
-	`
+		LIMIT $6 OFFSET $7
+    `
 
 	ctx, cancel := context.WithTimeout(ctx, queryTimeoutDuration)
 	defer cancel()
@@ -450,7 +463,7 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 		ctx,
 		stmt,
 		filters.Query,
-		filters.Status,
+		pq.Array(filters.Status),
 		pq.Array(filters.Categories),
 		filters.Inserted[0],
 		filters.Inserted[1],
@@ -471,6 +484,8 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			&t.Issue,
 			&t.Model,
 			&t.SerialNumber,
+			&t.Quote,
+			&t.Warranty,
 			&t.Sender.Name,
 			&t.Sender.Email,
 			&t.Sender.Phone,
@@ -502,7 +517,7 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 	return tickets, totalCount, nil
 }
 
-func (s *ticketStore) GetByID(ctx context.Context, ID int64) (*Ticket, error) {
+func (s *ticketStore) GetByID(ctx context.Context, ID string) (*Ticket, error) {
 	stmt := `
 		SELECT
 			id,
@@ -511,6 +526,8 @@ func (s *ticketStore) GetByID(ctx context.Context, ID int64) (*Ticket, error) {
 			issue,
 			model,
 			serial_number,
+			quote,
+			warranty,
 			sender_name,
 			sender_email,
 			sender_phone,
@@ -547,6 +564,8 @@ func (s *ticketStore) GetByID(ctx context.Context, ID int64) (*Ticket, error) {
 		&t.Issue,
 		&t.Model,
 		&t.SerialNumber,
+		&t.Quote,
+		&t.Warranty,
 		&t.Sender.Name,
 		&t.Sender.Email,
 		&t.Sender.Phone,
@@ -576,7 +595,7 @@ func (s *ticketStore) GetByID(ctx context.Context, ID int64) (*Ticket, error) {
 	return &t, nil
 }
 
-func (s *ticketStore) DeleteByID(ctx context.Context, ID int64) error {
+func (s *ticketStore) DeleteByID(ctx context.Context, ID string) error {
 	stmt := `
 		DELETE FROM tickets
 		WHERE id = $1
@@ -640,7 +659,7 @@ func (s *ticketStore) createLog(ctx context.Context, l *Log) error {
 	return nil
 }
 
-func (s *ticketStore) updateTicketStatus(ctx context.Context, ID int64, status Status) error {
+func (s *ticketStore) updateTicketStatus(ctx context.Context, ID string, status Status) error {
 	stmt := `
 		UPDATE tickets
 		SET status = $1, updated = $2
@@ -684,7 +703,7 @@ func (s *ticketStore) CreateLog(ctx context.Context, l *Log) error {
 	})
 }
 
-func (s *ticketStore) ListInternalLogs(ctx context.Context, ID int64) ([]Log, error) {
+func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, error) {
 	stmt := `
 		SELECT id, status, initiator, external_comment, internal_comment, inserted
 		FROM logs
@@ -730,7 +749,7 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID int64) ([]Log, er
 	return logs, nil
 }
 
-func (s *ticketStore) ListExternalLogs(ctx context.Context, ID int64) ([]Log, error) {
+func (s *ticketStore) ListExternalLogs(ctx context.Context, ID string) ([]Log, error) {
 	stmt := `
 		SELECT id, status, initiator, external_comment, inserted
 		FROM logs
