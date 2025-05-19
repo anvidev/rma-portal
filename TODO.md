@@ -29,4 +29,4 @@
  - [ ] Links in header to overview and create page
  - [ ] Add max height on ticket table
  - [ ] Add sorting/direction to filters
- - [ ] Cache control for overview page
+ - [x] Cache control for overview page
