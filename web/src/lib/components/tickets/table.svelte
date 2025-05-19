@@ -5,13 +5,13 @@
 	import StatusBadge from '../common/status-badge.svelte'
 	import CategoryBadge from '../common/category-badge.svelte'
 	import type { Ticket } from '$lib/types'
-	import { stringArrayQueryState, type QueryState } from '$lib/query-state.svelte'
+	import { type QueryState } from '$lib/query-state.svelte'
 
 	let {
 		tickets,
 		searchParams,
-		statusQuery,
-		categoriesQuery,
+		statusQuery = $bindable(),
+		categoriesQuery = $bindable(),
 	}: {
 		tickets: Ticket[]
 		searchParams: SvelteURLSearchParams
@@ -57,7 +57,7 @@
 							<CategoryBadge onclick={() => categoriesQuery.set([category])} {category} />
 						{/each}
 					</Table.Cell>
-					<Table.Cell class="max-w-60 truncate">{ticket.sender.name}</Table.Cell>
+					<Table.Cell class="max-w-56 truncate">{ticket.sender.name}</Table.Cell>
 					<Table.Cell>{ticket.sender.email}</Table.Cell>
 					<Table.Cell>{new Date(ticket.inserted).toLocaleString('en-GB')}</Table.Cell>
 					<Table.Cell>{new Date(ticket.updated).toLocaleString('en-GB')}</Table.Cell>

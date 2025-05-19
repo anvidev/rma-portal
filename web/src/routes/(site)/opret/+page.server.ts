@@ -65,7 +65,7 @@ export const load: PageServerLoad = async () => {
 }
 
 export const actions: Actions = {
-	default: async ({ request, fetch, locals }) => {
+	default: async ({ request, fetch, locals, setHeaders }) => {
 		const form = await superValidate(request, zod(schema))
 
 		if (!form.valid) return fail(400, { form })
@@ -84,6 +84,12 @@ export const actions: Actions = {
 		const redirectUrl = locals.user
 			? `/admin/tickets/${data.ticket.id}`
 			: `/tak?rma=${data.ticket.id}`
+
+		if (locals.user) {
+			setHeaders({
+				'Clear-Site-Data': 'cache',
+			})
+		}
 
 		redirect(303, redirectUrl)
 	},

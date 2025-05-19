@@ -7,9 +7,9 @@
 	let {
 		statuses,
 		categories,
-		statusQuery,
-		searchQuery,
-		categoriesQuery,
+		statusQuery = $bindable(),
+		searchQuery = $bindable(),
+		categoriesQuery = $bindable(),
 		clearFilters,
 	}: {
 		statuses: string[]

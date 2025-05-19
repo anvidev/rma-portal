@@ -15,11 +15,11 @@
 
 	const searchParams = new SvelteURLSearchParams(page.url.searchParams)
 
-	const searchQuery = stringQueryState(searchParams, 'query', { default: '' })
-	const statusQuery = stringArrayQueryState(searchParams, 'status')
-	const categoriesQuery = stringArrayQueryState(searchParams, 'categories')
-	const pageQuery = numberQueryState(searchParams, 'page')
-	const limitQuery = numberQueryState(searchParams, 'limit')
+	let searchQuery = $state(stringQueryState(searchParams, 'query', { default: '' }))
+	let statusQuery = $state(stringArrayQueryState(searchParams, 'status'))
+	let categoriesQuery = $state(stringArrayQueryState(searchParams, 'categories'))
+	let pageQuery = $state(numberQueryState(searchParams, 'page'))
+	let limitQuery = $state(numberQueryState(searchParams, 'limit'))
 
 	function clearFilters() {
 		searchQuery.set('')
@@ -33,18 +33,18 @@
 <section class="space-y-4">
 	<div>
 		<h1 class="text-lg font-semibold leading-tight">Sags oversigt</h1>
-		<p class="text-muted-foreground text-sm">
+		<p class="text-sm text-muted-foreground">
 			Se alle dine RMA-sager samlet ét sted, og brug filtre til hurtigt at finde det, du søger
 		</p>
 	</div>
 	<Filters
 		statuses={data.statuses}
 		categories={data.categories}
-		{statusQuery}
-		{searchQuery}
-		{categoriesQuery}
+		bind:statusQuery
+		bind:searchQuery
+		bind:categoriesQuery
 		{clearFilters}
 	/>
-	<Table {searchParams} tickets={data.tickets} {statusQuery} {categoriesQuery} />
-	<Pagination total={data.total} limit={data.limit} {limitOptions} {pageQuery} {limitQuery} />
+	<Table {searchParams} tickets={data.tickets} bind:statusQuery bind:categoriesQuery />
+	<Pagination total={data.total} limit={data.limit} {limitOptions} bind:pageQuery bind:limitQuery />
 </section>
