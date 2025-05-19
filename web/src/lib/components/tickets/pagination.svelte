@@ -8,8 +8,8 @@
 		total,
 		limit,
 		limitOptions,
-		pageQuery,
-		limitQuery,
+		pageQuery = $bindable(),
+		limitQuery = $bindable(),
 	}: {
 		total: number
 		limit: number

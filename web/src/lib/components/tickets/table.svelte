@@ -5,13 +5,13 @@
 	import StatusBadge from '../common/status-badge.svelte'
 	import CategoryBadge from '../common/category-badge.svelte'
 	import type { Ticket } from '$lib/types'
-	import { stringArrayQueryState, type QueryState } from '$lib/query-state.svelte'
+	import { type QueryState } from '$lib/query-state.svelte'
 
 	let {
 		tickets,
 		searchParams,
-		statusQuery,
-		categoriesQuery,
+		statusQuery = $bindable(),
+		categoriesQuery = $bindable(),
 	}: {
 		tickets: Ticket[]
 		searchParams: SvelteURLSearchParams
