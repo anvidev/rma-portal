@@ -14,12 +14,19 @@
  - [x] Change filter for status to be multiple
  - [x] Fetch status and categories in frontend
  - [x] Show total in pagination
- - [ ] Add max height on ticket table
  - [x] Change ticket id to something like "00001-FKJSHF"
     - Autoincrement number combined with 5 random uppercase letters
  - [x] Update frontend for login page
- - [ ] Add sorting/direction to filters
  - [x] Modals for terms and coditions
  - [x] Ability to log out
  - [x] Show quote and warranty data on details page
- - [ ] Thank you page after ticket creation (different redirect if user is logged in)
+ - [x] Thank you page after ticket creation (different redirect if user is logged in)
+
+### Road to v1.1 (client facing)
+
+ - [ ] Ability for customers to look up a ticket
+ - [ ] Email to skancode and customer when ticket is created
+ - [ ] Links in header to overview and create page
+ - [ ] Add max height on ticket table
+ - [ ] Add sorting/direction to filters
+ - [ ] Cache control for overview page
