@@ -18,7 +18,7 @@
 		limitQuery: QueryState<number | null>
 	} = $props()
 
-	const totalPages = $derived(total > 0 ? Math.ceil(total / (limitQuery.value ?? 25)) : 1)
+	const totalPages = $derived(total > 0 ? Math.ceil(total / (limitQuery.value || 25)) : 1)
 </script>
 
 <div class="flex items-center justify-between">
@@ -33,13 +33,13 @@
 				{/each}
 			</Select.Content>
 		</Select.Root>
-		<span class="text-muted-foreground text-sm">
+		<span class="text-sm text-muted-foreground">
 			{total} Total rækker
 		</span>
 	</div>
 
 	<div class="flex items-center gap-2">
-		<span class="text-muted-foreground mr-2 text-sm">
+		<span class="mr-2 text-sm text-muted-foreground">
 			Side {pageQuery.value ?? 1} af {totalPages}
 		</span>
 		<Button
