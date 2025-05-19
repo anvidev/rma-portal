@@ -39,7 +39,8 @@ const contactZod = z.object({
 	country: z
 		.string()
 		.nonempty({ message: 'Dette felt er påkrævet' })
-		.max(2, { message: 'Vælg en af mulighederne' }),
+		.max(2, { message: 'Vælg en af mulighederne' })
+		.default('DK'),
 })
 
 const schema = z.object({

@@ -406,6 +406,7 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 					OR billing_country ILIKE '%' || $1 || '%'
 					OR model ILIKE '%' || $1 || '%'
 					OR serial_number ILIKE '%' || $1 || '%'
+					OR id ILIKE '%' || $1 || '%'
 					)
 				)
 				AND (

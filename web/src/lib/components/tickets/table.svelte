@@ -34,7 +34,7 @@
 				<Table.Head onclick={() => handleSortingChange('id', 'asc')}>Sags ID</Table.Head>
 				<Table.Head>Status</Table.Head>
 				<Table.Head>Kategorier</Table.Head>
-				<Table.Head class="max-w-60 truncate">Afsender firma</Table.Head>
+				<Table.Head class="max-w-56 truncate">Afsender firma</Table.Head>
 				<Table.Head>Afsender e-mail</Table.Head>
 				<Table.Head>Oprettet</Table.Head>
 				<Table.Head>Sidste ændring</Table.Head>
