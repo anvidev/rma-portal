@@ -2,7 +2,7 @@ import { API_URL } from '$lib/server/env'
 import type { Ticket } from '$lib/types'
 import type { PageServerLoad } from './$types'
 
-export const load: PageServerLoad = async ({ cookies, url }) => {
+export const load: PageServerLoad = async ({ cookies, url, setHeaders }) => {
 	const searchParams = url.searchParams
 
 	const ticketsResponse = await fetch(
@@ -20,6 +20,10 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 
 	const { statuses } = await statusResponse.json()
 	const { categories } = await categoriesResponse.json()
+
+	setHeaders({
+		'Cache-Control': 'private, max-age=120',
+	})
 
 	return {
 		tickets: tickets as Ticket[],
