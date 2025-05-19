@@ -31,3 +31,5 @@
  - [ ] Add max height on ticket table
  - [ ] Add sorting/direction to filters
  - [x] Cache control for overview page
+ - [x] Change redirect url for log out to login page
+ - [x] Add a redirect searchparam to login page

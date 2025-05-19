@@ -35,7 +35,9 @@ export const actions: Actions = {
 				maxAge: 60 * 60 * 24 * 3,
 			})
 
-			throw redirect(301, '/admin/tickets')
+			const redirectUrl = evt.url.searchParams.get('redirect') ?? '/'
+
+			throw redirect(301, redirectUrl)
 		}
 	},
 }
