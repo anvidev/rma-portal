@@ -9,7 +9,7 @@
 <section class="w-72 space-y-4">
 	<div>
 		<h1 class="text-lg font-semibold leading-tight">Velkommen tilbage!</h1>
-		<p class="text-muted-foreground text-sm">Log ind for at servicere RMA sager.</p>
+		<p class="text-sm text-muted-foreground">Log ind for at servicere RMA sager.</p>
 	</div>
 
 	<form method="POST" class="space-y-4">

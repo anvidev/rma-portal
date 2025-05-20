@@ -2,11 +2,7 @@
 	import type { TicketWithLogs } from '$lib/types'
 	import LogsItem from './logs-item.svelte'
 
-	let {
-		ticket,
-	}: {
-		ticket: TicketWithLogs
-	} = $props()
+	let { ticket }: { ticket: TicketWithLogs } = $props()
 </script>
 
 <div class="flex items-center justify-between">
