@@ -1,5 +1,5 @@
 import { API_URL } from '$lib/server/env'
-import type { AdminTicket } from '$lib/types'
+import type { TicketWithLogs } from '$lib/types'
 import { fail, redirect, type Actions } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 import { maxLength, nonEmpty, object, pipe, string } from 'valibot'
@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ cookies, params, fetch }) => {
 
 	return {
 		form: emptyForm,
-		ticket: ticket as AdminTicket,
+		ticket: ticket as TicketWithLogs,
 		statuses: statuses as string[],
 	}
 }

@@ -1,13 +1,11 @@
 <script lang="ts">
 	import ContactInformation from '$lib/components/tickets/contact-information.svelte'
 	import Details from '$lib/components/tickets/details.svelte'
-	import LogsListInternal from '$lib/components/tickets/logs-list-internal.svelte'
+	import LogsListExternal from '$lib/components/tickets/logs-list-external.svelte'
 	import Title from '$lib/components/tickets/title.svelte'
 
 	let { data } = $props()
 	const ticket = $derived(data.ticket)
-	const statuses = data.statuses
-	const form = data.form
 </script>
 
 <title>RMA Sag #{data.ticket.id} - Skancode RMA Service Portal</title>
@@ -21,5 +19,5 @@
 			<ContactInformation contact={ticket.billing} title="Fakturering" sub="Faktureringsaddresse" />
 		</div>
 	</div>
-	<LogsListInternal {ticket} {statuses} superform={form} />
+	<LogsListExternal {ticket} />
 </article>

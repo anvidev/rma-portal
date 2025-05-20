@@ -31,14 +31,16 @@ export type Ticket = {
 	billing: Contact
 }
 
-export interface AdminTicket extends Ticket {
-	logs: {
-		id: number
-		ticketId: number
-		status: string
-		initiator: string
-		external_comment: string
-		internal_comment?: string
-		inserted: string
-	}[]
+export type Log = {
+	id: number
+	ticketId: number
+	status: string
+	initiator: string
+	external_comment: string
+	internal_comment?: string
+	inserted: string
+}
+
+export interface TicketWithLogs extends Ticket {
+	logs: Log[]
 }
