@@ -12,8 +12,8 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
-			<Button variant="ghost" class="relative h-8 w-8 rounded-full" {...props}>
-				<Avatar.Root class="bg-muted/20 size-8 rounded-lg border">
+			<Button variant="ghost" class="relative size-7 rounded-full" {...props}>
+				<Avatar.Root class="size-7 rounded-lg border bg-muted/20">
 					<Avatar.Fallback>{initials.toUpperCase()}</Avatar.Fallback>
 				</Avatar.Root>
 			</Button>
@@ -23,13 +23,13 @@
 		<DropdownMenu.Label class="font-normal">
 			<div class="flex flex-col space-y-1">
 				<p class="text-sm font-medium leading-none">{user.name}</p>
-				<p class="text-muted-foreground text-xs leading-none">{user.email}</p>
+				<p class="text-xs leading-none text-muted-foreground">{user.email}</p>
 			</div>
 		</DropdownMenu.Label>
 		<DropdownMenu.Separator />
 		<form method="POST" action="/log-ud?/logout">
 			<button class="w-full">
-				<DropdownMenu.Item class="!text-destructive flex items-center justify-between">
+				<DropdownMenu.Item class="flex items-center justify-between !text-destructive">
 					Log ud
 					<LogOut class="size-3.5" />
 				</DropdownMenu.Item>

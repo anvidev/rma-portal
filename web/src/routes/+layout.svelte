@@ -4,5 +4,5 @@
 	let { children } = $props()
 </script>
 
-<Toaster />
+<Toaster duration={4000} />
 {@render children()}

@@ -24,10 +24,10 @@
 
 ### Road to v1.1 (client facing)
 
- - [ ] Ability for customers to look up a ticket
+ - [x] Ability for customers to look up a ticket / homepage
  - [ ] Download PDF after ticket creation
  - [ ] Email to skancode and customer when ticket is created
- - [ ] Links in header to overview and create page
+ - [x] Links in header to overview and create page
  - [ ] Add max height on ticket table
  - [ ] Add sorting/direction to filters
  - [x] Cache control for overview page
