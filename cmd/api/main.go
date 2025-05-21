@@ -37,7 +37,7 @@ func main() {
 			},
 		},
 		resend: resendMailerConfig{
-			apikey:       env.String("RESEND_API_KEY", "re_DkiPV5pp_8fhywK1tda65BE1cLaWXz1Eo"),
+			apikey:       env.MustString("RESEND_API_KEY"),
 			from:         env.String("RESEND_FROM", "Skancode RMA <noreply@nemunivers.app>"),
 			serviceEmail: env.String("RESEND_SERVICE_EMAIL", "av@skancode.dk"),
 		},
