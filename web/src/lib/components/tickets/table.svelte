@@ -6,6 +6,7 @@
 	import CategoryBadge from '../common/category-badge.svelte'
 	import type { Ticket } from '$lib/types'
 	import { type QueryState } from '$lib/query-state.svelte'
+	import { formatDate } from '$lib/utils'
 
 	let {
 		tickets,
@@ -59,8 +60,8 @@
 					</Table.Cell>
 					<Table.Cell class="max-w-56 truncate">{ticket.sender.name}</Table.Cell>
 					<Table.Cell>{ticket.sender.email}</Table.Cell>
-					<Table.Cell>{new Date(ticket.inserted).toLocaleString('en-GB')}</Table.Cell>
-					<Table.Cell>{new Date(ticket.updated).toLocaleString('en-GB')}</Table.Cell>
+					<Table.Cell>{formatDate(ticket.inserted)}</Table.Cell>
+					<Table.Cell>{formatDate(ticket.updated)}</Table.Cell>
 				</Table.Row>
 			{/each}
 		</Table.Body>
