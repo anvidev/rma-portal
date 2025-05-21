@@ -8,7 +8,7 @@
 	let { children, data } = $props()
 </script>
 
-<main class="bg-muted/20 relative flex min-h-screen w-full flex-col">
+<main class="relative flex min-h-screen w-full flex-col bg-muted/20">
 	<header
 		class="sticky top-4 mx-auto mt-4 flex w-full max-w-6xl items-center justify-between rounded-lg border-b bg-white px-3 py-2 shadow-sm"
 	>
@@ -20,7 +20,7 @@
 				<span class="text-sm leading-none">Skancode RMA</span>
 			</a>
 			{#if data.user}
-				<nav class="text-muted-foreground flex items-center gap-4 text-sm font-medium">
+				<nav class="flex items-center gap-4 text-sm font-medium text-muted-foreground">
 					<a
 						class={cn(page.url.pathname == '/admin/tickets' && 'text-foreground')}
 						href="/admin/tickets">Oversigt</a
