@@ -6,6 +6,8 @@ import (
 
 	"github.com/anvidev/rma-portal/internal/apidoc"
 	"github.com/anvidev/rma-portal/internal/auth"
+	"github.com/anvidev/rma-portal/internal/mailer"
+	"github.com/anvidev/rma-portal/internal/queue"
 	"github.com/anvidev/rma-portal/internal/store"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -17,13 +19,16 @@ type api struct {
 	config        config
 	store         store.Store
 	auth          auth.Authenticator
+	mailer        mailer.Mailer
 	documentation *apidoc.APIDocumentation
+	queue         *queue.Queue
 }
 
 type config struct {
 	server   serverConfig
 	database databaseConfig
 	auth     authConfig
+	resend   resendMailerConfig
 }
 
 type serverConfig struct {
@@ -49,6 +54,12 @@ type tokenConfig struct {
 	host   string
 	secret string
 	expiry time.Duration
+}
+
+type resendMailerConfig struct {
+	apikey       string
+	from         string
+	serviceEmail string
 }
 
 func (api *api) mount() http.Handler {

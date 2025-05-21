@@ -2,8 +2,8 @@ package main
 
 import (
 	"net/http"
-	"strconv"
 
+	"github.com/anvidev/rma-portal/internal/queue"
 	"github.com/anvidev/rma-portal/internal/store"
 )
 
@@ -84,6 +84,8 @@ func (api *api) postCreateTicket(w http.ResponseWriter, r *http.Request) {
 		api.internalServerError(w, r, err)
 		return
 	}
+
+	api.queue.Enqueue(queue.TicketCreated, ticket)
 
 	if err := writeJSON(w, http.StatusCreated, createTicketResponse{ticket}); err != nil {
 		api.internalServerError(w, r, err)
@@ -295,9 +297,4 @@ func (api *api) getTicketCategories(w http.ResponseWriter, r *http.Request) {
 		api.internalServerError(w, r, err)
 		return
 	}
-}
-
-func parseIntFromPath(r *http.Request, key string) (int64, error) {
-	id := r.PathValue(key)
-	return strconv.ParseInt(id, 10, 64)
 }

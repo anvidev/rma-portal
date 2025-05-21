@@ -7,6 +7,7 @@ require go.uber.org/zap v1.27.0
 require (
 	github.com/go-chi/chi/v5 v5.2.0
 	github.com/go-playground/validator/v10 v10.23.0
+	github.com/resend/resend-go/v2 v2.20.0
 	golang.org/x/crypto v0.35.0
 )
 
