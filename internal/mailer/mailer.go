@@ -6,11 +6,11 @@ import "embed"
 var templates embed.FS
 
 var (
-	// templates
+	// mails
 	TicketCreatedCustomer = "ticket_created_customer.tmpl"
 	TicketCreatedSkancode = "ticket_created_skancode.tmpl"
 )
 
 type Mailer interface {
-	Send(to []string, email string, data any) error
+	Send(to []string, mail string, data any) error
 }

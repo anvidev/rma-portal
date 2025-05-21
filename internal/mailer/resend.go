@@ -19,8 +19,8 @@ func NewResendMailer(apikey, from string) Mailer {
 	}
 }
 
-func (m *resendMailer) Send(to []string, email string, data any) error {
-	tmpl, err := template.ParseFS(templates, "templates/"+email)
+func (m *resendMailer) Send(to []string, mail string, data any) error {
+	tmpl, err := template.ParseFS(templates, "templates/"+mail)
 	if err != nil {
 		return err
 	}
@@ -35,14 +35,14 @@ func (m *resendMailer) Send(to []string, email string, data any) error {
 		return err
 	}
 
-	mail := &resend.SendEmailRequest{
+	email := &resend.SendEmailRequest{
 		From:    m.from,
 		To:      to,
 		Html:    body.String(),
 		Subject: subject.String(),
 	}
 
-	if _, err = m.client.Emails.Send(mail); err != nil {
+	if _, err = m.client.Emails.Send(email); err != nil {
 		return err
 	}
 
