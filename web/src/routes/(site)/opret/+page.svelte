@@ -513,16 +513,16 @@
 					<h2 class="font-medium">2. Formål og behandlingsgrundlag</h2>
 					<p>Vi indsamler og behandler personoplysninger med følgende formål:</p>
 					<ul class="list-inside list-disc">
-						<li>Behandling af RMA-sager (reklamationer, reparationer og returneringer)</li>
+						<li>Behandling af RMA-sager</li>
 						<li>Kommunikation vedrørende din RMA-sag</li>
 						<li>Fakturering og administration</li>
 						<li>Overholdelse af retlige forpligtelser, herunder bogføringskrav</li>
 					</ul>
 					<p>Retsgrundlaget for behandlingen er:</p>
 					<ul class="list-inside list-disc">
-						<li>GDPR art. 6(1)(b): Opfyldelse af kontrakt (fx RMA-sagsbehandling)</li>
-						<li>GDPR art. 6(1)(c): Retlig forpligtelse (fx bogføringspligt)</li>
-						<li>GDPR art. 6(1)(f): Legitim interesse (fx drift og support)</li>
+						<li>GDPR art. 6(1)(b): Opfyldelse af kontrakt</li>
+						<li>GDPR art. 6(1)(c): Retlig forpligtelse</li>
+						<li>GDPR art. 6(1)(f): Legitim interesse</li>
 					</ul>
 				</div>
 				<div class="space-y-1 text-sm">
