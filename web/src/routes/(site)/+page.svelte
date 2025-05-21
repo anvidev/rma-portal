@@ -26,9 +26,9 @@
 			<h1 class="max-w-[36rem] text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
 				Professionel, hurtig og autoriseret service.
 			</h1>
-			<p class="text-muted-foreground mx-auto max-w-[32rem]">
+			<p class="text-muted-foreground mx-auto max-w-[33rem]">
 				Vi reparerer din stregkodescanner, håndterminal eller etiketprinter med originale
-				reservedele – enten på vores værksted eller leverandør.
+				reservedele – enten på vores værksted eller hos leverandør.
 			</p>
 		</div>
 
