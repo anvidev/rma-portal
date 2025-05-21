@@ -104,7 +104,10 @@ func (api *api) mount() http.Handler {
 			r.Post("/", api.postCreateTicket)
 			r.Get("/statuses", api.getTicketStatuses)
 			r.Get("/categories", api.getTicketCategories)
-			r.Get("/{id}", api.getPublicTicket)
+			r.Route("/{id}", func(r chi.Router) {
+				r.Get("/", api.getPublicTicket)
+				r.Get("/pdf", api.getPublicTicketPdf)
+			})
 		})
 	})
 

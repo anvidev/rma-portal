@@ -1,8 +1,11 @@
 package main
 
 import (
+	"io"
 	"net/http"
+	"os"
 
+	"codeberg.org/go-pdf/fpdf"
 	"github.com/anvidev/rma-portal/internal/queue"
 	"github.com/anvidev/rma-portal/internal/store"
 )
@@ -294,6 +297,41 @@ func (api *api) getTicketCategories(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := writeJSON(w, http.StatusOK, getTicketCategoriesResponse{categories}); err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+}
+
+func (api *api) getPublicTicketPdf(w http.ResponseWriter, r *http.Request) {
+	f, err := os.CreateTemp("", "file.pdf")
+	if err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+
+	defer os.Remove(f.Name())
+	defer f.Close()
+
+	pdf := fpdf.New("P", "mm", "A4", "")
+	pdf.AddPage()
+	pdf.SetFont("Arial", "B", 16)
+	pdf.Cell(40, 10, "Hello, world")
+	if err = pdf.Output(f); err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+
+	_, err = f.Seek(0, 0)
+	if err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/pdf")
+	w.WriteHeader(http.StatusOK)
+
+	_, err = io.Copy(w, f)
+	if err != nil {
 		api.internalServerError(w, r, err)
 		return
 	}
