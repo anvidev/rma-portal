@@ -26,9 +26,9 @@
 			<h1 class="max-w-[36rem] text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
 				Professionel, hurtig og autoriseret service.
 			</h1>
-			<p class="mx-auto max-w-[32rem] text-muted-foreground">
+			<p class="text-muted-foreground mx-auto max-w-[32rem]">
 				Vi reparerer din stregkodescanner, håndterminal eller etiketprinter med originale
-				reservedele – enten på vores værksted eller on-site.
+				reservedele – enten på vores værksted eller leverandør.
 			</p>
 		</div>
 
@@ -38,7 +38,7 @@
 				size="lg"
 				variant="outline"
 				onclick={() => {
-					const input = document.getElementById('input')?.focus()
+					document.getElementById('input')?.focus()
 				}}>Følg din RMA</Button
 			>
 		</div>
