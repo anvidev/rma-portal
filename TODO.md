@@ -26,7 +26,7 @@
 
  - [x] Ability for customers to look up a ticket / homepage
  - [ ] Download PDF after ticket creation
- - [ ] Email to skancode and customer when ticket is created
+ - [x] Email to skancode and customer when ticket is created
  - [x] Links in header to overview and create page
  - [ ] Add max height on ticket table
  - [ ] Add sorting/direction to filters

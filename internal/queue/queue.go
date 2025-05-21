@@ -6,7 +6,12 @@ import (
 	"log/slog"
 )
 
-type queue struct {
+const (
+	// events
+	TicketCreated = "ticket/created"
+)
+
+type Queue struct {
 	logger   *slog.Logger
 	eventCh  chan job
 	handlers map[string]func(ctx context.Context, msg any) error
@@ -21,24 +26,25 @@ type job struct {
 	currentTry uint
 }
 
-func (q *queue) Enqueue(event string, payload any) {
+func (q *Queue) Enqueue(event string, payload any) {
 	if _, ok := q.handlers[event]; ok {
 		q.eventCh <- job{event: event, payload: payload, maxRetries: 5, currentTry: 1}
 	} else {
-		q.logger.Warn("job event does not exist", "event", event)
+		q.logger.Warn("[QUEUE] job event does not exist", "event", event)
 	}
 }
 
-func (q *queue) Start(ctx context.Context) {
-	for range q.workers {
-		go func(queue *queue) {
+func (q *Queue) Start(ctx context.Context) {
+	for i := range q.workers {
+		q.logger.Info("[QUEUE] worker " + fmt.Sprintf("%d", i+1) + " starting")
+		go func(queue *Queue) {
 			for {
 				select {
 				case <-ctx.Done():
-					queue.logger.Info("done signal received. Shutting down queue")
+					queue.logger.Info("[QUEUE] done signal received. shutting down queue")
 					return
 				case qj := <-q.eventCh:
-					queue.logger.Info("job received", "event", qj.event, "payload", qj.payload)
+					queue.logger.Info("[QUEUE] job received", "event", qj.event)
 
 					if handler, ok := queue.handlers[qj.event]; ok {
 						if err := handler(ctx, qj.payload); err != nil {
@@ -51,13 +57,15 @@ func (q *queue) Start(ctx context.Context) {
 								}
 							}
 							queue.logger.Error(
-								"job failed",
+								"[QUEUE] job failed",
 								"event",
 								qj.event,
 								"current_try",
 								qj.currentTry,
 								"max_retries",
 								qj.maxRetries,
+								"payload",
+								qj.payload,
 								"error",
 								err,
 							)
@@ -69,8 +77,8 @@ func (q *queue) Start(ctx context.Context) {
 	}
 }
 
-func New(opts ...option) *queue {
-	q := queue{
+func New(opts ...option) *Queue {
+	q := Queue{
 		logger:   slog.Default(),
 		eventCh:  make(chan job, 10),
 		handlers: make(map[string]func(ctx context.Context, msg any) error),
@@ -81,31 +89,31 @@ func New(opts ...option) *queue {
 		opt(&q)
 	}
 
-	q.logger.Info("queue initialized successfully")
+	q.logger.Info("[QUEUE] queue initialized")
 
 	return &q
 }
 
-type option func(*queue)
+type option func(*Queue)
 
 func WithLogger(logger *slog.Logger) option {
-	return func(q *queue) {
+	return func(q *Queue) {
 		q.logger = logger
 	}
 }
 
 func WithWorkers(n int) option {
-	return func(q *queue) {
+	return func(q *Queue) {
 		q.workers = n
 	}
 }
 
 func WithEvent[T any](event string, h func(ctx context.Context, payload T) error) option {
-	return func(q *queue) {
+	return func(q *Queue) {
 		fn := func(ctx context.Context, payload any) error {
 			p, ok := payload.(T)
 			if !ok {
-				return fmt.Errorf("invalid job payload type for job event %s: %+v", event, payload)
+				return fmt.Errorf("[QUEUE] invalid job payload type for job event registration %s: %+v", event, payload)
 			}
 			return h(ctx, p)
 		}

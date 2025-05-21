@@ -7,7 +7,8 @@ var templates embed.FS
 
 var (
 	// templates
-	TicketCreated = "ticket_created.tmpl"
+	TicketCreatedCustomer = "ticket_created_customer.tmpl"
+	TicketCreatedSkancode = "ticket_created_skancode.tmpl"
 )
 
 type Mailer interface {

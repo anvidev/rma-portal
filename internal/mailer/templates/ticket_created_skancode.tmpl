@@ -1,0 +1,32 @@
+{{define "subject"}}Ny RMA-henvendelse modtaget: #{{.ID}}{{end}}
+
+{{define "body"}}
+<!doctype html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+	<p>Hej team,</p>
+
+	<p>Der er netop oprettet en ny RMA-sag i systemet.</p>
+
+	<ul>
+		<li><strong>RMA ID:</strong> {{.ID}}</li>
+		<li><strong>Navn:</strong> {{.Sender.Name}}</li>
+		<li><strong>E-mail:</strong> {{.Sender.Email}}</li>
+		<li><strong>Telefon:</strong> {{.Sender.Phone}}</li>
+	</ul>
+
+	<p>Du kan tilgå og behandle sagen via følgende link:</p>
+	<p><a href="https://rma.anvi.dev/admin/tickets/{{.ID}}">Behandl RMA-sag</a></p>
+
+	<p>--<br />
+	RMA Portal</p>
+</body>
+
+</html>
+{{end}}

@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"time"
 
 	"github.com/anvidev/rma-portal/internal/apidoc"
 	"github.com/anvidev/rma-portal/internal/auth"
 	"github.com/anvidev/rma-portal/internal/database"
 	"github.com/anvidev/rma-portal/internal/env"
+	"github.com/anvidev/rma-portal/internal/mailer"
+	"github.com/anvidev/rma-portal/internal/queue"
 	"github.com/anvidev/rma-portal/internal/store"
 	"go.uber.org/zap"
 )
@@ -34,8 +37,9 @@ func main() {
 			},
 		},
 		resend: resendMailerConfig{
-			apikey: env.MustString("RESEND_API_KEY"),
-			from:   env.String("RESEND_FROM", "Skancode RMA <noreply@nemunivers.app>"),
+			apikey:       env.String("RESEND_API_KEY", "re_DkiPV5pp_8fhywK1tda65BE1cLaWXz1Eo"),
+			from:         env.String("RESEND_FROM", "Skancode RMA <noreply@nemunivers.app>"),
+			serviceEmail: env.String("RESEND_SERVICE_EMAIL", "av@skancode.dk"),
 		},
 	}
 
@@ -62,7 +66,22 @@ func main() {
 		logger.Fatalw("database connection failed", "error", err)
 	}
 
+	mail := mailer.NewResendMailer(
+		config.resend.apikey,
+		config.resend.from,
+	)
+
+	queue := queue.New(
+		queue.WithEvent(queue.TicketCreated, func(ctx context.Context, payload store.Ticket) error {
+			if err := mail.Send([]string{config.resend.serviceEmail}, mailer.TicketCreatedSkancode, payload); err != nil {
+				return err
+			}
+			return nil
+		}),
+	)
+
 	store := store.NewStore(db)
+
 	authenticator := auth.NewJWTAuthenticator(
 		config.auth.token.secret,
 		config.auth.token.host,
@@ -74,9 +93,12 @@ func main() {
 		config:        config,
 		store:         store,
 		auth:          authenticator,
+		mailer:        mail,
+		queue:         queue,
 		documentation: documentation,
 	}
 
+	queue.Start(context.Background())
 	api.addDocs()
 	mux := api.mount()
 

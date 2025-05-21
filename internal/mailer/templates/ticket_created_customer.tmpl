@@ -1,4 +1,4 @@
-{{define "subject"}} {{subject}} {{end}}
+{{define "subject"}} Din RMA sag (#{{.ID}}) er nu registreret {{end}}
 
 {{define "body"}}
 <!doctype html>
@@ -10,7 +10,7 @@
 </head>
 
 <body>
-  <p>Kære {{.Name}},</p>
+  <p>Kære {{.Sender.Name}},</p>
   <p>Tak for din henvendelse! Din RMA sag ({{.ID}}) er nu registreret i vores system.</p>
   <p>Du kan følge din RMA sag på linket nedenunder, så du altid kan være opdateret på forløbet.</p>
   <p><a href="https://rma.anvi.dev/sager/{{.ID}}">Følg din RMA sag</a></p>

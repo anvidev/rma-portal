@@ -20,7 +20,7 @@ func NewResendMailer(apikey, from string) Mailer {
 }
 
 func (m *resendMailer) Send(to []string, email string, data any) error {
-	tmpl, err := template.ParseFS(templates, email)
+	tmpl, err := template.ParseFS(templates, "templates/"+email)
 	if err != nil {
 		return err
 	}
