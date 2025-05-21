@@ -24,6 +24,7 @@ type config struct {
 	server   serverConfig
 	database databaseConfig
 	auth     authConfig
+	resend   resendMailerConfig
 }
 
 type serverConfig struct {
@@ -49,6 +50,11 @@ type tokenConfig struct {
 	host   string
 	secret string
 	expiry time.Duration
+}
+
+type resendMailerConfig struct {
+	apikey string
+	from   string
 }
 
 func (api *api) mount() http.Handler {
