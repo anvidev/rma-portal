@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
+import { API_URL } from '$lib/server/env'
 
 export const GET: RequestHandler = async ({ url }) => {
 	const ticketID = url.searchParams.get('rma')
@@ -7,7 +8,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		error(400, 'Kan ikke hente RMA label uden et ID')
 	}
 
-	const labelResponse = await fetch(`http://localhost:9090/v1/tickets/${ticketID}/label`)
+	const labelResponse = await fetch(`${API_URL}/v1/tickets/${ticketID}/label`)
 
 	if (!labelResponse.ok) {
 		if (labelResponse.status === 404) {
