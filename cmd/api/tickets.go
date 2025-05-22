@@ -1,8 +1,10 @@
 package main
 
 import (
+	"io"
 	"net/http"
 
+	"github.com/anvidev/rma-portal/internal/pdf"
 	"github.com/anvidev/rma-portal/internal/queue"
 	"github.com/anvidev/rma-portal/internal/store"
 )
@@ -294,6 +296,37 @@ func (api *api) getTicketCategories(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := writeJSON(w, http.StatusOK, getTicketCategoriesResponse{categories}); err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+}
+
+func (api *api) getPublicTicketLabel(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+
+	ticket, err := api.store.Tickets.GetByID(r.Context(), id)
+	if err != nil {
+		switch err {
+		case store.ErrTicketNotFound:
+			api.notFoundError(w, r, err)
+		default:
+			api.internalServerError(w, r, err)
+		}
+		return
+	}
+
+	file, closeFile, err := pdf.TicketLabelPDF(ticket)
+	if err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+	defer closeFile()
+
+	w.Header().Set("Content-Type", "application/pdf")
+	w.WriteHeader(http.StatusOK)
+
+	_, err = io.Copy(w, file)
+	if err != nil {
 		api.internalServerError(w, r, err)
 		return
 	}

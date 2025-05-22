@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { AdminTicket } from '$lib/types'
+	import type { TicketWithLogs } from '$lib/types'
 	import { cn } from '$lib/utils'
 
-	let { ticket }: { ticket: AdminTicket } = $props()
+	let { ticket }: { ticket: TicketWithLogs } = $props()
 
 	const warranty = $derived.by(
 		() =>

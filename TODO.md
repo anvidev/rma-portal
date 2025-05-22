@@ -25,7 +25,7 @@
 ### Road to v1.1 (client facing)
 
  - [x] Ability for customers to look up a ticket / homepage
- - [ ] Download PDF after ticket creation
+ - [x] Download PDF after ticket creation
  - [x] Email to skancode and customer when ticket is created
  - [x] Links in header to overview and create page
  - [ ] Add max height on ticket table
@@ -33,3 +33,6 @@
  - [x] Cache control for overview page
  - [x] Change redirect url for log out to login page
  - [x] Add a redirect searchparam to login page
+ - [x] Fix caching after a ticket has been updated
+ - [ ] Fix endpoints names with plural naming convention
+ - [x] Fix pathname for ticket overview page to /admin/sager
