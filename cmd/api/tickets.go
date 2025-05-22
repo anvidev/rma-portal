@@ -3,9 +3,8 @@ package main
 import (
 	"io"
 	"net/http"
-	"os"
 
-	"codeberg.org/go-pdf/fpdf"
+	"github.com/anvidev/rma-portal/internal/pdf"
 	"github.com/anvidev/rma-portal/internal/queue"
 	"github.com/anvidev/rma-portal/internal/store"
 )
@@ -302,35 +301,31 @@ func (api *api) getTicketCategories(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (api *api) getPublicTicketPdf(w http.ResponseWriter, r *http.Request) {
-	f, err := os.CreateTemp("", "file.pdf")
+func (api *api) getPublicTicketLabel(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+
+	ticket, err := api.store.Tickets.GetByID(r.Context(), id)
+	if err != nil {
+		switch err {
+		case store.ErrTicketNotFound:
+			api.notFoundError(w, r, err)
+		default:
+			api.internalServerError(w, r, err)
+		}
+		return
+	}
+
+	file, closeFile, err := pdf.TicketLabelPDF(ticket)
 	if err != nil {
 		api.internalServerError(w, r, err)
 		return
 	}
-
-	defer os.Remove(f.Name())
-	defer f.Close()
-
-	pdf := fpdf.New("P", "mm", "A4", "")
-	pdf.AddPage()
-	pdf.SetFont("Arial", "B", 16)
-	pdf.Cell(40, 10, "Hello, world")
-	if err = pdf.Output(f); err != nil {
-		api.internalServerError(w, r, err)
-		return
-	}
-
-	_, err = f.Seek(0, 0)
-	if err != nil {
-		api.internalServerError(w, r, err)
-		return
-	}
+	defer closeFile()
 
 	w.Header().Set("Content-Type", "application/pdf")
 	w.WriteHeader(http.StatusOK)
 
-	_, err = io.Copy(w, f)
+	_, err = io.Copy(w, file)
 	if err != nil {
 		api.internalServerError(w, r, err)
 		return

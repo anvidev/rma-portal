@@ -45,7 +45,7 @@
 			{#each tickets as ticket (ticket.id)}
 				<Table.Row>
 					<Table.Cell class="font-medium">
-						<a href={`/admin/tickets/${ticket.id}`}>#{ticket.id}</a>
+						<a href={`/admin/sager/${ticket.id}`}>#{ticket.id}</a>
 					</Table.Cell>
 					<Table.Cell
 						><StatusBadge

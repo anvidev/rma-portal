@@ -6,7 +6,7 @@ export const load: PageServerLoad = async evt => {
 	const accessToken = evt.cookies.get('token')
 
 	if (accessToken) {
-		throw redirect(301, '/admin/tickets')
+		throw redirect(301, '/admin/sager')
 	}
 }
 
@@ -35,7 +35,7 @@ export const actions: Actions = {
 				maxAge: 60 * 60 * 24 * 3,
 			})
 
-			const redirectUrl = evt.url.searchParams.get('redirect') ?? '/admin/tickets'
+			const redirectUrl = evt.url.searchParams.get('redirect') ?? '/admin/sager'
 
 			throw redirect(301, redirectUrl)
 		}

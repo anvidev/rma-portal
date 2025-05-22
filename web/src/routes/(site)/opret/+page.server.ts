@@ -82,8 +82,8 @@ export const actions: Actions = {
 		const data = (await response.json()) as { ticket: Ticket }
 
 		const redirectUrl = locals.user
-			? `/admin/tickets/${data.ticket.id}`
-			: `/tak?rma=${data.ticket.id}`
+			? `/admin/sager/${data.ticket.id}`
+			: `sager/${data.ticket.id}/tak`
 
 		if (locals.user) {
 			setHeaders({

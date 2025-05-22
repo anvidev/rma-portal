@@ -106,7 +106,7 @@ func (api *api) mount() http.Handler {
 			r.Get("/categories", api.getTicketCategories)
 			r.Route("/{id}", func(r chi.Router) {
 				r.Get("/", api.getPublicTicket)
-				r.Get("/pdf", api.getPublicTicketPdf)
+				r.Get("/label", api.getPublicTicketLabel)
 			})
 		})
 	})

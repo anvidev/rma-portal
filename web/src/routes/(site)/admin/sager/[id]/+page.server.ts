@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ cookies, params, fetch }) => {
 	const statusResponse = await fetch(`${API_URL}/v1/tickets/statuses`)
 
 	if (!response.ok || !statusResponse.ok) {
-		redirect(308, '/admin/tickets')
+		redirect(308, '/admin/sager')
 	}
 
 	const { ticket } = await response.json()
@@ -40,7 +40,7 @@ export const load: PageServerLoad = async ({ cookies, params, fetch }) => {
 }
 
 export const actions: Actions = {
-	default: async ({ request, fetch, params, cookies }) => {
+	default: async ({ request, fetch, params, cookies, setHeaders }) => {
 		const form = await superValidate(request, valibot(createLogSchema))
 
 		if (!form.valid) {
@@ -58,6 +58,10 @@ export const actions: Actions = {
 		if (!response.ok) {
 			return fail(response.status, { form })
 		}
+
+		setHeaders({
+			'Clear-Site-Data': 'cache',
+		})
 
 		return message(form, 'Opdatering tilføjet til RMA')
 	},
