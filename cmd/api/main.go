@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/anvidev/rma-portal/internal/apidoc"
@@ -11,6 +12,7 @@ import (
 	"github.com/anvidev/rma-portal/internal/mailer"
 	"github.com/anvidev/rma-portal/internal/queue"
 	"github.com/anvidev/rma-portal/internal/ratelimit"
+	"github.com/anvidev/rma-portal/internal/storage"
 	"github.com/anvidev/rma-portal/internal/store"
 	"go.uber.org/zap"
 )
@@ -41,6 +43,12 @@ func main() {
 			apikey:       env.MustString("RESEND_API_KEY"),
 			from:         env.String("RESEND_FROM", "Skancode RMA <noreply@nemunivers.app>"),
 			serviceEmail: env.String("RESEND_SERVICE_EMAIL", "av@skancode.dk"),
+		},
+		r2Storage: r2StorageConfig{
+			bucketName:      env.String("R2_BUCKET_NAME", "rma-portal"),
+			accountID:       env.MustString("R2_ACCOUNT_ID"),
+			accessKeyID:     env.MustString("R2_ACCESS_KEY_ID"),
+			accessKeySecret: env.MustString("R2_ACCESS_KEY_SECRET"),
 		},
 	}
 
@@ -90,6 +98,25 @@ func main() {
 	)
 
 	baseRateLimit := ratelimit.NewRateLimitContext(context.Background(), 0.5, 10)
+	storage, err := storage.NewR2Storage(
+		config.r2Storage.bucketName,
+		config.r2Storage.accountID,
+		config.r2Storage.accessKeyID,
+		config.r2Storage.accessKeySecret,
+	)
+
+	// DEBUGGING
+	// TODO: remember to remove
+	list, err := storage.List(context.Background())
+	if err != nil {
+		logger.Fatalw("failed to get storage list", "error", err)
+	}
+
+	logger.Info("got storage list", "total", len(list))
+
+	for _, obj := range list {
+		fmt.Println(obj.URL)
+	}
 
 	api := &api{
 		logger:        logger,

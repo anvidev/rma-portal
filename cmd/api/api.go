@@ -27,10 +27,11 @@ type api struct {
 }
 
 type config struct {
-	server   serverConfig
-	database databaseConfig
-	auth     authConfig
-	resend   resendMailerConfig
+	server    serverConfig
+	database  databaseConfig
+	auth      authConfig
+	resend    resendMailerConfig
+	r2Storage r2StorageConfig
 }
 
 type serverConfig struct {
@@ -62,6 +63,13 @@ type resendMailerConfig struct {
 	apikey       string
 	from         string
 	serviceEmail string
+}
+
+type r2StorageConfig struct {
+	bucketName      string
+	accountID       string
+	accessKeyID     string
+	accessKeySecret string
 }
 
 func (api *api) mount() http.Handler {
