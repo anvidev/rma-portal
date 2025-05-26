@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io"
 	"net/http"
 
@@ -330,6 +331,59 @@ func (api *api) getPublicTicketLabel(w http.ResponseWriter, r *http.Request) {
 
 	_, err = io.Copy(w, file)
 	if err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+}
+
+type ticketFilesResponse struct {
+	files []string `json:"files"`
+}
+
+func (api *api) postTicketFiles(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+
+	if id == "" {
+		api.badRequestError(w, r, errors.New("mangler et RMA sags id"))
+		return
+	}
+
+	if err := r.ParseMultipartForm(16 << 20); err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+
+	files, exists := r.MultipartForm.File["files"]
+	if !exists || len(files) == 0 {
+		api.badRequestError(w, r, errors.New("ingen filer modtaget"))
+		return
+	}
+
+	var response ticketFilesResponse
+
+	for _, fileHeader := range files {
+		if fileHeader.Size > 4*1024*1024 {
+			api.badRequestError(w, r, errors.New("fil er for stor: "+fileHeader.Filename))
+			return
+		}
+
+		file, err := fileHeader.Open()
+		if err != nil {
+			api.internalServerError(w, r, err)
+			return
+		}
+		defer file.Close()
+
+		_, err = api.storage.Put(r.Context(), file, id, fileHeader.Filename)
+		if err != nil {
+			api.internalServerError(w, r, err)
+			return
+		}
+
+		response.files = append(response.files, fileHeader.Filename)
+	}
+
+	if err := writeJSON(w, http.StatusCreated, response); err != nil {
 		api.internalServerError(w, r, err)
 		return
 	}

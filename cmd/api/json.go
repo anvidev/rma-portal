@@ -20,7 +20,7 @@ func init() {
 func readJSON(w http.ResponseWriter, r *http.Request, v any) error {
 	r.Body = http.MaxBytesReader(w, r.Body, maxBodySize)
 	d := json.NewDecoder(r.Body)
-	d.DisallowUnknownFields()
+	// d.DisallowUnknownFields()
 	return d.Decode(v)
 }
 

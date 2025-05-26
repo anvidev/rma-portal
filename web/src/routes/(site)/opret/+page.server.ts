@@ -1,7 +1,7 @@
 import type { Actions, PageServerLoad } from './$types'
-import { superValidate } from 'sveltekit-superforms'
+import { fail, message, superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
-import { fail, redirect } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 import { API_URL } from '$lib/server/env'
 import * as z from 'zod'
 import type { Ticket } from '$lib/types'
@@ -61,6 +61,12 @@ const schema = z.object({
 		.max(500, { message: 'Må ikke være mere end 500 karaterer' }),
 	quote: radio.default('none'),
 	warranty: radio.default('none'),
+	files: z
+		.instanceof(File, { message: 'Foo' })
+		.refine(f => f.size < 4_000_000_000, 'Billederne må ikke være større end 4MB')
+		.array()
+		.max(4, { message: 'Maks. 4 billeder må uploades' })
+		.optional(),
 })
 
 export const load: PageServerLoad = async () => {
@@ -72,19 +78,49 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	default: async ({ request, fetch, locals, setHeaders }) => {
 		const form = await superValidate(request, zod(schema))
-
 		if (!form.valid) return fail(400, { form })
 
-		const response = await fetch(`${API_URL}/v1/tickets`, {
-			method: 'post',
-			body: JSON.stringify(form.data),
-		})
-
-		if (!response.ok) {
-			return fail(response.status, { form })
+		const ticketData = {
+			sender: form.data.sender,
+			billing: form.data.billing,
+			model: form.data.model,
+			serial_number: form.data.serial_number,
+			categories: form.data.categories,
+			issue: form.data.issue,
+			quote: form.data.quote,
+			warranty: form.data.warranty,
 		}
 
-		const data = (await response.json()) as { ticket: Ticket }
+		const ticketResponse = await fetch(`${API_URL}/v1/tickets`, {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(ticketData),
+		})
+
+		if (!ticketResponse.ok) {
+			return fail(ticketResponse.status, { form })
+		}
+
+		const data = (await ticketResponse.json()) as { ticket: Ticket }
+
+		if (form.data.files && form.data.files.length > 0) {
+			const formData = new FormData()
+			form.data.files.forEach(f => {
+				formData.append('files', f)
+			})
+
+			const fileResponse = await fetch(`${API_URL}/v1/tickets/${data.ticket.id}/files`, {
+				method: 'POST',
+				body: formData,
+			})
+
+			if (!fileResponse.ok) {
+				const { error } = await fileResponse.json()
+				console.error(`fil upload fejlede for RMA #${data.ticket.id}: ${error ?? 'ukendt fejl'}`)
+			}
+		}
 
 		const redirectUrl = locals.user
 			? `/admin/sager/${data.ticket.id}`

@@ -8,6 +8,7 @@ import (
 	"github.com/anvidev/rma-portal/internal/auth"
 	"github.com/anvidev/rma-portal/internal/mailer"
 	"github.com/anvidev/rma-portal/internal/queue"
+	"github.com/anvidev/rma-portal/internal/storage"
 	"github.com/anvidev/rma-portal/internal/store"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -22,6 +23,7 @@ type api struct {
 	mailer        mailer.Mailer
 	documentation *apidoc.APIDocumentation
 	queue         *queue.Queue
+	storage       storage.Storager
 }
 
 type config struct {
@@ -115,6 +117,7 @@ func (api *api) mount() http.Handler {
 			r.Route("/{id}", func(r chi.Router) {
 				r.Get("/", api.getPublicTicket)
 				r.Get("/label", api.getPublicTicketLabel)
+				r.Post("/files", api.postTicketFiles)
 			})
 		})
 	})
