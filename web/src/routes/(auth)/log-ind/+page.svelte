@@ -15,12 +15,12 @@
 	<form method="POST" class="space-y-4">
 		<div class="grid gap-2">
 			<Label for="email">E-mail</Label>
-			<Input name="email" id="email" />
+			<Input autocomplete="work email" autofocus name="email" id="email" />
 		</div>
 
 		<div class="grid gap-2">
 			<Label for="password">Adgangskode</Label>
-			<Input name="password" id="password" type="password" />
+			<Input autocomplete="current-password" name="password" id="password" type="password" />
 		</div>
 
 		<Button class="w-full" type="submit">Log ind</Button>

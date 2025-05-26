@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/state'
+	import MetaMenu from '$lib/components/common/meta-menu.svelte'
 	import UserButton from '$lib/components/common/user-button.svelte'
-	import Button from '$lib/components/ui/button/button.svelte'
 	import { cn } from '$lib/utils.js'
 	import { ScanBarcode } from '@lucide/svelte'
 
 	let { children, data } = $props()
 </script>
 
+{#if data.user}
+	<MetaMenu />
+{/if}
 <main class="relative flex min-h-screen w-full flex-col bg-muted/20">
 	{#if data.user}
 		<header
