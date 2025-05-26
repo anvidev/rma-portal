@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/anvidev/rma-portal/internal/apidoc"
@@ -105,19 +104,6 @@ func main() {
 		config.r2Storage.accessKeySecret,
 	)
 
-	// DEBUGGING
-	// TODO: remember to remove
-	list, err := storage.List(context.Background())
-	if err != nil {
-		logger.Fatalw("failed to get storage list", "error", err)
-	}
-
-	logger.Info("got storage list", "total", len(list))
-
-	for _, obj := range list {
-		fmt.Println(obj.URL)
-	}
-
 	api := &api{
 		logger:        logger,
 		config:        config,
@@ -127,6 +113,7 @@ func main() {
 		queue:         queue,
 		documentation: documentation,
 		baseRateLimit: baseRateLimit,
+		storage:       storage,
 	}
 
 	queue.Start(context.Background())

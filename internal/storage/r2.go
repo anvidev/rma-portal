@@ -27,8 +27,6 @@ func NewR2Storage(bucketName, accountID, accessKeyID, accessKeySecret string) (S
 		context.TODO(),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, accessKeySecret, "")),
 		config.WithRegion("auto"),
-		config.WithRequestChecksumCalculation(0),
-		config.WithResponseChecksumValidation(0),
 	)
 	if err != nil {
 		return nil, err
@@ -63,24 +61,6 @@ func (s *R2Storage) Put(ctx context.Context, body io.Reader, namespace, filename
 		Key: *key,
 		URL: url(s.accountID, s.bucketName, *key),
 	}, nil
-}
-
-func (s *R2Storage) List(ctx context.Context) ([]StorageResponse, error) {
-	objs, err := s.client.ListObjectsV2(ctx, &s3.ListObjectsV2Input{
-		Bucket: &s.bucketName,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	var response []StorageResponse
-	for _, obj := range objs.Contents {
-		key := obj.Key
-
-		response = append(response, StorageResponse{Key: *key, URL: url(s.accountID, s.bucketName, *key)})
-	}
-
-	return response, nil
 }
 
 func timestampedKey(s string) string {
