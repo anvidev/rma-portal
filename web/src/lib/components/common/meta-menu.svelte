@@ -88,7 +88,7 @@
 					<Search class="size-4" />
 					<span>Søg efter {searchValue ? searchValue : 'sag'}</span>
 					<Command.Shortcut
-						class="text-muted-foreground bg-background rounded-sm border border-b-2 border-l-2 p-0.5"
+						class="rounded-sm border border-b-2 border-l-2 bg-background p-0.5 text-muted-foreground"
 						>↵</Command.Shortcut
 					>
 				</Command.Item>
