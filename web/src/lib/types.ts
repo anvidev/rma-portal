@@ -8,6 +8,7 @@ export type User = {
 
 export type Contact = {
 	name: string
+	company: string
 	email: string
 	phone: string
 	street: string

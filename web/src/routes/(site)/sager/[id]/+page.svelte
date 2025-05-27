@@ -49,7 +49,8 @@
 
 	const censoredSender: Contact = $derived.by(() => {
 		return {
-			name: ticket.sender.name,
+			company: ticket.sender.company,
+			name: censor(ticket.sender.name),
 			phone: censorPhone(ticket.sender.phone),
 			email: censorEmail(ticket.sender.email),
 			street: censor(ticket.sender.street),
@@ -61,7 +62,8 @@
 
 	const censoredBilling: Contact = $derived.by(() => {
 		return {
-			name: ticket.billing.name,
+			company: ticket.billing.company,
+			name: censor(ticket.billing.name),
 			phone: censorPhone(ticket.billing.phone),
 			email: censorEmail(ticket.billing.email),
 			street: censor(ticket.billing.street),
