@@ -305,7 +305,7 @@ func (s *ticketStore) Create(ctx context.Context, t *Ticket) error {
 		createdLog := &Log{
 			TicketID:        t.ID,
 			Status:          CREATED,
-			Initiator:       t.Sender.Name,
+			Initiator:       t.Sender.Company,
 			ExternalComment: "Sagen er registreret. Skancode A/S afventer modtagelse af RMA-enheden.",
 			InternalComment: "",
 		}
