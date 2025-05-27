@@ -46,7 +46,7 @@ func NewR2Storage(bucketName, accountID, accessKeyID, accessKeySecret string) (S
 func (s *R2Storage) Get() {}
 
 func (s *R2Storage) Put(ctx context.Context, body io.Reader, namespace, filename string) (*StorageResponse, error) {
-	key := aws.String(fmt.Sprintf("%s/%s/%s", folderName, namespace, timestampedKey(filename)))
+	key := aws.String(fmt.Sprintf("%s/%s/%s", folderName, namespace, s.timestampedKey(filename)))
 
 	_, err := s.client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: &s.bucketName,
@@ -59,14 +59,14 @@ func (s *R2Storage) Put(ctx context.Context, body io.Reader, namespace, filename
 
 	return &StorageResponse{
 		Key: *key,
-		URL: url(s.accountID, s.bucketName, *key),
+		URL: s.url(s.accountID, s.bucketName, *key),
 	}, nil
 }
 
-func timestampedKey(s string) string {
-	return fmt.Sprintf("%d-%s", time.Now().Unix(), s)
+func (s *R2Storage) timestampedKey(v string) string {
+	return fmt.Sprintf("%d-%s", time.Now().Unix(), v)
 }
 
-func url(accountID, bucketName, key string) string {
+func (s *R2Storage) url(accountID, bucketName, key string) string {
 	return fmt.Sprintf("https://%s.r2.cloudflarestorage.com/%s/%s", accountID, bucketName, key)
 }
