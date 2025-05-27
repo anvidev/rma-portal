@@ -10,7 +10,10 @@
 	const form = data.form
 </script>
 
-<title>RMA Sag #{data.ticket.id} - Skancode RMA Service Portal</title>
+<svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+	<title>RMA Sag #{data.ticket.id} - Skancode RMA Service Portal</title>
+</svelte:head>
 
 <article class="space-y-4">
 	<Title {ticket} />

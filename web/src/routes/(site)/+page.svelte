@@ -20,9 +20,17 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Skancode RMA Service Portal</title>
+	<meta
+		name="description"
+		content="Professionel, hurtig og autoriseret service. Vi reparerer din stregkodescanner, håndterminal eller etiketprinter med originale reservedele – enten på vores værksted eller hos leverandør."
+	/>
+</svelte:head>
+
 <div class="mx-auto flex flex-1 flex-col items-center justify-center gap-16">
 	<div
-		class="flex items-center gap-1 rounded-lg px-2 py-1 text-base font-semibold text-background bg-brand"
+		class="text-background bg-brand flex items-center gap-1 rounded-lg px-2 py-1 text-base font-semibold"
 	>
 		<ScanBarcode class="size-5" />
 		<p>Skancode</p>
@@ -30,9 +38,10 @@
 	<div class="flex flex-col items-center gap-8">
 		<div class="space-y-4 text-center">
 			<h1 class="max-w-[36rem] text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-				Professionel, <div class="text-brand italic-left inline-block">hurtig</div> og autoriseret service
+				Professionel, <div class="text-brand italic-left inline-block">hurtig</div>
+				og autoriseret service
 			</h1>
-			<p class="mx-auto max-w-[33rem] text-muted-foreground">
+			<p class="text-muted-foreground mx-auto max-w-[33rem]">
 				Vi reparerer din stregkodescanner, håndterminal eller etiketprinter med originale
 				reservedele – enten på vores værksted eller hos leverandør.
 			</p>
@@ -42,7 +51,7 @@
 			<Button size="lg" href="/opret">Opret ny RMA</Button>
 			<Button
 				size="lg"
-			variant="outline"
+				variant="outline"
 				onclick={() => {
 					document.getElementById('input')?.focus()
 				}}>Følg din RMA</Button
