@@ -36,3 +36,6 @@
  - [x] Fix caching after a ticket has been updated
  - [ ] Fix endpoints names with plural naming convention
  - [x] Fix pathname for ticket overview page to /admin/sager
+ - [x] Censor customer information on public page
+ - [ ] Add new "contact_person_name" field to tickets table
+ - [ ] File storage for tickets/logs
