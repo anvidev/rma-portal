@@ -257,6 +257,7 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 
 type Contact struct {
 	Name    string `json:"name"`
+	Company string `json:"company"`
 	Email   string `json:"email"`
 	Phone   string `json:"phone"`
 	Street  string `json:"street"`
@@ -327,6 +328,7 @@ func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 			serial_number,
 			quote,
 			warranty,
+			sender_company,
 			sender_name,
 			sender_email,
 			sender_phone,
@@ -334,6 +336,7 @@ func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 			sender_city,
 			sender_zip,
 			sender_country,
+			billing_company,
 			billing_name,
 			billing_email,
 			billing_phone,
@@ -342,7 +345,7 @@ func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 			billing_zip,
 			billing_country
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
 		RETURNING id, inserted, updated
 	`
 
@@ -359,6 +362,7 @@ func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 		t.SerialNumber,
 		t.Quote,
 		t.Warranty,
+		t.Sender.Company,
 		t.Sender.Name,
 		t.Sender.Email,
 		t.Sender.Phone,
@@ -366,6 +370,7 @@ func (s *ticketStore) create(ctx context.Context, t *Ticket) error {
 		t.Sender.City,
 		t.Sender.Zip,
 		t.Sender.Country,
+		t.Billing.Company,
 		t.Billing.Name,
 		t.Billing.Email,
 		t.Billing.Phone,
@@ -392,12 +397,14 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			FROM tickets
 			WHERE (
 				$1 = '' OR (
-					sender_name ILIKE '%' || $1 || '%'
+					sender_company ILIKE '%' || $1 || '%'
+					OR sender_name ILIKE '%' || $1 || '%'
 					OR sender_email ILIKE '%' || $1 || '%'
 					OR sender_street ILIKE '%' || $1 || '%'
 					OR sender_city ILIKE '%' || $1 || '%'
 					OR sender_zip ILIKE '%' || $1 || '%'
 					OR sender_country ILIKE '%' || $1 || '%'
+					OR billing_company ILIKE '%' || $1 || '%'
 					OR billing_name ILIKE '%' || $1 || '%'
 					OR billing_email ILIKE '%' || $1 || '%'
 					OR billing_street ILIKE '%' || $1 || '%'
@@ -432,6 +439,7 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			serial_number,
 			quote,
 			warranty,
+			sender_company,
 			sender_name,
 			sender_email,
 			sender_phone,
@@ -439,6 +447,7 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			sender_city,
 			sender_zip,
 			sender_country,
+			billing_company,
 			billing_name,
 			billing_email,
 			billing_phone,
@@ -487,6 +496,7 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			&t.SerialNumber,
 			&t.Quote,
 			&t.Warranty,
+			&t.Sender.Company,
 			&t.Sender.Name,
 			&t.Sender.Email,
 			&t.Sender.Phone,
@@ -494,6 +504,7 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			&t.Sender.City,
 			&t.Sender.Zip,
 			&t.Sender.Country,
+			&t.Billing.Company,
 			&t.Billing.Name,
 			&t.Billing.Email,
 			&t.Billing.Phone,
@@ -529,6 +540,7 @@ func (s *ticketStore) GetByID(ctx context.Context, ID string) (*Ticket, error) {
 			serial_number,
 			quote,
 			warranty,
+			sender_company,
 			sender_name,
 			sender_email,
 			sender_phone,
@@ -536,6 +548,7 @@ func (s *ticketStore) GetByID(ctx context.Context, ID string) (*Ticket, error) {
 			sender_city,
 			sender_zip,
 			sender_country,
+			billing_company,
 			billing_name,
 			billing_email,
 			billing_phone,
@@ -567,6 +580,7 @@ func (s *ticketStore) GetByID(ctx context.Context, ID string) (*Ticket, error) {
 		&t.SerialNumber,
 		&t.Quote,
 		&t.Warranty,
+		&t.Sender.Company,
 		&t.Sender.Name,
 		&t.Sender.Email,
 		&t.Sender.Phone,
@@ -574,6 +588,7 @@ func (s *ticketStore) GetByID(ctx context.Context, ID string) (*Ticket, error) {
 		&t.Sender.City,
 		&t.Sender.Zip,
 		&t.Sender.Country,
+		&t.Billing.Company,
 		&t.Billing.Name,
 		&t.Billing.Email,
 		&t.Billing.Phone,
