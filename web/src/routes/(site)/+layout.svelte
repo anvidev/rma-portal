@@ -18,7 +18,7 @@
 		>
 			<div class="flex items-center gap-8">
 				<a href="/" class="flex items-center gap-2 font-medium">
-					<div class="grid size-7 place-items-center rounded-lg bg-foreground">
+					<div class="grid size-7 place-items-center rounded-lg bg-brand">
 						<ScanBarcode class="size-[18px] text-white" />
 					</div>
 					<span class="text-sm leading-none">Skancode RMA</span>

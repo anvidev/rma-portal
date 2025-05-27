@@ -55,7 +55,7 @@
 	<div>
 		<h1 class="text-lg font-semibold leading-tight">Opret RMA</h1>
 		<p class="text-sm text-muted-foreground">
-			Udfyld formularen og vedlæg den genererede PDF-fil, når du sender varen retur.
+			Udfyld formularen og vedlæg den genererede PDF-label, når du sender varen retur.
 		</p>
 	</div>
 	{#if $message}
@@ -555,7 +555,7 @@
 						<li>Hetzner Online GmbH</li>
 					</ul>
 					<p>Databasen hostes internt og kontrolleres udelukkende af os.</p>
-					<p>Vi overfører ikke personoplysninger uden for EU/EØS.</p>
+					<p>Vi overfører ikke personoplysninger uden for EU.</p>
 				</div>
 				<div class="space-y-1 text-sm">
 					<h2 class="font-medium">6. Dine rettigheder</h2>
@@ -569,7 +569,7 @@
 						<li>Ret til at gøre indsigelse mod behandlingen</li>
 					</ul>
 					<p>
-						Du kan udøve dine rettigheder ved at kontakte os via ovenstående kontaktoplysninger.
+						Du kan gøre brug af dine rettigheder ved at kontakte os via ovenstående kontaktoplysninger.
 					</p>
 				</div>
 				<div class="space-y-1 text-sm">
