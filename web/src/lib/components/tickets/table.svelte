@@ -36,7 +36,7 @@
 				<Table.Head>Status</Table.Head>
 				<Table.Head>Kategorier</Table.Head>
 				<Table.Head class="max-w-56 truncate">Firma</Table.Head>
-				<Table.Head>Kontaktperson</Table.Head>
+				<Table.Head class="max-w-56 truncate">Kontaktperson</Table.Head>
 				<Table.Head>Oprettet</Table.Head>
 				<Table.Head>Sidste ændring</Table.Head>
 			</Table.Row>
@@ -59,7 +59,7 @@
 						{/each}
 					</Table.Cell>
 					<Table.Cell class="max-w-56 truncate">{ticket.sender.company}</Table.Cell>
-					<Table.Cell>{ticket.sender.name}</Table.Cell>
+					<Table.Cell class="max-w-56 truncate">{ticket.sender.name}</Table.Cell>
 					<Table.Cell>{formatDate(ticket.inserted)}</Table.Cell>
 					<Table.Cell>{formatDate(ticket.updated)}</Table.Cell>
 				</Table.Row>
