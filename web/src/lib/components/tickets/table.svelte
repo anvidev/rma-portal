@@ -35,8 +35,8 @@
 				<Table.Head onclick={() => handleSortingChange('id', 'asc')}>Sags ID</Table.Head>
 				<Table.Head>Status</Table.Head>
 				<Table.Head>Kategorier</Table.Head>
-				<Table.Head class="max-w-56 truncate">Firma</Table.Head>
-				<Table.Head class="max-w-56 truncate">Kontaktperson</Table.Head>
+				<Table.Head class="max-w-44 truncate">Firma</Table.Head>
+				<Table.Head class="max-w-44 truncate">Kontaktperson</Table.Head>
 				<Table.Head>Oprettet</Table.Head>
 				<Table.Head>Sidste ændring</Table.Head>
 			</Table.Row>
@@ -58,8 +58,8 @@
 							<CategoryBadge onclick={() => categoriesQuery.set([category])} {category} />
 						{/each}
 					</Table.Cell>
-					<Table.Cell class="max-w-56 truncate">{ticket.sender.company}</Table.Cell>
-					<Table.Cell class="max-w-56 truncate">{ticket.sender.name}</Table.Cell>
+					<Table.Cell class="max-w-44 truncate">{ticket.sender.company}</Table.Cell>
+					<Table.Cell class="max-w-44 truncate">{ticket.sender.name}</Table.Cell>
 					<Table.Cell>{formatDate(ticket.inserted)}</Table.Cell>
 					<Table.Cell>{formatDate(ticket.updated)}</Table.Cell>
 				</Table.Row>
