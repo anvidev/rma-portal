@@ -30,7 +30,7 @@
 
 <div class="mx-auto flex flex-1 flex-col items-center justify-center gap-16">
 	<div
-		class="text-background bg-brand flex items-center gap-1 rounded-lg px-2 py-1 text-base font-semibold"
+		class="flex items-center gap-1 rounded-lg bg-brand px-2 py-1 text-base font-semibold text-background"
 	>
 		<ScanBarcode class="size-5" />
 		<p>Skancode</p>
@@ -38,10 +38,10 @@
 	<div class="flex flex-col items-center gap-8">
 		<div class="space-y-4 text-center">
 			<h1 class="max-w-[36rem] text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-				Professionel, <div class="text-brand italic-left inline-block">hurtig</div>
+				Professionel, <div class="italic-left inline-block text-brand">hurtig</div>
 				og autoriseret service
 			</h1>
-			<p class="text-muted-foreground mx-auto max-w-[33rem]">
+			<p class="mx-auto max-w-[33rem] text-muted-foreground">
 				Vi reparerer din stregkodescanner, håndterminal eller etiketprinter med originale
 				reservedele – enten på vores værksted eller hos leverandør.
 			</p>

@@ -28,11 +28,11 @@
 		<h1 class="max-w-lg text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
 			Tak for din henvendelse!
 		</h1>
-		<p class="text-muted-foreground max-w-lg">
+		<p class="max-w-lg text-muted-foreground">
 			Vi har modtaget din anmodning og behandler den hurtigst muligt. Tak for din tålmodighed – vi
 			ser frem til at hjælpe dig.
 		</p>
-		<p class="text-muted-foreground max-w-lg">
+		<p class="max-w-lg text-muted-foreground">
 			Venligst download din RMA-label og enten vedlæg den i pakken eller fastgør den udenpå, når du
 			sender varen retur. <span class="font-bold"
 				>Bemærk, at RMA-labelen ikke fungerer som en forsendelseslabel.</span

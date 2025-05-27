@@ -36,7 +36,7 @@
 <section class="space-y-4">
 	<div>
 		<h1 class="text-lg font-semibold leading-tight">Sags oversigt</h1>
-		<p class="text-muted-foreground text-sm">
+		<p class="text-sm text-muted-foreground">
 			Se alle dine RMA-sager samlet ét sted, og brug filtre til hurtigt at finde det, du søger
 		</p>
 	</div>
