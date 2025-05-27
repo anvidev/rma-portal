@@ -67,15 +67,29 @@
 			Disse oplysninger bruges til kommunikation vedrørende din RMA og som returadresse.
 		</p>
 	</div>
-	<div class="grid gap-2">
-		<Label for="senderName">Firma<span class="text-red-500">*</span></Label>
-		<Input
-			id="senderName"
-			bind:value={$form.sender.name}
-			aria-invalid={$errors?.sender?.name ? 'true' : undefined}
-		/>
-		{#if $errors?.sender?.name}<span class="text-sm text-destructive">{$errors.sender?.name}</span
-			>{/if}
+
+	<div class="flex items-start justify-stretch gap-4">
+		<div class="grid flex-1 gap-2">
+			<Label for="senderCompany">Firma<span class="text-red-500">*</span></Label>
+			<Input
+				id="senderCompany"
+				bind:value={$form.sender.company}
+				aria-invalid={$errors?.sender?.company ? 'true' : undefined}
+			/>
+			{#if $errors?.sender?.company}<span class="text-sm text-destructive"
+					>{$errors.sender?.company}</span
+				>{/if}
+		</div>
+		<div class="grid flex-1 gap-2">
+			<Label for="senderName">Kontaktperson<span class="text-red-500">*</span></Label>
+			<Input
+				id="senderName"
+				bind:value={$form.sender.name}
+				aria-invalid={$errors?.sender?.name ? 'true' : undefined}
+			/>
+			{#if $errors?.sender?.name}<span class="text-sm text-destructive">{$errors.sender?.name}</span
+				>{/if}
+		</div>
 	</div>
 
 	<div class="flex items-start justify-stretch gap-4">
@@ -174,16 +188,31 @@
 		<Label class="font-normal" for="billing-checkbox">Fakturering er den samme som afsender</Label>
 	</div>
 
-	<div class="grid gap-2">
-		<Label for="billingName">Firma<span class="text-red-500">*</span></Label>
-		<Input
-			id="billingName"
-			disabled={isBillingSame}
-			bind:value={$form.billing.name}
-			aria-invalid={$errors?.billing?.name ? 'true' : undefined}
-		/>
-		{#if $errors?.billing?.name}<span class="text-sm text-destructive">{$errors.billing?.name}</span
-			>{/if}
+	<div class="flex items-center justify-stretch gap-4">
+		<div class="grid flex-1 gap-2">
+			<Label for="billingCompany">Firma<span class="text-red-500">*</span></Label>
+			<Input
+				id="billingCompany"
+				disabled={isBillingSame}
+				bind:value={$form.billing.company}
+				aria-invalid={$errors?.billing?.company ? 'true' : undefined}
+			/>
+			{#if $errors?.billing?.company}<span class="text-sm text-destructive"
+					>{$errors.billing?.company}</span
+				>{/if}
+		</div>
+		<div class="grid flex-1 gap-2">
+			<Label for="billingName">Kontaktperson<span class="text-red-500">*</span></Label>
+			<Input
+				id="billingName"
+				disabled={isBillingSame}
+				bind:value={$form.billing.name}
+				aria-invalid={$errors?.billing?.name ? 'true' : undefined}
+			/>
+			{#if $errors?.billing?.name}<span class="text-sm text-destructive"
+					>{$errors.billing?.name}</span
+				>{/if}
+		</div>
 	</div>
 
 	<div class="flex items-center justify-stretch gap-4">

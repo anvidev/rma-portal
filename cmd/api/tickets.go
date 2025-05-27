@@ -10,6 +10,7 @@ import (
 )
 
 type contactPayload struct {
+	Company string `json:"company" validate:"required,min=3,max=100"`
 	Name    string `json:"name" validate:"required,min=3,max=100"`
 	Email   string `json:"email" validate:"required,email,max=100"`
 	Phone   string `json:"phone" validate:"required,max=30"`
@@ -63,6 +64,7 @@ func (api *api) postCreateTicket(w http.ResponseWriter, r *http.Request) {
 		Quote:        payload.Quote,
 		Warranty:     payload.Warranty,
 		Sender: store.Contact{
+			Company: payload.Sender.Company,
 			Name:    payload.Sender.Name,
 			Email:   payload.Sender.Email,
 			Phone:   payload.Sender.Phone,
@@ -72,6 +74,7 @@ func (api *api) postCreateTicket(w http.ResponseWriter, r *http.Request) {
 			Country: payload.Sender.Country,
 		},
 		Billing: store.Contact{
+			Company: payload.Billing.Company,
 			Name:    payload.Billing.Name,
 			Email:   payload.Billing.Email,
 			Phone:   payload.Billing.Phone,

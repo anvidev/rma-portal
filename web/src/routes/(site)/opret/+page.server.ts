@@ -11,6 +11,11 @@ const radio = z
 	.refine(val => val != 'none', { message: 'Vælg venligst en af mulighederne' })
 
 const contactZod = z.object({
+	company: z
+		.string()
+		.nonempty({ message: 'Dette felt er påkrævet' })
+		.min(3, { message: 'Må ikke være mindre end 3 karakterer' })
+		.max(100, { message: 'Må ikke være mere end 100 karakterer' }),
 	name: z
 		.string()
 		.nonempty({ message: 'Dette felt er påkrævet' })

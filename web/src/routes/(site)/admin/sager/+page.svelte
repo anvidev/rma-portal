@@ -28,7 +28,10 @@
 	}
 </script>
 
-<title>RMA Sags Oversigt - Skancode RMA Service Portal</title>
+<svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+	<title>RMA Sags Oversigt - Skancode RMA Service Portal</title>
+</svelte:head>
 
 <section class="space-y-4">
 	<div>

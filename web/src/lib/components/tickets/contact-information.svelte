@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Contact } from '$lib/types'
-	import { Phone, Mail, MapPin, Building } from '@lucide/svelte'
+	import { Phone, Mail, MapPin, Building, User } from '@lucide/svelte'
 
 	let { contact, title, sub }: { contact: Contact; title: string; sub: string } = $props()
 </script>
@@ -14,6 +14,10 @@
 	<div>
 		<div class="flex items-center gap-2">
 			<Building class="size-4 text-muted-foreground" />
+			<span class="text-sm">{contact.company}</span>
+		</div>
+		<div class="flex items-center gap-2">
+			<User class="size-4 text-muted-foreground" />
 			<span class="text-sm">{contact.name}</span>
 		</div>
 		<div class="flex items-center gap-2">

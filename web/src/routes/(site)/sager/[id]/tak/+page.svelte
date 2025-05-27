@@ -18,7 +18,10 @@
 	}
 </script>
 
-<title>Tak for din henvendelse - Skancode RMA Service Portal</title>
+<svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+	<title>Tak for din henvendelse - Skancode RMA Service Portal</title>
+</svelte:head>
 
 <div class="flex flex-1 flex-col items-center justify-center gap-4">
 	<div class="flex flex-col items-center space-y-4 text-pretty text-center">
