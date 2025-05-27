@@ -68,7 +68,7 @@
 		</p>
 	</div>
 	<div class="grid gap-2">
-		<Label for="senderName">Firma / kontaktperson<span class="text-red-500">*</span></Label>
+		<Label for="senderName">Firma<span class="text-red-500">*</span></Label>
 		<Input
 			id="senderName"
 			bind:value={$form.sender.name}
@@ -175,7 +175,7 @@
 	</div>
 
 	<div class="grid gap-2">
-		<Label for="billingName">Firma / kontaktperson<span class="text-red-500">*</span></Label>
+		<Label for="billingName">Firma<span class="text-red-500">*</span></Label>
 		<Input
 			id="billingName"
 			disabled={isBillingSame}
@@ -569,7 +569,8 @@
 						<li>Ret til at gøre indsigelse mod behandlingen</li>
 					</ul>
 					<p>
-						Du kan gøre brug af dine rettigheder ved at kontakte os via ovenstående kontaktoplysninger.
+						Du kan gøre brug af dine rettigheder ved at kontakte os via ovenstående
+						kontaktoplysninger.
 					</p>
 				</div>
 				<div class="space-y-1 text-sm">
