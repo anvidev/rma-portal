@@ -337,7 +337,7 @@ func (api *api) getPublicTicketLabel(w http.ResponseWriter, r *http.Request) {
 }
 
 type ticketFilesResponse struct {
-	files []string `json:"files"`
+	Files []string `json:"files"`
 }
 
 func (api *api) postTicketFiles(w http.ResponseWriter, r *http.Request) {
@@ -380,7 +380,7 @@ func (api *api) postTicketFiles(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		response.files = append(response.files, fileHeader.Filename)
+		response.Files = append(response.Files, fileHeader.Filename)
 	}
 
 	if err := writeJSON(w, http.StatusCreated, response); err != nil {
