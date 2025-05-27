@@ -21,13 +21,17 @@
 <title>Tak for din henvendelse - Skancode RMA Service Portal</title>
 
 <div class="flex flex-1 flex-col items-center justify-center gap-4">
-	<div class="max-w-lg space-y-4 text-pretty text-center">
-		<h1 class="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+	<div class="flex flex-col items-center space-y-4 text-pretty text-center">
+		<h1 class="max-w-lg text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
 			Tak for din henvendelse!
 		</h1>
-		<p class="mx-auto text-muted-foreground">
-			Vi har modtaget din RMA-anmodning og behandler den hurtigst muligt. Vi takker for din
-			tålmodighed og ser frem til at hjælpe dig.
+		<p class="max-w-prose text-muted-foreground">
+			Vi har modtaget din anmodning og behandler den hurtigst muligt. Tak for din tålmodighed – vi
+			ser frem til at hjælpe dig.
+		</p>
+		<p class="max-w-prose text-muted-foreground">
+			Venligst download din RMA-label og enten vedlæg den i pakken eller fastgør den udenpå, når du
+			sender varen retur. Bemærk, at RMA-labelen ikke fungerer som en forsendelseslabel.
 		</p>
 	</div>
 
