@@ -18,9 +18,13 @@
 
 		for (let i = s.length - 1; i >= 0; i--) {
 			const char = s[i]
-			if (char !== ' ' && count < 4) {
-				result = '*' + result
-				count++
+			if (char !== ' ' && /\d/.test(char)) {
+				if (count < 4) {
+					result = char + result
+					count++
+				} else {
+					result = '*' + result
+				}
 			} else {
 				result = char + result
 			}
