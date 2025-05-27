@@ -12,27 +12,58 @@
 		return s.replaceAll(/./g, '*')
 	}
 
+	function censorPhone(s: string): string {
+		let count = 0
+		let result = ''
+
+		for (let i = s.length - 1; i >= 0; i--) {
+			const char = s[i]
+			if (char !== ' ' && count < 4) {
+				result = '*' + result
+				count++
+			} else {
+				result = char + result
+			}
+		}
+
+		return result
+	}
+
+	function censorEmail(email: string): string {
+		const [local, domain] = email.split('@')
+		if (!domain) return email
+
+		if (local.length <= 2) {
+			return '*'.repeat(local.length) + '@' + domain
+		}
+
+		const first = local[0]
+		const last = local[local.length - 1]
+		const stars = '*'.repeat(local.length - 2)
+		return `${first}${stars}${last}@${domain}`
+	}
+
 	const censoredSender: Contact = $derived.by(() => {
 		return {
-			name: censor(ticket.sender.name),
-			phone: censor(ticket.sender.phone),
-			email: censor(ticket.sender.email),
+			name: ticket.sender.name,
+			phone: censorPhone(ticket.sender.phone),
+			email: censorEmail(ticket.sender.email),
 			street: censor(ticket.sender.street),
-			city: censor(ticket.sender.city),
-			zip: censor(ticket.sender.zip),
-			country: censor(ticket.sender.country),
+			city: ticket.sender.city,
+			zip: ticket.sender.zip,
+			country: ticket.sender.country,
 		}
 	})
 
 	const censoredBilling: Contact = $derived.by(() => {
 		return {
-			name: censor(ticket.billing.name),
-			phone: censor(ticket.billing.phone),
-			email: censor(ticket.billing.email),
+			name: ticket.billing.name,
+			phone: censorPhone(ticket.billing.phone),
+			email: censorEmail(ticket.billing.email),
 			street: censor(ticket.billing.street),
-			city: censor(ticket.billing.city),
-			zip: censor(ticket.billing.zip),
-			country: censor(ticket.billing.country),
+			city: ticket.billing.city,
+			zip: ticket.billing.zip,
+			country: ticket.billing.country,
 		}
 	})
 </script>
