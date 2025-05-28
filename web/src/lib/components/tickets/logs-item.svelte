@@ -3,6 +3,8 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js'
 	import { cn, formatDate } from '$lib/utils'
 	import { FileText, Shield } from '@lucide/svelte'
+	import { Lightbox } from '$lib/lightbox.svelte'
+	import LightboxView from '../common/lightbox-view.svelte'
 	let { log, internal = false }: { log: Log; internal?: boolean } = $props()
 
 	function getStatusBorderColor(status: string): string {
@@ -43,7 +45,20 @@
 			filename: 'report.pdf',
 			url: 'https://anvi.dev/files/00007-C43E6/bd378640-2bc6-4c9a-8fb9-dd769a06f13b.pdf',
 		},
+		{
+			id: 3,
+			type: 'image',
+			filename: '3.jpg',
+			url: 'https://anvi.dev/files/00008-245C0/1748261219-3.jpg',
+		},
 	]
+
+	let lightbox = new Lightbox({
+		images: attachments
+			.filter(att => att.type == 'image')
+			.map(att => ({ id: att.id, url: att.url })),
+		loop: true,
+	})
 </script>
 
 <div
@@ -61,8 +76,8 @@
 		<p class="whitespace-pre-line text-sm">{log.external_comment}</p>
 	</div>
 	{#if log.internal_comment}
-		<div class="mt-3 rounded-lg border bg-muted/40 p-3">
-			<div class="mb-1 flex items-center gap-1 text-sm text-muted-foreground">
+		<div class="bg-muted/40 mt-3 rounded-lg border p-3">
+			<div class="text-muted-foreground mb-1 flex items-center gap-1 text-sm">
 				<Shield class="size-3.5" />
 				<span class="font-medium">Intern kommentar</span>
 			</div>
@@ -82,16 +97,18 @@
 									<a
 										href={att.url}
 										target="_blank"
-										class="grid h-full w-full place-items-center bg-muted/40 transition-colors group-hover:bg-muted/100"
+										class="bg-muted/40 group-hover:bg-muted/100 grid h-full w-full place-items-center transition-colors"
 									>
 										<FileText class="size-5 fill-slate-200 text-slate-500" />
 									</a>
 								{:else if att.type == 'image'}
-									<img
-										alt={att.filename}
-										src={att.url}
-										class="transition-transform group-hover:scale-105"
-									/>
+									<div role="img" onclick={() => lightbox.open(att.id)}>
+										<img
+											alt={att.filename}
+											src={att.url}
+											class="transition-transform group-hover:scale-105"
+										/>
+									</div>
 								{/if}
 							</div>
 						</Tooltip.Trigger>
@@ -104,3 +121,5 @@
 		</div>
 	{/if}
 </div>
+
+<LightboxView {lightbox} />
