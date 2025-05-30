@@ -42,15 +42,15 @@
 			<p class="text-sm leading-tight">{formatDate(log.inserted)}</p>
 		</div>
 		<small class="text-muted-foreground">{log.initiator}</small>
-		<p class="text-sm">{log.external_comment}</p>
+		<p class="whitespace-pre-line text-sm">{log.external_comment}</p>
 	</div>
 	{#if log.internal_comment}
-		<div class="mt-3 rounded-lg border bg-muted/40 p-3">
-			<div class="mb-1 flex items-center gap-1 text-sm text-muted-foreground">
+		<div class="bg-muted/40 mt-3 rounded-lg border p-3">
+			<div class="text-muted-foreground mb-1 flex items-center gap-1 text-sm">
 				<Shield class="size-3.5" />
 				<span class="font-medium">Intern kommentar</span>
 			</div>
-			<p class="text-sm">{log.internal_comment}</p>
+			<p class="whitespace-pre-line text-sm">{log.internal_comment}</p>
 		</div>
 	{/if}
 </div>
