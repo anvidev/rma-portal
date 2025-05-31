@@ -10,6 +10,7 @@ import (
 	"github.com/anvidev/rma-portal/internal/env"
 	"github.com/anvidev/rma-portal/internal/mailer"
 	"github.com/anvidev/rma-portal/internal/queue"
+	"github.com/anvidev/rma-portal/internal/ratelimit"
 	"github.com/anvidev/rma-portal/internal/store"
 	"go.uber.org/zap"
 )
@@ -88,6 +89,8 @@ func main() {
 		config.auth.token.host,
 	)
 
+	baseRateLimit := ratelimit.NewRateLimitContext(context.Background(), 0.5, 10)
+
 	api := &api{
 		logger:        logger,
 		config:        config,
@@ -96,6 +99,7 @@ func main() {
 		mailer:        mail,
 		queue:         queue,
 		documentation: documentation,
+		baseRateLimit: baseRateLimit,
 	}
 
 	queue.Start(context.Background())

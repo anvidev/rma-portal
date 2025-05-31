@@ -8,6 +8,7 @@ import (
 	"github.com/anvidev/rma-portal/internal/auth"
 	"github.com/anvidev/rma-portal/internal/mailer"
 	"github.com/anvidev/rma-portal/internal/queue"
+	"github.com/anvidev/rma-portal/internal/ratelimit"
 	"github.com/anvidev/rma-portal/internal/store"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -22,6 +23,7 @@ type api struct {
 	mailer        mailer.Mailer
 	documentation *apidoc.APIDocumentation
 	queue         *queue.Queue
+	baseRateLimit *ratelimit.RateLimit
 }
 
 type config struct {
@@ -65,6 +67,8 @@ type resendMailerConfig struct {
 func (api *api) mount() http.Handler {
 	r := chi.NewMux()
 
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.StripSlashes)
@@ -73,6 +77,7 @@ func (api *api) mount() http.Handler {
 	r.Route("/v1", func(r chi.Router) {
 
 		r.Route("/auth", func(r chi.Router) {
+			r.Use(api.ratelimit)
 			r.Post("/login", api.postLoginUser)
 			r.Get("/validate", api.postValidateUser)
 		})
@@ -101,6 +106,7 @@ func (api *api) mount() http.Handler {
 		})
 
 		r.Route("/tickets", func(r chi.Router) {
+			r.Use(api.ratelimit)
 			r.Post("/", api.postCreateTicket)
 			r.Get("/statuses", api.getTicketStatuses)
 			r.Get("/categories", api.getTicketCategories)
