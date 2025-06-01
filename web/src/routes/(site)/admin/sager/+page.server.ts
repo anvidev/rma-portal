@@ -1,32 +1,53 @@
-import { API_URL } from '$lib/server/env'
-import type { Ticket } from '$lib/types'
+import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
+import { ApiError } from '$lib/server/api'
 
-export const load: PageServerLoad = async ({ cookies, url, setHeaders }) => {
+export const load: PageServerLoad = async ({ cookies, url, setHeaders, locals }) => {
 	const searchParams = url.searchParams
+	const token = cookies.get('token') ?? ''
 
-	const ticketsResponse = await fetch(`${API_URL}/v1/admin/tickets?${searchParams.toString()}`, {
-		headers: {
-			Authorization: `Bearer ${cookies.get('token')}`,
-		},
-	})
-	const { tickets, total, limit } = await ticketsResponse.json()
+	const [ticketsData, ticketsErr] = await locals.api.listTickets(token, searchParams)
+	if (ticketsErr != null) {
+		if (ticketsErr instanceof ApiError) {
+			return error(ticketsErr.status, {
+				message: ticketsErr.message,
+				requestId: ticketsErr.requestID,
+			})
+		} else {
+			return error(500, ticketsErr.message)
+		}
+	}
 
-	const statusResponse = await fetch(`${API_URL}/v1/tickets/statuses`)
-	const categoriesResponse = await fetch(`${API_URL}/v1/tickets/categories`)
+	const [statusesData, statusErr] = await locals.api.listStatuses()
+	if (statusErr != null) {
+		if (statusErr instanceof ApiError) {
+			return error(statusErr.status, { message: statusErr.message, requestId: statusErr.requestID })
+		} else {
+			return error(500, statusErr.message)
+		}
+	}
 
-	const { statuses } = await statusResponse.json()
-	const { categories } = await categoriesResponse.json()
+	const [categoriesData, categoriesErr] = await locals.api.listCategories()
+	if (categoriesErr != null) {
+		if (categoriesErr instanceof ApiError) {
+			return error(categoriesErr.status, {
+				message: categoriesErr.message,
+				requestId: categoriesErr.requestID,
+			})
+		} else {
+			return error(500, categoriesErr.message)
+		}
+	}
 
 	setHeaders({
 		'Cache-Control': 'private, max-age=120',
 	})
 
 	return {
-		tickets: tickets as Ticket[],
-		statuses: statuses as string[],
-		categories: categories as string[],
-		total: total as number,
-		limit: limit as number,
+		tickets: ticketsData.tickets,
+		statuses: statusesData.statuses,
+		categories: categoriesData.categories,
+		total: ticketsData.total,
+		limit: ticketsData.limit,
 	}
 }
