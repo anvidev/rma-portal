@@ -33,6 +33,7 @@ export const validateAuth = async (event: RequestEvent) => {
 		path: '/',
 		secure: true,
 		httpOnly: true,
+		maxAge: 60 * 60 * 24 * 3,
 	})
 
 	return user
