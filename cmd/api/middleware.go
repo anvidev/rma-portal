@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -17,6 +18,8 @@ var (
 	ErrAuthorizationMalformed = fmt.Errorf("authorization header is malformed")
 	ErrAuthorizationDenied    = fmt.Errorf("access denied")
 	ErrAuthorizationExpired   = fmt.Errorf("access expired")
+
+	ErrTooManyRequests = fmt.Errorf("too many requests")
 )
 
 func (api *api) bearerAuthorization(next http.Handler) http.Handler {
@@ -90,4 +93,23 @@ func (api *api) bearerAuthorization(next http.Handler) http.Handler {
 func (api *api) getAuthenticatedUser(r *http.Request) (store.User, bool) {
 	user, found := r.Context().Value(contextkeys.UserKey).(store.User)
 	return user, found
+}
+
+func (api *api) ratelimit(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ip, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			api.internalServerError(w, r, err)
+			return
+		}
+
+		visitor := api.baseRateLimit.Visitor(ip)
+
+		if !visitor.Allow() {
+			api.tooManyRequests(w, r, ErrTooManyRequests)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }

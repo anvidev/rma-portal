@@ -11,10 +11,14 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!ticketResponse.ok) {
 		if (ticketResponse.status === 404) {
 			error(404, {
-				message: 'RMA sag blev ikke fundet',
+				message: 'RMA sag blev ikke fundet.',
+			})
+		} else if (ticketResponse.status === 429) {
+			error(429, {
+				message: 'For mange forspørgelser til serveren. Vent et øjeblik.',
 			})
 		} else {
-			error(500, 'Der skete en fejl på serveren')
+			error(500, 'Der skete en fejl på serveren.')
 		}
 	}
 
