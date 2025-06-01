@@ -1,4 +1,5 @@
 import type { Ticket } from '$lib/types'
+import type { NewTicket } from '../../routes/(site)/opret/+page.server'
 import { API_URL } from './env'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -61,10 +62,6 @@ async function apiRequest<TOutput>(
 			return [text, null]
 		}
 	} catch (error) {
-		if (error instanceof ApiError) {
-			return [null, error]
-		}
-
 		return [null, error as Error]
 	}
 }
@@ -84,5 +81,10 @@ export const api = {
 	},
 	async listCategories() {
 		return apiRequest<{ categories: string[] }>(`${API_URL}/v1/tickets/statuses`, 'GET')
+	},
+	async createTicket(data: NewTicket) {
+		return apiRequest<{ ticket: Ticket }>(`${API_URL}/v1/tickets`, 'POST', {
+			body: data,
+		})
 	},
 } as const

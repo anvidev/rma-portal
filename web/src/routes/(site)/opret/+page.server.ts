@@ -2,9 +2,8 @@ import type { Actions, PageServerLoad } from './$types'
 import { superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { fail, redirect } from '@sveltejs/kit'
-import { API_URL } from '$lib/server/env'
 import * as z from 'zod'
-import type { Ticket } from '$lib/types'
+import { ApiError } from '$lib/server/api'
 
 const radio = z
 	.enum(['yes', 'no', 'unknown', 'none'])
@@ -63,6 +62,8 @@ const schema = z.object({
 	warranty: radio.default('none'),
 })
 
+export type NewTicket = z.infer<typeof schema>
+
 export const load: PageServerLoad = async () => {
 	return {
 		form: await superValidate(zod(schema)),
@@ -70,25 +71,22 @@ export const load: PageServerLoad = async () => {
 }
 
 export const actions: Actions = {
-	default: async ({ request, fetch, locals, setHeaders }) => {
+	default: async ({ request, locals, setHeaders }) => {
 		const form = await superValidate(request, zod(schema))
 
 		if (!form.valid) return fail(400, { form })
 
-		const response = await fetch(`${API_URL}/v1/tickets`, {
-			method: 'post',
-			body: JSON.stringify(form.data),
-		})
-
-		if (!response.ok) {
-			return fail(response.status, { form })
+		const [ticketData, err] = await locals.api.createTicket(form.data)
+		if (err != null) {
+			if (err instanceof ApiError) {
+				return fail(err.status, { form })
+			}
+			return fail(500, { form })
 		}
 
-		const data = (await response.json()) as { ticket: Ticket }
-
 		const redirectUrl = locals.user
-			? `/admin/sager/${data.ticket.id}`
-			: `sager/${data.ticket.id}/tak`
+			? `/admin/sager/${ticketData.ticket.id}`
+			: `sager/${ticketData.ticket.id}/tak`
 
 		if (locals.user) {
 			setHeaders({
