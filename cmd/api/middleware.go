@@ -103,7 +103,7 @@ func (api *api) ratelimit(next http.Handler) http.Handler {
 			return
 		}
 
-		visitor := api.baseRateLimit.GetVisitor(ip)
+		visitor := api.baseRateLimit.Visitor(ip)
 
 		if !visitor.Allow() {
 			api.tooManyRequests(w, r, ErrTooManyRequests)

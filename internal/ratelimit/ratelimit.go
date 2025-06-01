@@ -31,7 +31,7 @@ func (v *visitor) Allow() bool {
 	return v.limit.Allow()
 }
 
-func (v *visitor) getLastSeen() time.Time {
+func (v *visitor) LastSeen() time.Time {
 	v.mu.RLock()
 	defer v.mu.RUnlock()
 	return v.lastSeen
@@ -50,7 +50,7 @@ func NewRateLimitContext(ctx context.Context, refill float64, bucketsize int) *R
 	return rl
 }
 
-func (rl *RateLimit) GetVisitor(ip string) *visitor {
+func (rl *RateLimit) Visitor(ip string) *visitor {
 	rl.mu.RLock()
 	v, found := rl.visitors[ip]
 	rl.mu.RUnlock()
@@ -76,7 +76,7 @@ func (rl *RateLimit) cleanupVisitors(ctx context.Context) {
 		case <-tick.C:
 			rl.mu.Lock()
 			for ip, v := range rl.visitors {
-				if time.Since(v.getLastSeen()) > rl.cleanupAfter {
+				if time.Since(v.LastSeen()) > rl.cleanupAfter {
 					delete(rl.visitors, ip)
 				}
 			}
