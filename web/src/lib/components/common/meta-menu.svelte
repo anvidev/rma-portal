@@ -8,7 +8,7 @@
 	let searchValue = $state('')
 
 	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === ':') {
+		if (e.ctrlKey && e.key === 'k') {
 			e.preventDefault()
 			open = !open
 		}
