@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ cookies, url, setHeaders, locals })
 		}
 	}
 
-	const {tickets, total, limit} = ticketsData
+	const { tickets, total, limit } = ticketsData
 
 	const [statusesData, statusErr] = await locals.api.listStatuses()
 	if (statusErr != null) {
@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ cookies, url, setHeaders, locals })
 		}
 	}
 
-	const {statuses} = statusesData
+	const { statuses } = statusesData
 
 	const [categoriesData, categoriesErr] = await locals.api.listCategories()
 	if (categoriesErr != null) {
@@ -43,7 +43,7 @@ export const load: PageServerLoad = async ({ cookies, url, setHeaders, locals })
 		}
 	}
 
-	const {categories} = categoriesData
+	const { categories } = categoriesData
 
 	setHeaders({
 		'Cache-Control': 'private, max-age=120',
