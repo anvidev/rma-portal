@@ -258,7 +258,7 @@
 			>{/if}
 	</div>
 
-	<div class="flex items-center justify-stretch gap-4">
+	<div class="flex items-start justify-stretch gap-4">
 		<div class="grid w-2/4 gap-2">
 			<Label for="billingCity">By<span class="text-red-500">*</span></Label>
 			<Input

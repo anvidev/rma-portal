@@ -2,8 +2,8 @@ import { fail, setError, superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { z } from 'zod'
 import type { Actions, PageServerLoad } from './$types'
-import { API_URL } from '$lib/server/env'
 import { redirect } from '@sveltejs/kit'
+import { ApiError } from '$lib/server/api'
 
 const schema = z.object({
 	query: z
@@ -16,7 +16,7 @@ export const load: PageServerLoad = async () => {
 }
 
 export const actions: Actions = {
-	default: async ({ request, fetch }) => {
+	default: async ({ request, locals }) => {
 		const form = await superValidate(request, zod(schema))
 
 		if (!form.valid) {
@@ -25,14 +25,17 @@ export const actions: Actions = {
 
 		const uppercasedID = form.data.query.toUpperCase()
 
-		const ticketReponse = await fetch(`${API_URL}/v1/tickets/${uppercasedID}`)
-
-		if (!ticketReponse.ok) {
-			let msg = 'Der gik noget galt på serveren.'
-			if (ticketReponse.status === 404) {
-				msg = 'RMA sag blev ikke fundet'
+		const [_ticketData, err] = await locals.api.getPublicTicket(uppercasedID)
+		if (err != null) {
+			if (err instanceof ApiError) {
+				let msg = 'Intern server fejl'
+				if (err.status == 404) {
+					msg = 'RMA sag blev ikke fundet'
+				}
+				return setError(form, 'query', msg)
+			} else {
+				return setError(form, 'query', 'Intern server fejl')
 			}
-			return setError(form, 'query', msg)
 		}
 
 		return redirect(303, `/sager/${uppercasedID}`)

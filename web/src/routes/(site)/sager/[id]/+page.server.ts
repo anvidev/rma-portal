@@ -1,30 +1,28 @@
-import { API_URL } from '$lib/server/env'
 import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
-import type { TicketWithLogs } from '$lib/types'
+import { ApiError } from '$lib/server/api'
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, locals }) => {
 	const id = params.id
 
-	const ticketResponse = await fetch(`${API_URL}/v1/tickets/${id}`)
-
-	if (!ticketResponse.ok) {
-		if (ticketResponse.status === 404) {
-			error(404, {
-				message: 'RMA sag blev ikke fundet.',
-			})
-		} else if (ticketResponse.status === 429) {
-			error(429, {
-				message: 'For mange forspørgelser til serveren. Vent et øjeblik.',
-			})
+	const [ticketData, err] = await locals.api.getPublicTicket(id)
+	if (err != null) {
+		let msg = 'Intern server fejl'
+		if (err instanceof ApiError) {
+			if (err.status === 429) {
+				msg = 'For mange forspørgelser til serveren. Vent et øjeblik.'
+			} else if (err.status === 404) {
+				msg = 'RMA sag blev ikke fundet.'
+			}
+			return error(err.status, { message: err.message, requestId: err.requestID })
 		} else {
-			error(500, 'Der skete en fejl på serveren.')
+			return error(500, msg)
 		}
 	}
 
-	const { ticket } = await ticketResponse.json()
+	const { ticket } = ticketData
 
 	return {
-		ticket: ticket as TicketWithLogs,
+		ticket: ticket,
 	}
 }
