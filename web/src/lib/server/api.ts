@@ -1,4 +1,5 @@
-import type { Ticket } from '$lib/types'
+import type { Ticket, TicketWithLogs } from '$lib/types'
+import type { NewTicketLog } from '../../routes/(site)/admin/sager/[id]/+page.server'
 import type { NewTicket } from '../../routes/(site)/opret/+page.server'
 import { API_URL } from './env'
 
@@ -83,8 +84,26 @@ export const api = {
 		return apiRequest<{ categories: string[] }>(`${API_URL}/v1/tickets/statuses`, 'GET')
 	},
 	async createTicket(data: NewTicket) {
-		return apiRequest<{ ticket: Ticket }>(`${API_URL}/v1/tickets`, 'POST', {
+		return apiRequest<{ ticket: TicketWithLogs }>(`${API_URL}/v1/tickets`, 'POST', {
 			body: data,
 		})
+	},
+	async getTicket(token: string, id: string) {
+		return apiRequest<{ ticket: Ticket }>(`${API_URL}/v1/admin/tickets/${id}`, 'GET', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		})
+	},
+	async createTicketLog(token: string, id: string, data: NewTicketLog) {
+		return apiRequest<null>(`${API_URL}/v1/admin/tickets/${id}/log`, 'POST', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			body: data,
+		})
+	},
+	async getPublicTicket(id: string) {
+		return apiRequest<{ ticket: TicketWithLogs }>(`${API_URL}/v1/tickets/${id}`, 'GET')
 	},
 } as const

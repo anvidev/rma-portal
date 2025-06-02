@@ -1,62 +1,72 @@
-import { API_URL } from '$lib/server/env'
-import type { TicketWithLogs } from '$lib/types'
-import { fail, redirect, type Actions } from '@sveltejs/kit'
+import { error, fail, type Actions } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
-import { maxLength, nonEmpty, object, pipe, string } from 'valibot'
 import { message, superValidate } from 'sveltekit-superforms'
-import { valibot } from 'sveltekit-superforms/adapters'
+import { zod } from 'sveltekit-superforms/adapters'
+import { ApiError } from '$lib/server/api'
+import { z } from 'zod'
 
-const createLogSchema = object({
-	status: pipe(string(), nonEmpty()),
-	external_comment: pipe(string(), nonEmpty(), maxLength(200)),
-	internal_comment: pipe(string(), maxLength(200)),
+const createLogSchema = z.object({
+	status: z.string(),
+	external_comment: z.string().max(200),
+	internal_comment: z.string().max(200),
 })
 
-export const load: PageServerLoad = async ({ cookies, params, fetch }) => {
+export type NewTicketLog = z.infer<typeof createLogSchema>
+
+export const load: PageServerLoad = async ({ cookies, params, locals }) => {
 	const id = params.id
 
-	const emptyForm = await superValidate(valibot(createLogSchema))
+	const emptyForm = await superValidate(zod(createLogSchema))
 
-	const response = await fetch(`${API_URL}/v1/admin/tickets/${id}`, {
-		headers: {
-			Authorization: `Bearer ${cookies.get('token')}`,
-		},
-	})
+	const token = cookies.get('token') ?? ''
 
-	const statusResponse = await fetch(`${API_URL}/v1/tickets/statuses`)
-
-	if (!response.ok || !statusResponse.ok) {
-		redirect(308, '/admin/sager')
+	const [ticketData, err] = await locals.api.getTicket(token, id)
+	if (err != null) {
+		if (err instanceof ApiError) {
+			return error(err.status, { message: err.message, requestId: err.requestID })
+		} else {
+			return error(500, { message: err.message })
+		}
 	}
 
-	const { ticket } = await response.json()
-	const { statuses } = await statusResponse.json()
+	const { ticket } = ticketData
+
+	const [statusesData, statusErr] = await locals.api.listStatuses()
+	if (statusErr != null) {
+		if (statusErr instanceof ApiError) {
+			return error(statusErr.status, { message: statusErr.message, requestId: statusErr.requestID })
+		} else {
+			return error(500, statusErr.message)
+		}
+	}
+
+	const { statuses } = statusesData
 
 	return {
 		form: emptyForm,
-		ticket: ticket as TicketWithLogs,
-		statuses: statuses as string[],
+		ticket: ticket,
+		statuses: statuses,
 	}
 }
 
 export const actions: Actions = {
-	default: async ({ request, fetch, params, cookies, setHeaders }) => {
-		const form = await superValidate(request, valibot(createLogSchema))
+	default: async ({ request, params, cookies, setHeaders, locals }) => {
+		const form = await superValidate(request, zod(createLogSchema))
 
 		if (!form.valid) {
 			return fail(400, { form })
 		}
 
-		const response = await fetch(`${API_URL}/v1/admin/tickets/${params.id}/log`, {
-			method: 'post',
-			headers: {
-				Authorization: `Bearer ${cookies.get('token')}`,
-			},
-			body: JSON.stringify(form.data),
-		})
+		const token = cookies.get('token') ?? ''
+		const id = params.id ?? ''
 
-		if (!response.ok) {
-			return fail(response.status, { form })
+		const [_logData, err] = await locals.api.createTicketLog(token, id, form.data)
+		if (err != null) {
+			if (err instanceof ApiError) {
+				return fail(err.status, { form })
+			} else {
+				return fail(500, { form })
+			}
 		}
 
 		setHeaders({
