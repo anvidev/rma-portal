@@ -28,7 +28,7 @@ export const actions: Actions = {
 		const [_ticketData, err] = await locals.api.getPublicTicket(uppercasedID)
 		if (err != null) {
 			if (err instanceof ApiError) {
-				let msg = 'Der gik noget galt på serveren.'
+				let msg = 'Intern server fejl'
 				if (err.status == 404) {
 					msg = 'RMA sag blev ikke fundet'
 				}

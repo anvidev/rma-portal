@@ -37,3 +37,4 @@
  - [ ] Fix endpoints names with plural naming convention
  - [x] Fix pathname for ticket overview page to /admin/sager
  - [x] Rate limit middleware
+ - [x] Abstract fetch call to api

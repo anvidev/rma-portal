@@ -36,6 +36,7 @@ async function apiRequest<TOutput>(
 		},
 	}
 
+	// TODO: support formdata also???
 	if (methodsWithBody.has(method) && body !== undefined) {
 		requestInit.body = JSON.stringify(body)
 	}

@@ -84,9 +84,11 @@ export const actions: Actions = {
 			return fail(500, { form })
 		}
 
+		const {ticket} = ticketData
+
 		const redirectUrl = locals.user
-			? `/admin/sager/${ticketData.ticket.id}`
-			: `sager/${ticketData.ticket.id}/tak`
+			? `/admin/sager/${ticket.id}`
+			: `sager/${ticket.id}/tak`
 
 		if (locals.user) {
 			setHeaders({
