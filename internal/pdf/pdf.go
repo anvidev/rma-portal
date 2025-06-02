@@ -21,11 +21,11 @@ func TicketLabelPDF(ticket *store.Ticket) (*os.File, func(), error) {
 	}
 
 	model := "Ikke angivet"
-	if *ticket.Model != "" {
+	if ticket.Model != nil {
 		model = *ticket.Model
 	}
 	serialNumber := "Ikke angivet"
-	if *ticket.SerialNumber != "" {
+	if ticket.SerialNumber != nil {
 		serialNumber = *ticket.SerialNumber
 	}
 	var categories []string
