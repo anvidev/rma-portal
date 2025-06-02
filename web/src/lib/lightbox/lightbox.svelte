@@ -1,29 +1,29 @@
 <script lang="ts">
-	import type { Lightbox } from '$lib/lightbox.svelte'
 	import { fade, fly } from 'svelte/transition'
-
-	let { lightbox = $bindable() }: { lightbox: Lightbox } = $props()
+	import { activeLightbox } from './lightbox-store'
+	import { cn } from '$lib/utils'
 
 	function handleKeyDown(e: KeyboardEvent) {
-		console.log('keys', e)
-		if (lightbox.current()) {
+		if (!$activeLightbox) return
+		if ($activeLightbox.current()) {
 			if (e.key === 'Escape') {
-				lightbox.close()
+				$activeLightbox.close()
 			} else if (e.key === 'ArrowRight' || e.key === 'l') {
-				lightbox.next()
+				$activeLightbox.next()
 			} else if (e.key === 'ArrowLeft' || e.key === 'h') {
-				lightbox.previous()
+				$activeLightbox.previous()
 			} else if (e.ctrlKey && e.shiftKey && e.key == 'S') {
-				console.log('save')
-				lightbox.download()
+				$activeLightbox.download()
 			}
 		}
 	}
+
+	// TODO: implement goto function for lightbox
 </script>
 
 <svelte:document on:keydown={handleKeyDown} />
 
-{#if lightbox.current()}
+{#if $activeLightbox && $activeLightbox.current()}
 	<section
 		out:fade
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
@@ -34,10 +34,28 @@
 			class="mx-2 w-fit rounded-lg bg-white p-4 shadow-xl sm:mx-0 sm:max-w-3xl"
 		>
 			<img
-				class="h-autobw-full max-w-md rounded-md object-contain"
-				alt={lightbox.current().id.toString()}
-				src={lightbox.current().url}
+				class="h-auto w-full max-w-md rounded-md object-contain"
+				alt={$activeLightbox.current()?.id.toString()}
+				src={$activeLightbox.current()?.url}
 			/>
+
+			{#if false}
+				<div class="mt-2 flex flex-wrap items-start gap-2">
+					{#each $activeLightbox?.images() as img (img.id)}
+						<button type="button" onclick={() => console.log('')}>
+							<img
+								class={cn(
+									'size-10 rounded-md',
+									$activeLightbox?.current()?.id == img.id &&
+										'border-primary border opacity-80 transition-all',
+								)}
+								alt={img.id.toString()}
+								src={img.url}
+							/>
+						</button>
+					{/each}
+				</div>
+			{/if}
 
 			<p class="mt-3 text-center text-sm text-gray-500">
 				Tryk

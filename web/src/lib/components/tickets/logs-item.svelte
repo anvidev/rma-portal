@@ -3,8 +3,7 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js'
 	import { cn, formatDate } from '$lib/utils'
 	import { FileText, Shield } from '@lucide/svelte'
-	import { Lightbox } from '$lib/lightbox.svelte'
-	import LightboxView from '../common/lightbox-view.svelte'
+	import { Lightbox } from '$lib/lightbox/lightbox-state.svelte'
 	let { log, internal = false }: { log: Log; internal?: boolean } = $props()
 
 	function getStatusBorderColor(status: string): string {
@@ -121,5 +120,3 @@
 		</div>
 	{/if}
 </div>
-
-<LightboxView {lightbox} />

@@ -1,3 +1,5 @@
+import { activeLightbox } from './lightbox-store'
+
 export type LightboxImage = {
 	id: string | number
 	url: string
@@ -9,6 +11,7 @@ export class Lightbox {
 	private imgs: LightboxImage[]
 	private cur: LightboxImage | undefined = $state(undefined)
 	private loop: boolean
+	private curIdx: number = $state(-1)
 
 	constructor(opts: LightboxOptions) {
 		this.imgs = opts.images
@@ -21,42 +24,44 @@ export class Lightbox {
 
 	open(id: string | number) {
 		this.#toggleBody()
-		this.cur = this.imgs.find(img => img.id == id)
+		const foundIdx = this.imgs.findIndex(img => img.id === id)
+		if (foundIdx !== -1) {
+			this.curIdx = foundIdx
+			this.cur = this.imgs[foundIdx]
+			activeLightbox.set(this)
+		}
+		activeLightbox.set(this)
 	}
 
 	close() {
 		this.#toggleBody()
 		this.cur = undefined
+		this.curIdx = -1
+		activeLightbox.set(undefined)
 	}
 
 	next() {
-		if (!this.cur) return
-		const curIdx = this.imgs.findIndex(img => img.id == this.cur?.id)
-		if (curIdx === -1) return
-		if (curIdx < this.imgs.length - 1) {
-			const nextImage = this.imgs[curIdx + 1]
-			this.cur = nextImage
+		if (this.curIdx === -1) return
+		if (this.curIdx < this.imgs.length - 1) {
+			this.curIdx++
+		} else if (this.loop) {
+			this.curIdx = 0
 		} else {
-			if (this.loop) {
-				const firstImage = this.imgs[0]
-				this.cur = firstImage
-			}
+			return
 		}
+		this.cur = this.imgs[this.curIdx]
 	}
 
 	previous() {
-		if (!this.cur) return
-		const curIdx = this.imgs.findIndex(img => img.id == this.cur?.id)
-		if (curIdx == -1) return
-		if (curIdx > 0) {
-			const previousImage = this.imgs[curIdx - 1]
-			this.cur = previousImage
+		if (this.curIdx === -1) return
+		if (this.curIdx > 0) {
+			this.curIdx--
+		} else if (this.loop) {
+			this.curIdx = this.imgs.length - 1
 		} else {
-			if (this.loop) {
-				const lastImage = this.imgs[this.imgs.length - 1]
-				this.cur = lastImage
-			}
+			return
 		}
+		this.cur = this.imgs[this.curIdx]
 	}
 
 	current(): LightboxImage | undefined {
@@ -69,5 +74,9 @@ export class Lightbox {
 		const a = document.createElement('a')
 		a.href = this.cur.url
 		a.click()
+	}
+
+	images(): LightboxImage[] {
+		return this.imgs
 	}
 }
