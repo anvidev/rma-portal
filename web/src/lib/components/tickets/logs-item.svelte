@@ -45,8 +45,8 @@
 		<p class="whitespace-pre-line text-sm">{log.external_comment}</p>
 	</div>
 	{#if log.internal_comment}
-		<div class="bg-muted/40 mt-3 rounded-lg border p-3">
-			<div class="text-muted-foreground mb-1 flex items-center gap-1 text-sm">
+		<div class="mt-3 rounded-lg border bg-muted/40 p-3">
+			<div class="mb-1 flex items-center gap-1 text-sm text-muted-foreground">
 				<Shield class="size-3.5" />
 				<span class="font-medium">Intern kommentar</span>
 			</div>

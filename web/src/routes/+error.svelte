@@ -10,7 +10,7 @@
 		<div class="flex flex-col items-center justify-center gap-2">
 			<h1 class="text-xl font-semibold">Hov! Der gik noget galt</h1>
 			{#if page.error?.requestId}
-				<p class="text-muted-foreground text-xs">Request ID: {page.error?.requestId}</p>
+				<p class="text-xs text-muted-foreground">Request ID: {page.error?.requestId}</p>
 			{/if}
 			<p class="text-muted-foreground">{page.error?.message}</p>
 		</div>
