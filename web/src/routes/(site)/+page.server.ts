@@ -8,7 +8,7 @@ import { redirect } from '@sveltejs/kit'
 const schema = z.object({
 	query: z
 		.string()
-		.regex(/^\d{5}-[A-Za-z0-9]{5}$/, 'Ugyldigt RMA sags ID. Tjek formatet og prøv igen.'),
+		.regex(/^\d{5}-[A-Za-z0-9]{10}$/, 'Ugyldigt RMA sags ID. Tjek formatet og prøv igen.'),
 })
 
 export const load: PageServerLoad = async () => {
