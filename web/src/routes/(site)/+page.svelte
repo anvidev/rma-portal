@@ -66,7 +66,7 @@
 			type="search"
 			class="h-12 text-base placeholder:text-base"
 			bind:value={$form.query}
-			placeholder="F.eks. 00001-R2D20"
+			placeholder="F.eks. 25001-R2D20C3PO0"
 			aria-invalid={$errors.query ? true : undefined}
 		/>
 		<Button size="lg" class="group" type="submit">
