@@ -37,6 +37,7 @@ type ticketStorer interface {
 	CreateLog(ctx context.Context, l *Log) error
 	ListInternalLogs(ctx context.Context, ID string) ([]Log, error)
 	ListExternalLogs(ctx context.Context, ID string) ([]Log, error)
+	CreateFile(ctx context.Context, file *File) error
 }
 
 func withTx(ctx context.Context, db *sql.DB, fn func(tx *sql.Tx) error) error {

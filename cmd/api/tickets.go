@@ -374,8 +374,21 @@ func (api *api) postTicketFiles(w http.ResponseWriter, r *http.Request) {
 		}
 		defer file.Close()
 
-		_, err = api.storage.Put(r.Context(), file, id, fileHeader.Filename)
+		object, err := api.storage.Put(r.Context(), file, id, fileHeader.Filename)
 		if err != nil {
+			api.internalServerError(w, r, err)
+			return
+		}
+
+		logFile := &store.File{
+			FileName:    fileHeader.Filename,
+			FileUrl:     object.URL,
+			FileDomain:  store.DomainTickets,
+			ReferenceID: id,
+			MimeType:    fileHeader.Header.Get("Content-Type"),
+		}
+
+		if err := api.store.Tickets.CreateFile(r.Context(), logFile); err != nil {
 			api.internalServerError(w, r, err)
 			return
 		}

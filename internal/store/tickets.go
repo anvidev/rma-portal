@@ -33,6 +33,11 @@ const (
 	HARDWARE
 )
 
+const (
+	DomainTickets = "tickets"
+	DomainLogs = "logs"
+)
+
 var (
 	ErrStatusNotImplemented   = fmt.Errorf("status ikke implementeret")
 	ErrCategoryNotImplemented = fmt.Errorf("kategori ikke implementeret")
@@ -255,6 +260,16 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 	return nil
 }
 
+type File struct {
+	ID          int64  `json:"id"`
+	FileName    string `json:"file_name"`
+	FileUrl     string `json:"file_url"`
+	FileDomain  string `json:"file_domain"`
+	ReferenceID string `json:"reference_id"` // tickets id are strings, logs id are int64
+	MimeType    string `json:"mime_type"`
+	Inserted    string `json:"inserted"`
+}
+
 type Contact struct {
 	Name    string `json:"name"`
 	Company string `json:"company"`
@@ -290,6 +305,7 @@ type Log struct {
 	ExternalComment string `json:"external_comment"`
 	InternalComment string `json:"internal_comment,omitempty"`
 	Inserted        string `json:"inserted" apidoc:"ignore"`
+	Files           []File `json:"files,omitempty"`
 }
 
 type ticketStore struct {
@@ -808,4 +824,36 @@ func (s *ticketStore) ListExternalLogs(ctx context.Context, ID string) ([]Log, e
 	}
 
 	return logs, nil
+}
+
+func (s *ticketStore) CreateFile(ctx context.Context, file *File) error {
+	stmt := `
+		INSERT INTO files (
+			file_name,
+			file_url,
+			file_domain,
+			reference_id,
+			mime_type
+		) 
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id, inserted
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, queryTimeoutDuration)
+	defer cancel()
+
+	err := s.db.QueryRowContext(
+		ctx,
+		stmt,
+		file.FileName,
+		file.FileUrl,
+		file.FileDomain,
+		file.ReferenceID,
+		file.MimeType,
+	).Scan(&file.ID, &file.Inserted)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

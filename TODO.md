@@ -38,6 +38,7 @@
  - [x] Fix pathname for ticket overview page to /admin/sager
  - [x] Rate limit middleware
  - [x] Abstract fetch call to api
- - [x] Censor customer information on public page
- - [ ] Add new "contact_person_name" field to tickets table
+ - [-] ~Censor customer information on public page~
+ - [x] Add new "contact_person_name" field to tickets table
  - [ ] File storage for tickets/logs
+ - [ ] Edit log as admin (remember updated, updated_by)

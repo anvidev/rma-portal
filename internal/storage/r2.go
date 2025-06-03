@@ -59,7 +59,7 @@ func (s *R2Storage) Put(ctx context.Context, body io.Reader, namespace, filename
 
 	return &StorageResponse{
 		Key: *key,
-		URL: s.url(s.accountID, s.bucketName, *key),
+		URL: s.url(*key),
 	}, nil
 }
 
@@ -67,6 +67,6 @@ func (s *R2Storage) timestampedKey(v string) string {
 	return fmt.Sprintf("%d-%s", time.Now().Unix(), v)
 }
 
-func (s *R2Storage) url(accountID, bucketName, key string) string {
-	return fmt.Sprintf("https://%s.r2.cloudflarestorage.com/%s/%s", accountID, bucketName, key)
+func (s *R2Storage) url(key string) string {
+	return fmt.Sprintf("https://anvi.dev/%s", key)
 }
