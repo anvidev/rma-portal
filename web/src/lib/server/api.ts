@@ -98,7 +98,7 @@ export const api = {
 		})
 	},
 	async createTicketLog(token: string, id: string, data: NewTicketLog) {
-		return apiRequest<{log: Log}>(`${API_URL}/v1/admin/tickets/${id}/logs`, 'POST', {
+		return apiRequest<{ log: Log }>(`${API_URL}/v1/admin/tickets/${id}/logs`, 'POST', {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -109,16 +109,20 @@ export const api = {
 		return apiRequest<{ ticket: TicketWithLogs }>(`${API_URL}/v1/tickets/${id}`, 'GET')
 	},
 	async createTicketFiles(id: string, data: FormData) {
-		return apiRequest<{files: string[]}>(`${API_URL}/v1/tickets/${id}/files`, 'POST', {
-			body: data
+		return apiRequest<{ files: string[] }>(`${API_URL}/v1/tickets/${id}/files`, 'POST', {
+			body: data,
 		})
 	},
 	async createLogFiles(token: string, id: string, logID: number, data: FormData) {
-		return apiRequest<{files: string[]}>(`${API_URL}/v1/admin/tickets/${id}/logs/${logID}/files`, 'POST', {
-			headers: {
-				Authorization: `Bearer ${token}`,
+		return apiRequest<{ files: string[] }>(
+			`${API_URL}/v1/admin/tickets/${id}/logs/${logID}/files`,
+			'POST',
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+				body: data,
 			},
-			body: data
-		})
-	}
+		)
+	},
 } as const

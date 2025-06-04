@@ -55,8 +55,8 @@
 		<p class="whitespace-pre-line text-sm">{log.external_comment}</p>
 	</div>
 	{#if log.internal_comment}
-		<div class="bg-muted/40 mt-3 rounded-lg border p-3">
-			<div class="text-muted-foreground mb-1 flex items-center gap-1 text-sm">
+		<div class="mt-3 rounded-lg border bg-muted/40 p-3">
+			<div class="mb-1 flex items-center gap-1 text-sm text-muted-foreground">
 				<Shield class="size-3.5" />
 				<span class="font-medium">Intern kommentar</span>
 			</div>
@@ -76,7 +76,7 @@
 									<a
 										href={file.file_url}
 										target="_blank"
-										class="bg-muted/40 group-hover:bg-muted/100 grid h-full w-full place-items-center transition-colors"
+										class="grid h-full w-full place-items-center bg-muted/40 transition-colors group-hover:bg-muted/100"
 									>
 										<FileText class="size-5 fill-slate-200 text-slate-500" />
 									</a>

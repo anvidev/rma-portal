@@ -47,7 +47,7 @@
 								class={cn(
 									'size-10 rounded-md',
 									$activeLightbox?.current()?.id == img.id &&
-										'border-primary border opacity-80 transition-all',
+										'border border-primary opacity-80 transition-all',
 								)}
 								alt={img.id.toString()}
 								src={img.url}
