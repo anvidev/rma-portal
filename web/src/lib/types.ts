@@ -18,7 +18,7 @@ export type Contact = {
 }
 
 export type Ticket = {
-	id: number
+	id: string
 	status: string
 	categories: string[]
 	issue: string
@@ -39,6 +39,17 @@ export type Log = {
 	initiator: string
 	external_comment: string
 	internal_comment?: string
+	inserted: string
+	files?: File[]
+}
+
+export type File = {
+	id: number
+	file_name: string
+	file_url: string
+	file_domain: 'tickets' | 'logs'
+	reference_id: string
+	mime_type: string
 	inserted: string
 }
 

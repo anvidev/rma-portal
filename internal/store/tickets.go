@@ -35,7 +35,7 @@ const (
 
 const (
 	DomainTickets = "tickets"
-	DomainLogs = "logs"
+	DomainLogs    = "logs"
 )
 
 var (
@@ -737,10 +737,32 @@ func (s *ticketStore) CreateLog(ctx context.Context, l *Log) error {
 
 func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, error) {
 	stmt := `
-		SELECT id, status, initiator, external_comment, internal_comment, inserted
-		FROM logs
+		SELECT 
+			l.id,
+			l.status,
+			l.initiator,
+			l.external_comment,
+			l.internal_comment,
+			l.inserted,
+			COALESCE(
+				json_agg(
+				  json_build_object(
+					'id', f.id,
+					'file_name', f.file_name,
+					'file_url', f.file_url,
+					'mime_type', f.mime_type,
+					'inserted', f.inserted
+				  )
+				) FILTER (WHERE f.id IS NOT NULL),
+				'[]'
+			) AS files
+		FROM logs l
+		LEFT JOIN files f
+			ON f.file_domain = 'logs'
+			AND f.reference_id = l.id::text
 		WHERE ticket_id = $1
-		ORDER BY id DESC
+		GROUP BY l.id
+		ORDER BY l.id DESC
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, queryTimeoutDuration)
@@ -759,6 +781,7 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, e
 
 	for rows.Next() {
 		var l Log
+		var filesJSON []byte
 
 		if err := rows.Scan(
 			&l.ID,
@@ -767,7 +790,12 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, e
 			&l.ExternalComment,
 			&l.InternalComment,
 			&l.Inserted,
+			&filesJSON,
 		); err != nil {
+			return nil, err
+		}
+
+		if err := json.Unmarshal(filesJSON, &l.Files); err != nil {
 			return nil, err
 		}
 
@@ -846,8 +874,12 @@ func (s *ticketStore) CreateFile(ctx context.Context, file *File) error {
 		ctx,
 		stmt,
 		file.FileName,
+
+	fmt.Printf("logs: %+v\n", logs)
 		file.FileUrl,
 		file.FileDomain,
+
+	fmt.Printf("logs: %+v\n", logs)
 		file.ReferenceID,
 		file.MimeType,
 	).Scan(&file.ID, &file.Inserted)
@@ -857,3 +889,52 @@ func (s *ticketStore) CreateFile(ctx context.Context, file *File) error {
 
 	return nil
 }
+
+// func (s *ticketStore) getLogFiles(ctx context.Context, tx *sql.Tx, log *Log) error {
+// 	stmt := `
+// 		SELECT id, file_name, file_url, file_domain, reference_id, mime_type, inserted
+// 		FROM files
+// 		WHERE file_domain = logs AND reference_id = $1
+// 		ORDER BY id
+// 	`
+//
+// 	ctx, cancel := context.WithTimeout(ctx, queryTimeoutDuration)
+// 	defer cancel()
+//
+// 	rows, err := tx.QueryContext(ctx, stmt, log.ID)
+// 	if err != nil {
+// 		switch err {
+// 		case sql.ErrNoRows:
+// 			return nil
+// 		default:
+// 			return err
+// 		}
+// 	}
+// 	defer rows.Close()
+//
+// 	files := []File{}
+//
+// 	for rows.Next() {
+// 		var file File
+//
+// 		rows.Scan(
+// 			&file.ID,
+// 			&file.FileName,
+// 			&file.FileUrl,
+// 			&file.FileDomain,
+// 			&file.ReferenceID,
+// 			&file.MimeType,
+// 			&file.Inserted,
+// 		)
+//
+// 		files = append(files, file)
+// 	}
+//
+// 	if err := rows.Err(); err != nil {
+// 		return err
+// 	}
+//
+// 	log.Files = files
+//
+// 	return nil
+// }

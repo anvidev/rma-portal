@@ -1,4 +1,4 @@
-import type { Ticket, TicketWithLogs } from '$lib/types'
+import type { Log, Ticket, TicketWithLogs } from '$lib/types'
 import type { NewTicketLog } from '../../routes/(site)/admin/sager/[id]/+page.server'
 import type { NewTicket } from '../../routes/(site)/opret/+page.server'
 import { API_URL } from './env'
@@ -30,15 +30,16 @@ async function apiRequest<TOutput>(
 
 	const requestInit: RequestInit = {
 		method,
-		headers: {
-			'Content-Type': 'application/json',
-			...headers,
-		},
+		headers: { ...headers },
 	}
 
 	// TODO: support formdata also???
 	if (methodsWithBody.has(method) && body !== undefined) {
-		requestInit.body = JSON.stringify(body)
+		if (body instanceof FormData) {
+			requestInit.body = body
+		} else {
+			requestInit.body = JSON.stringify(body)
+		}
 	}
 
 	try {
@@ -90,14 +91,14 @@ export const api = {
 		})
 	},
 	async getTicket(token: string, id: string) {
-		return apiRequest<{ ticket: Ticket }>(`${API_URL}/v1/admin/tickets/${id}`, 'GET', {
+		return apiRequest<{ ticket: TicketWithLogs }>(`${API_URL}/v1/admin/tickets/${id}`, 'GET', {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
 		})
 	},
 	async createTicketLog(token: string, id: string, data: NewTicketLog) {
-		return apiRequest<null>(`${API_URL}/v1/admin/tickets/${id}/log`, 'POST', {
+		return apiRequest<{log: Log}>(`${API_URL}/v1/admin/tickets/${id}/logs`, 'POST', {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -107,4 +108,17 @@ export const api = {
 	async getPublicTicket(id: string) {
 		return apiRequest<{ ticket: TicketWithLogs }>(`${API_URL}/v1/tickets/${id}`, 'GET')
 	},
+	async createTicketFiles(id: string, data: FormData) {
+		return apiRequest<{files: string[]}>(`${API_URL}/v1/tickets/${id}/files`, 'POST', {
+			body: data
+		})
+	},
+	async createLogFiles(token: string, id: string, logID: number, data: FormData) {
+		return apiRequest<{files: string[]}>(`${API_URL}/v1/admin/tickets/${id}/logs/${logID}/files`, 'POST', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			body: data
+		})
+	}
 } as const

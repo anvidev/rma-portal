@@ -110,7 +110,10 @@ func (api *api) mount() http.Handler {
 					r.Get("/", api.getAdminTicket)
 					r.Put("/", nil)
 					r.Delete("/", api.deleteAdminTicket)
-					r.Post("/log", api.postCreateLog)
+					r.Route("/logs", func(r chi.Router) {
+						r.Post("/", api.postCreateLog)
+						r.Post("/{logID}/files", api.postLogFiles)
+					})
 				})
 			})
 		})

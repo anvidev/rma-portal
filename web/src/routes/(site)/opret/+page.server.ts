@@ -109,14 +109,13 @@ export const actions: Actions = {
 				formData.append('files', f)
 			})
 
-			const fileResponse = await fetch(`${API_URL}/v1/tickets/${ticket.id}/files`, {
-				method: 'POST',
-				body: formData,
-			})
-
-			if (!fileResponse.ok) {
-				const { error } = await fileResponse.json()
-				console.error(`fil upload fejlede for RMA #${ticket.id}: ${error ?? 'ukendt fejl'}`)
+			const [_filesData, err] = await locals.api.createTicketFiles(ticket.id, formData)
+			if (err != null) {
+				console.error(`fil upload fejlede for RMA #${ticket.id}: ${err.message}`)
+				if (err instanceof ApiError) {
+					return fail(err.status, { form })
+				}
+				return fail(500, { form })
 			}
 		}
 

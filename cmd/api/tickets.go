@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -385,6 +386,66 @@ func (api *api) postTicketFiles(w http.ResponseWriter, r *http.Request) {
 			FileUrl:     object.URL,
 			FileDomain:  store.DomainTickets,
 			ReferenceID: id,
+			MimeType:    fileHeader.Header.Get("Content-Type"),
+		}
+
+		if err := api.store.Tickets.CreateFile(r.Context(), logFile); err != nil {
+			api.internalServerError(w, r, err)
+			return
+		}
+
+		response.Files = append(response.Files, fileHeader.Filename)
+	}
+
+	if err := writeJSON(w, http.StatusCreated, response); err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+}
+
+func (api *api) postLogFiles(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	logID := r.PathValue("logID")
+
+	if err := r.ParseMultipartForm(16 << 20); err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+
+	files, exists := r.MultipartForm.File["files"]
+	if !exists || len(files) == 0 {
+		api.badRequestError(w, r, errors.New("ingen filer modtaget"))
+		return
+	}
+
+	var response ticketFilesResponse
+
+	for _, fileHeader := range files {
+		if fileHeader.Size > 4*1024*1024 {
+			api.badRequestError(w, r, errors.New("fil er for stor: "+fileHeader.Filename))
+			return
+		}
+
+		file, err := fileHeader.Open()
+		if err != nil {
+			api.internalServerError(w, r, err)
+			return
+		}
+		defer file.Close()
+
+		logNamespace := fmt.Sprintf("%s/logs", id)
+
+		object, err := api.storage.Put(r.Context(), file, logNamespace, fileHeader.Filename)
+		if err != nil {
+			api.internalServerError(w, r, err)
+			return
+		}
+
+		logFile := &store.File{
+			FileName:    fileHeader.Filename,
+			FileUrl:     object.URL,
+			FileDomain:  store.DomainLogs,
+			ReferenceID: logID,
 			MimeType:    fileHeader.Header.Get("Content-Type"),
 		}
 
