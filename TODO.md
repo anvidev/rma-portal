@@ -40,5 +40,5 @@
  - [x] Abstract fetch call to api
  - [-] ~Censor customer information on public page~
  - [x] Add new "contact_person_name" field to tickets table
- - [ ] File storage for tickets/logs
+ - [x] File storage for tickets/logs
  - [ ] Edit log as admin (remember updated, updated_by)
