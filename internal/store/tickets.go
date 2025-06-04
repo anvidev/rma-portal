@@ -874,12 +874,8 @@ func (s *ticketStore) CreateFile(ctx context.Context, file *File) error {
 		ctx,
 		stmt,
 		file.FileName,
-
-	fmt.Printf("logs: %+v\n", logs)
 		file.FileUrl,
 		file.FileDomain,
-
-	fmt.Printf("logs: %+v\n", logs)
 		file.ReferenceID,
 		file.MimeType,
 	).Scan(&file.ID, &file.Inserted)
@@ -889,52 +885,3 @@ func (s *ticketStore) CreateFile(ctx context.Context, file *File) error {
 
 	return nil
 }
-
-// func (s *ticketStore) getLogFiles(ctx context.Context, tx *sql.Tx, log *Log) error {
-// 	stmt := `
-// 		SELECT id, file_name, file_url, file_domain, reference_id, mime_type, inserted
-// 		FROM files
-// 		WHERE file_domain = logs AND reference_id = $1
-// 		ORDER BY id
-// 	`
-//
-// 	ctx, cancel := context.WithTimeout(ctx, queryTimeoutDuration)
-// 	defer cancel()
-//
-// 	rows, err := tx.QueryContext(ctx, stmt, log.ID)
-// 	if err != nil {
-// 		switch err {
-// 		case sql.ErrNoRows:
-// 			return nil
-// 		default:
-// 			return err
-// 		}
-// 	}
-// 	defer rows.Close()
-//
-// 	files := []File{}
-//
-// 	for rows.Next() {
-// 		var file File
-//
-// 		rows.Scan(
-// 			&file.ID,
-// 			&file.FileName,
-// 			&file.FileUrl,
-// 			&file.FileDomain,
-// 			&file.ReferenceID,
-// 			&file.MimeType,
-// 			&file.Inserted,
-// 		)
-//
-// 		files = append(files, file)
-// 	}
-//
-// 	if err := rows.Err(); err != nil {
-// 		return err
-// 	}
-//
-// 	log.Files = files
-//
-// 	return nil
-// }
