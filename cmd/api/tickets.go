@@ -403,6 +403,10 @@ func (api *api) postTicketFiles(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type logFilesResponse struct {
+	Files []string `json:"files"`
+}
+
 func (api *api) postLogFiles(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	logID := r.PathValue("logID")
@@ -418,7 +422,7 @@ func (api *api) postLogFiles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var response ticketFilesResponse
+	var response logFilesResponse
 
 	for _, fileHeader := range files {
 		if fileHeader.Size > 4*1024*1024 {
