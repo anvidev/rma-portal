@@ -83,7 +83,7 @@ export const api = {
 		return apiRequest<{ statuses: string[] }>(`${API_URL}/v1/tickets/statuses`, 'GET')
 	},
 	async listCategories() {
-		return apiRequest<{ categories: string[] }>(`${API_URL}/v1/tickets/statuses`, 'GET')
+		return apiRequest<{ categories: string[] }>(`${API_URL}/v1/tickets/categories`, 'GET')
 	},
 	async createTicket(data: NewTicket) {
 		return apiRequest<{ ticket: TicketWithLogs }>(`${API_URL}/v1/tickets`, 'POST', {
