@@ -739,6 +739,7 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, e
 	stmt := `
 		SELECT 
 			l.id,
+			l.ticket_id,
 			l.status,
 			l.initiator,
 			l.external_comment,
@@ -785,6 +786,7 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, e
 
 		if err := rows.Scan(
 			&l.ID,
+			&l.TicketID,
 			&l.Status,
 			&l.Initiator,
 			&l.ExternalComment,
@@ -811,7 +813,7 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, e
 
 func (s *ticketStore) ListExternalLogs(ctx context.Context, ID string) ([]Log, error) {
 	stmt := `
-		SELECT id, status, initiator, external_comment, inserted
+		SELECT id, ticket_id, status, initiator, external_comment, inserted
 		FROM logs
 		WHERE ticket_id = $1
 		ORDER BY id DESC
@@ -836,6 +838,7 @@ func (s *ticketStore) ListExternalLogs(ctx context.Context, ID string) ([]Log, e
 
 		if err := rows.Scan(
 			&l.ID,
+			&l.TicketID,
 			&l.Status,
 			&l.Initiator,
 			&l.ExternalComment,

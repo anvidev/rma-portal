@@ -34,7 +34,7 @@ export type Ticket = {
 
 export type Log = {
 	id: number
-	ticketId: number
+	ticket_id: number
 	status: string
 	initiator: string
 	external_comment: string

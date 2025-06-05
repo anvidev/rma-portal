@@ -13,6 +13,11 @@ import (
 )
 
 const (
+	BucketUrl string = "https://anvi.dev"
+
+	storageContextTimeout   time.Duration = time.Second * 20
+	storagePresignExpiresIn time.Duration = time.Minute * 3
+
 	folderName string = "files"
 )
 
@@ -41,6 +46,27 @@ func NewR2Storage(bucketName, accountID, accessKeyID, accessKeySecret string) (S
 		accountID:  accountID,
 		client:     client,
 	}, nil
+}
+
+func (s *R2Storage) PutPresign(ctx context.Context, key, contentType string, contentLength int64) (string, error) {
+	presignClient := s3.NewPresignClient(s.client)
+
+	ctx, cancel := context.WithTimeout(ctx, storageContextTimeout)
+	defer cancel()
+
+	obj := &s3.PutObjectInput{
+		Bucket:        &s.bucketName,
+		Key:           &key,
+		ContentType:   &contentType,
+		ContentLength: &contentLength,
+	}
+
+	request, err := presignClient.PresignPutObject(ctx, obj, s3.WithPresignExpires(storagePresignExpiresIn))
+	if err != nil {
+		return "", err
+	}
+
+	return request.URL, nil
 }
 
 func (s *R2Storage) Get() {}

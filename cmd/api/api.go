@@ -116,6 +116,7 @@ func (api *api) mount() http.Handler {
 					})
 				})
 			})
+			r.Put("/upload", api.postUpload)
 		})
 
 		r.Route("/tickets", func(r chi.Router) {
