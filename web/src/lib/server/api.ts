@@ -1,6 +1,7 @@
-import type { Ticket, TicketWithLogs } from '$lib/types'
+import type { Log, Ticket, TicketWithLogs } from '$lib/types'
 import type { NewTicketLog } from '../../routes/(site)/admin/sager/[id]/+page.server'
 import type { NewTicket } from '../../routes/(site)/opret/+page.server'
+import type { NewPresignedUrl } from '../../routes/api/upload/+server'
 import { API_URL } from './env'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -30,15 +31,15 @@ async function apiRequest<TOutput>(
 
 	const requestInit: RequestInit = {
 		method,
-		headers: {
-			'Content-Type': 'application/json',
-			...headers,
-		},
+		headers: headers,
 	}
 
-	// TODO: support formdata also???
 	if (methodsWithBody.has(method) && body !== undefined) {
-		requestInit.body = JSON.stringify(body)
+		if (body instanceof FormData) {
+			requestInit.body = body
+		} else {
+			requestInit.body = JSON.stringify(body)
+		}
 	}
 
 	try {
@@ -82,7 +83,7 @@ export const api = {
 		return apiRequest<{ statuses: string[] }>(`${API_URL}/v1/tickets/statuses`, 'GET')
 	},
 	async listCategories() {
-		return apiRequest<{ categories: string[] }>(`${API_URL}/v1/tickets/statuses`, 'GET')
+		return apiRequest<{ categories: string[] }>(`${API_URL}/v1/tickets/categories`, 'GET')
 	},
 	async createTicket(data: NewTicket) {
 		return apiRequest<{ ticket: TicketWithLogs }>(`${API_URL}/v1/tickets`, 'POST', {
@@ -90,14 +91,14 @@ export const api = {
 		})
 	},
 	async getTicket(token: string, id: string) {
-		return apiRequest<{ ticket: Ticket }>(`${API_URL}/v1/admin/tickets/${id}`, 'GET', {
+		return apiRequest<{ ticket: TicketWithLogs }>(`${API_URL}/v1/admin/tickets/${id}`, 'GET', {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
 		})
 	},
 	async createTicketLog(token: string, id: string, data: NewTicketLog) {
-		return apiRequest<null>(`${API_URL}/v1/admin/tickets/${id}/log`, 'POST', {
+		return apiRequest<{ log: Log }>(`${API_URL}/v1/admin/tickets/${id}/logs`, 'POST', {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -106,5 +107,13 @@ export const api = {
 	},
 	async getPublicTicket(id: string) {
 		return apiRequest<{ ticket: TicketWithLogs }>(`${API_URL}/v1/tickets/${id}`, 'GET')
+	},
+	async getPresignedPutUrl(token: string, newPresignedUrl: NewPresignedUrl) {
+		return apiRequest<{ presigned_url: string }>(`${API_URL}/v1/admin/upload`, 'PUT', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			body: newPresignedUrl,
+		})
 	},
 } as const

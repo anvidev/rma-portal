@@ -11,6 +11,7 @@ import (
 	"github.com/anvidev/rma-portal/internal/mailer"
 	"github.com/anvidev/rma-portal/internal/queue"
 	"github.com/anvidev/rma-portal/internal/ratelimit"
+	"github.com/anvidev/rma-portal/internal/storage"
 	"github.com/anvidev/rma-portal/internal/store"
 	"go.uber.org/zap"
 )
@@ -41,6 +42,12 @@ func main() {
 			apikey:       env.MustString("RESEND_API_KEY"),
 			from:         env.String("RESEND_FROM", "Skancode RMA <noreply@nemunivers.app>"),
 			serviceEmail: env.String("RESEND_SERVICE_EMAIL", "av@skancode.dk"),
+		},
+		r2Storage: r2StorageConfig{
+			bucketName:      env.String("R2_BUCKET_NAME", "rma-portal"),
+			accountID:       env.MustString("R2_ACCOUNT_ID"),
+			accessKeyID:     env.MustString("R2_ACCESS_KEY_ID"),
+			accessKeySecret: env.MustString("R2_ACCESS_KEY_SECRET"),
 		},
 	}
 
@@ -89,7 +96,13 @@ func main() {
 		config.auth.token.host,
 	)
 
-	baseRateLimit := ratelimit.NewRateLimitContext(context.Background(), 0.5, 10)
+	baseRateLimit := ratelimit.NewRateLimitContext(context.Background(), 0.5, 30)
+	storage, err := storage.NewR2Storage(
+		config.r2Storage.bucketName,
+		config.r2Storage.accountID,
+		config.r2Storage.accessKeyID,
+		config.r2Storage.accessKeySecret,
+	)
 
 	api := &api{
 		logger:        logger,
@@ -100,6 +113,7 @@ func main() {
 		queue:         queue,
 		documentation: documentation,
 		baseRateLimit: baseRateLimit,
+		storage:       storage,
 	}
 
 	queue.Start(context.Background())

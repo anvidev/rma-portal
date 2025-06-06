@@ -53,3 +53,11 @@ export function censorEmail(email: string): string {
 	const stars = '*'.repeat(local.length - 2)
 	return `${first}${stars}${last}@${domain}`
 }
+
+export function isImage(mime: string) {
+	return mime.startsWith('image/')
+}
+
+export function isDocument(mime: string) {
+	return mime === 'application/pdf' || mime.startsWith('application/ms')
+}

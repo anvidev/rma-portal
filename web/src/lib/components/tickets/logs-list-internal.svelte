@@ -23,6 +23,7 @@
 			status: string
 			external_comment: string
 			internal_comment: string
+			files?: File[]
 		}>
 	} = $props()
 
@@ -42,7 +43,7 @@
 <div class="flex items-center justify-between">
 	<div>
 		<h3 class="font-semibold leading-tight">Seneste opdateringer</h3>
-		<p class="text-sm text-muted-foreground">Følg status og opdateringer på din RMA sag</p>
+		<p class="text-muted-foreground text-sm">Følg status og opdateringer RMA sag</p>
 	</div>
 
 	<Dialog.Root {open} onOpenChange={val => (open = val)}>
@@ -75,13 +76,13 @@
 								{/each}
 							</Select.Content>
 						</Select.Root>
-						{#if $errors?.status}<span class="text-sm text-destructive">{$errors.status}</span>{/if}
+						{#if $errors?.status}<span class="text-destructive text-sm">{$errors.status}</span>{/if}
 					</div>
 
 					<div class="grid flex-1 gap-2">
 						<Label for="external">Ekstern kommentar<span class="text-red-500">*</span></Label>
 						<Textarea id="external" bind:value={$form.external_comment} />
-						{#if $errors?.external_comment}<span class="text-sm text-destructive"
+						{#if $errors?.external_comment}<span class="text-destructive text-sm"
 								>{$errors.external_comment}</span
 							>{/if}
 					</div>
@@ -89,10 +90,10 @@
 					<div class="grid flex-1 gap-2">
 						<Label for="internal">Intern kommentar</Label>
 						<Textarea id="internal" bind:value={$form.internal_comment} />
-						<p class="text-sm text-muted-foreground">
+						<p class="text-muted-foreground text-sm">
 							Denne kommentar er kun synlig for Skancode A/S
 						</p>
-						{#if $errors?.internal_comment}<span class="text-sm text-destructive"
+						{#if $errors?.internal_comment}<span class="text-destructive text-sm"
 								>{$errors.internal_comment}</span
 							>{/if}
 					</div>
@@ -106,6 +107,6 @@
 </div>
 <div class="mt-8 flex flex-col gap-4">
 	{#each ticket.logs as log (log.id)}
-		<LogsItem {log} />
+		<LogsItem {log} internal={true} />
 	{/each}
 </div>

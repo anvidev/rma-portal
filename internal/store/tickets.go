@@ -33,6 +33,11 @@ const (
 	HARDWARE
 )
 
+const (
+	DomainTickets = "tickets"
+	DomainLogs    = "logs"
+)
+
 var (
 	ErrStatusNotImplemented   = fmt.Errorf("status ikke implementeret")
 	ErrCategoryNotImplemented = fmt.Errorf("kategori ikke implementeret")
@@ -255,6 +260,16 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 	return nil
 }
 
+type File struct {
+	ID          int64  `json:"id"`
+	FileName    string `json:"file_name"`
+	FileUrl     string `json:"file_url"`
+	FileDomain  string `json:"file_domain"`
+	ReferenceID string `json:"reference_id"` // tickets id are strings, logs id are int64
+	MimeType    string `json:"mime_type"`
+	Inserted    string `json:"inserted"`
+}
+
 type Contact struct {
 	Name    string `json:"name"`
 	Company string `json:"company"`
@@ -290,6 +305,7 @@ type Log struct {
 	ExternalComment string `json:"external_comment"`
 	InternalComment string `json:"internal_comment,omitempty"`
 	Inserted        string `json:"inserted" apidoc:"ignore"`
+	Files           []File `json:"files,omitempty"`
 }
 
 type ticketStore struct {
@@ -721,10 +737,33 @@ func (s *ticketStore) CreateLog(ctx context.Context, l *Log) error {
 
 func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, error) {
 	stmt := `
-		SELECT id, status, initiator, external_comment, internal_comment, inserted
-		FROM logs
+		SELECT 
+			l.id,
+			l.ticket_id,
+			l.status,
+			l.initiator,
+			l.external_comment,
+			l.internal_comment,
+			l.inserted,
+			COALESCE(
+				json_agg(
+				  json_build_object(
+					'id', f.id,
+					'file_name', f.file_name,
+					'file_url', f.file_url,
+					'mime_type', f.mime_type,
+					'inserted', f.inserted
+				  )
+				) FILTER (WHERE f.id IS NOT NULL),
+				'[]'
+			) AS files
+		FROM logs l
+		LEFT JOIN files f
+			ON f.file_domain = 'logs'
+			AND f.reference_id = l.id::text
 		WHERE ticket_id = $1
-		ORDER BY id DESC
+		GROUP BY l.id
+		ORDER BY l.id DESC
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, queryTimeoutDuration)
@@ -743,15 +782,22 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, e
 
 	for rows.Next() {
 		var l Log
+		var filesJSON []byte
 
 		if err := rows.Scan(
 			&l.ID,
+			&l.TicketID,
 			&l.Status,
 			&l.Initiator,
 			&l.ExternalComment,
 			&l.InternalComment,
 			&l.Inserted,
+			&filesJSON,
 		); err != nil {
+			return nil, err
+		}
+
+		if err := json.Unmarshal(filesJSON, &l.Files); err != nil {
 			return nil, err
 		}
 
@@ -767,7 +813,7 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, e
 
 func (s *ticketStore) ListExternalLogs(ctx context.Context, ID string) ([]Log, error) {
 	stmt := `
-		SELECT id, status, initiator, external_comment, inserted
+		SELECT id, ticket_id, status, initiator, external_comment, inserted
 		FROM logs
 		WHERE ticket_id = $1
 		ORDER BY id DESC
@@ -792,6 +838,7 @@ func (s *ticketStore) ListExternalLogs(ctx context.Context, ID string) ([]Log, e
 
 		if err := rows.Scan(
 			&l.ID,
+			&l.TicketID,
 			&l.Status,
 			&l.Initiator,
 			&l.ExternalComment,
@@ -808,4 +855,36 @@ func (s *ticketStore) ListExternalLogs(ctx context.Context, ID string) ([]Log, e
 	}
 
 	return logs, nil
+}
+
+func (s *ticketStore) CreateFile(ctx context.Context, file *File) error {
+	stmt := `
+		INSERT INTO files (
+			file_name,
+			file_url,
+			file_domain,
+			reference_id,
+			mime_type
+		) 
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id, inserted
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, queryTimeoutDuration)
+	defer cancel()
+
+	err := s.db.QueryRowContext(
+		ctx,
+		stmt,
+		file.FileName,
+		file.FileUrl,
+		file.FileDomain,
+		file.ReferenceID,
+		file.MimeType,
+	).Scan(&file.ID, &file.Inserted)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

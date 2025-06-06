@@ -1,7 +1,7 @@
 import type { Actions, PageServerLoad } from './$types'
-import { superValidate } from 'sveltekit-superforms'
+import { fail, superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
-import { fail, redirect } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 import * as z from 'zod'
 import { ApiError } from '$lib/server/api'
 
@@ -73,7 +73,6 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	default: async ({ request, locals, setHeaders }) => {
 		const form = await superValidate(request, zod(schema))
-
 		if (!form.valid) return fail(400, { form })
 
 		const [ticketData, err] = await locals.api.createTicket(form.data)

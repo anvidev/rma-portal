@@ -9,6 +9,7 @@ import (
 	"github.com/anvidev/rma-portal/internal/mailer"
 	"github.com/anvidev/rma-portal/internal/queue"
 	"github.com/anvidev/rma-portal/internal/ratelimit"
+	"github.com/anvidev/rma-portal/internal/storage"
 	"github.com/anvidev/rma-portal/internal/store"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -24,13 +25,15 @@ type api struct {
 	documentation *apidoc.APIDocumentation
 	queue         *queue.Queue
 	baseRateLimit *ratelimit.RateLimit
+	storage       storage.Storager
 }
 
 type config struct {
-	server   serverConfig
-	database databaseConfig
-	auth     authConfig
-	resend   resendMailerConfig
+	server    serverConfig
+	database  databaseConfig
+	auth      authConfig
+	resend    resendMailerConfig
+	r2Storage r2StorageConfig
 }
 
 type serverConfig struct {
@@ -62,6 +65,13 @@ type resendMailerConfig struct {
 	apikey       string
 	from         string
 	serviceEmail string
+}
+
+type r2StorageConfig struct {
+	bucketName      string
+	accountID       string
+	accessKeyID     string
+	accessKeySecret string
 }
 
 func (api *api) mount() http.Handler {
@@ -100,9 +110,10 @@ func (api *api) mount() http.Handler {
 					r.Get("/", api.getAdminTicket)
 					r.Put("/", nil)
 					r.Delete("/", api.deleteAdminTicket)
-					r.Post("/log", api.postCreateLog)
+					r.Post("/logs", api.postCreateLog)
 				})
 			})
+			r.Put("/upload", api.postUpload)
 		})
 
 		r.Route("/tickets", func(r chi.Router) {

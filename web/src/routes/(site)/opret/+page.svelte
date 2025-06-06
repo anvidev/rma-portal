@@ -51,7 +51,11 @@
 
 <title>Opret RMA - Skancode RMA Service Portal</title>
 
-<form method="POST" use:enhance class="mx-auto max-w-3xl space-y-4 p-6">
+<form
+	method="POST"
+	use:enhance
+	class="mx-auto max-w-3xl space-y-4 p-6"
+>
 	<div>
 		<h1 class="text-lg font-semibold leading-tight">Opret RMA</h1>
 		<p class="text-sm text-muted-foreground">
