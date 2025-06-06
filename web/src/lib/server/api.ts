@@ -31,7 +31,7 @@ async function apiRequest<TOutput>(
 
 	const requestInit: RequestInit = {
 		method,
-		headers: { ...headers },
+		headers: headers,
 	}
 
 	if (methodsWithBody.has(method) && body !== undefined) {

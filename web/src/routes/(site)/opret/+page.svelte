@@ -52,7 +52,6 @@
 <title>Opret RMA - Skancode RMA Service Portal</title>
 
 <form
-	enctype="multipart/form-data"
 	method="POST"
 	use:enhance
 	class="mx-auto max-w-3xl space-y-4 p-6"
