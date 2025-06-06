@@ -112,86 +112,88 @@
 		<p class="whitespace-pre-line text-sm">{log.external_comment}</p>
 	</div>
 	{#if log.internal_comment}
-		<div class="mt-3 rounded-lg border bg-muted/40 p-3">
-			<div class="mb-1 flex items-center gap-1 text-sm text-muted-foreground">
+		<div class="bg-muted/40 mt-3 rounded-lg border p-3">
+			<div class="text-muted-foreground mb-1 flex items-center gap-1 text-sm">
 				<Shield class="size-3.5" />
 				<span class="font-medium">Intern kommentar</span>
 			</div>
 			<p class="whitespace-pre-line text-sm">{log.internal_comment}</p>
 		</div>
 	{/if}
-	<div class="mt-3 flex items-center gap-2">
-		{#if internal && files && files.length > 0}
-			{#each files as file (file.id)}
-				<div animate:flip>
-					<Tooltip.Provider delayDuration={250}>
-						<Tooltip.Root>
-							<Tooltip.Trigger>
-								{#snippet child({ props })}
-									<div
-										class="group flex size-12 cursor-pointer items-center justify-center overflow-hidden rounded-lg border"
-										{...props}
-									>
-										{#if isDocument(file.mime_type)}
-											<a
-												href={file.file_url}
-												target="_blank"
-												class="grid h-full w-full place-items-center bg-muted/40 transition-colors group-hover:bg-muted/100"
-											>
-												<FileText class="size-5 fill-slate-200 text-slate-600" />
-											</a>
-										{:else if isImage(file.mime_type)}
-											<button
-												class="h-full w-full"
-												type="button"
-												onclick={() => lightbox.open(file.id)}
-											>
-												<img
-													alt={file.file_name}
-													src={file.file_url}
-													class="h-full w-full object-cover transition-transform group-hover:scale-105"
-												/>
-											</button>
-										{/if}
+	{#if internal}
+		<div class="mt-3 flex items-center gap-2">
+			{#if files && files.length > 0}
+				{#each files as file (file.id)}
+					<div animate:flip>
+						<Tooltip.Provider delayDuration={250}>
+							<Tooltip.Root>
+								<Tooltip.Trigger>
+									{#snippet child({ props })}
+										<div
+											class="group flex size-12 cursor-pointer items-center justify-center overflow-hidden rounded-lg border"
+											{...props}
+										>
+											{#if isDocument(file.mime_type)}
+												<a
+													href={file.file_url}
+													target="_blank"
+													class="bg-muted/40 group-hover:bg-muted/100 grid h-full w-full place-items-center transition-colors"
+												>
+													<FileText class="size-5 fill-slate-200 text-slate-600" />
+												</a>
+											{:else if isImage(file.mime_type)}
+												<button
+													class="h-full w-full"
+													type="button"
+													onclick={() => lightbox.open(file.id)}
+												>
+													<img
+														alt={file.file_name}
+														src={file.file_url}
+														class="h-full w-full object-cover transition-transform group-hover:scale-105"
+													/>
+												</button>
+											{/if}
+										</div>
+									{/snippet}
+								</Tooltip.Trigger>
+								<Tooltip.Content sideOffset={8}>
+									<div class="">{file.file_name}</div>
+								</Tooltip.Content>
+							</Tooltip.Root>
+						</Tooltip.Provider>
+					</div>
+				{/each}
+			{/if}
+			<Tooltip.Provider delayDuration={250}>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						{#snippet child({ props })}
+							<div {...props} class="group flex items-center justify-center">
+								<label
+									for={`dropzone-log-${log.id}`}
+									class="bg-muted/40 group-hover:bg-muted/100 flex size-12 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed transition-colors"
+								>
+									<div class="flex flex-col items-center justify-center">
+										<FileUp class="size-5 fill-slate-200 text-slate-600" />
 									</div>
-								{/snippet}
-							</Tooltip.Trigger>
-							<Tooltip.Content sideOffset={8}>
-								<div class="">{file.file_name}</div>
-							</Tooltip.Content>
-						</Tooltip.Root>
-					</Tooltip.Provider>
-				</div>
-			{/each}
-		{/if}
-		<Tooltip.Provider delayDuration={250}>
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					{#snippet child({ props })}
-						<div {...props} class="group flex items-center justify-center">
-							<label
-								for={`dropzone-log-${log.id}`}
-								class="flex size-12 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed bg-muted/40 transition-colors group-hover:bg-muted/100"
-							>
-								<div class="flex flex-col items-center justify-center">
-									<FileUp class="size-5 fill-slate-200 text-slate-600" />
-								</div>
-								<input
-									{onchange}
-									id={`dropzone-log-${log.id}`}
-									type="file"
-									class="hidden"
-									accept="image/*, application/pdf, application/ms"
-									multiple
-								/>
-							</label>
-						</div>
-					{/snippet}
-				</Tooltip.Trigger>
-				<Tooltip.Content sideOffset={8}>
-					<div>Upload filer</div>
-				</Tooltip.Content>
-			</Tooltip.Root>
-		</Tooltip.Provider>
-	</div>
+									<input
+										{onchange}
+										id={`dropzone-log-${log.id}`}
+										type="file"
+										class="hidden"
+										accept="image/*, application/pdf, application/ms"
+										multiple
+									/>
+								</label>
+							</div>
+						{/snippet}
+					</Tooltip.Trigger>
+					<Tooltip.Content sideOffset={8}>
+						<div>Upload filer</div>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
+		</div>
+	{/if}
 </div>

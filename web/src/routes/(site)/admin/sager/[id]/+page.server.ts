@@ -9,12 +9,6 @@ const createLogSchema = z.object({
 	status: z.string(),
 	external_comment: z.string().max(200),
 	internal_comment: z.string().max(200),
-	files: z
-		.instanceof(File, { message: 'Foo' })
-		.refine(f => f.size < 4_000_000_000, 'Filerne må ikke være større end 4MB')
-		.array()
-		.max(10, { message: 'Maks. 10 filer må uploades' })
-		.optional(),
 })
 
 export type NewTicketLog = z.infer<typeof createLogSchema>
@@ -59,8 +53,6 @@ export const actions: Actions = {
 	default: async ({ request, params, cookies, setHeaders, locals }) => {
 		const form = await superValidate(request, zod(createLogSchema))
 
-		const { files, ...newLog } = form.data
-
 		if (!form.valid) {
 			return fail(400, { form })
 		}
@@ -68,26 +60,11 @@ export const actions: Actions = {
 		const token = cookies.get('token') ?? ''
 		const id = params.id ?? ''
 
-		const [logData, err] = await locals.api.createTicketLog(token, id, newLog)
+		const [_logData, err] = await locals.api.createTicketLog(token, id, form.data)
 		if (err != null) {
 			if (err instanceof ApiError) {
 				return fail(err.status, { form })
 			} else {
-				return fail(500, { form })
-			}
-		}
-
-		if (files && files.length > 0) {
-			const formData = new FormData()
-
-			files.forEach(f => formData.append('files', f))
-
-			const [_filesData, err] = await locals.api.createLogFiles(token, id, logData.log.id, formData)
-			if (err != null) {
-				console.error(`fil upload fejlede for RMA opdatering #${logData.log.id}: ${err.message}`)
-				if (err instanceof ApiError) {
-					return fail(err.status, { form })
-				}
 				return fail(500, { form })
 			}
 		}

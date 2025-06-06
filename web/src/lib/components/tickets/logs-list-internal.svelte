@@ -6,10 +6,9 @@
 	import { Plus } from '@lucide/svelte'
 	import Button from '../ui/button/button.svelte'
 	import Label from '../ui/label/label.svelte'
-	import { filesProxy, superForm, type SuperValidated } from 'sveltekit-superforms'
+	import { superForm, type SuperValidated } from 'sveltekit-superforms'
 	import { toast } from 'svelte-sonner'
 	import LogsItem from './logs-item.svelte'
-	import Input from '../ui/input/input.svelte'
 
 	let open = $state(false)
 
@@ -39,8 +38,6 @@
 			}
 		},
 	})
-
-	const files = filesProxy(form, 'files')
 </script>
 
 <div class="flex items-center justify-between">
@@ -100,21 +97,6 @@
 								>{$errors.internal_comment}</span
 							>{/if}
 					</div>
-
-					<!-- <div class="grid gap-2"> -->
-					<!-- 	<Label for="files">Filer</Label> -->
-					<!-- 	<Input -->
-					<!-- 		placeholder="Der er ikke valgt nogen filer" -->
-					<!-- 		type="file" -->
-					<!-- 		multiple -->
-					<!-- 		name="files" -->
-					<!-- 		bind:files={$files} -->
-					<!-- 	/> -->
-					<!-- 	<p class="text-sm text-muted-foreground">Filer er kun synlig for Skancode A/S</p> -->
-					<!-- 	{#if $errors?.files}<span class="text-sm text-destructive" -->
-					<!-- 			>{$errors.files._errors[0]}</span -->
-					<!-- 		>{/if} -->
-					<!-- </div> -->
 				</div>
 				<Dialog.Footer>
 					<Button type="submit">Opret</Button>
