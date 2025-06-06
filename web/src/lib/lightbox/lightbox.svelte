@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade, fly } from 'svelte/transition'
 	import { activeLightbox } from './lightbox-store'
-	import { cn } from '$lib/utils'
+	import { onMount } from 'svelte'
 
 	function handleKeyDown(e: KeyboardEvent) {
 		if (!$activeLightbox) return
@@ -18,10 +18,14 @@
 		}
 	}
 
-	// TODO: implement goto function for lightbox
-</script>
+	onMount(() => {
+		document.addEventListener('keydown', handleKeyDown)
 
-<svelte:document on:keydown={handleKeyDown} />
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown)
+		}
+	})
+</script>
 
 {#if $activeLightbox && $activeLightbox.current()}
 	<section
@@ -38,24 +42,6 @@
 				alt={$activeLightbox.current()?.id.toString()}
 				src={$activeLightbox.current()?.url}
 			/>
-
-			{#if false}
-				<div class="mt-2 flex flex-wrap items-start gap-2">
-					{#each $activeLightbox?.images() as img (img.id)}
-						<button type="button" onclick={() => console.log('')}>
-							<img
-								class={cn(
-									'size-10 rounded-md',
-									$activeLightbox?.current()?.id == img.id &&
-										'border border-primary opacity-80 transition-all',
-								)}
-								alt={img.id.toString()}
-								src={img.url}
-							/>
-						</button>
-					{/each}
-				</div>
-			{/if}
 
 			<p class="mt-3 text-center text-sm text-gray-500">
 				Tryk
