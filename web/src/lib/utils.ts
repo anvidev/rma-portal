@@ -59,9 +59,5 @@ export function isImage(mime: string) {
 }
 
 export function isDocument(mime: string) {
-	return (
-		mime === 'application/pdf' ||
-		mime.startsWith('application/ms') ||
-		mime.startsWith('application/vnd')
-	)
+	return mime === 'application/pdf' || mime.startsWith('application/ms')
 }

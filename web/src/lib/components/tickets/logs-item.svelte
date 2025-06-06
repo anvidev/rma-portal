@@ -2,7 +2,7 @@
 	import { type Log } from '$lib/types'
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js'
 	import { cn, formatDate, isDocument, isImage } from '$lib/utils'
-	import { FileText, Shield, Upload } from '@lucide/svelte'
+	import { FileText, FileUp, Shield } from '@lucide/svelte'
 	import { Lightbox } from '$lib/lightbox/lightbox-state.svelte'
 	import { toast } from 'svelte-sonner'
 	import { flip } from 'svelte/animate'
@@ -120,8 +120,8 @@
 			<p class="whitespace-pre-line text-sm">{log.internal_comment}</p>
 		</div>
 	{/if}
-	{#if internal && files && files.length > 0}
-		<div class="mt-3 flex items-center gap-2">
+	<div class="mt-3 flex items-center gap-2">
+		{#if internal && files && files.length > 0}
 			{#each files as file (file.id)}
 				<div animate:flip>
 					<Tooltip.Provider delayDuration={250}>
@@ -138,7 +138,7 @@
 												target="_blank"
 												class="bg-muted/40 group-hover:bg-muted/100 grid h-full w-full place-items-center transition-colors"
 											>
-												<FileText class="size-5 fill-slate-200 text-slate-500" />
+												<FileText class="size-5 fill-slate-200 text-slate-600" />
 											</a>
 										{:else if isImage(file.mime_type)}
 											<button type="button" onclick={() => lightbox.open(file.id)}>
@@ -159,18 +159,35 @@
 					</Tooltip.Provider>
 				</div>
 			{/each}
-
-			<div class="flex items-center justify-center">
-				<label
-					for={`dropzone-log-${log.id}`}
-					class="flex size-12 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-800"
-				>
-					<div class="flex flex-col items-center justify-center">
-						<Upload class="text-muted-foreground size-5" />
-					</div>
-					<input {onchange} id={`dropzone-log-${log.id}`} type="file" class="hidden" multiple />
-				</label>
-			</div>
-		</div>
-	{/if}
+		{/if}
+		<Tooltip.Provider delayDuration={250}>
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					{#snippet child({ props })}
+						<div {...props} class="group flex items-center justify-center">
+							<label
+								for={`dropzone-log-${log.id}`}
+								class="group-hover:bg-muted/100 bg-muted/40 flex size-12 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed transition-colors"
+							>
+								<div class="flex flex-col items-center justify-center">
+									<FileUp class="size-5 fill-slate-200 text-slate-600" />
+								</div>
+								<input
+									{onchange}
+									id={`dropzone-log-${log.id}`}
+									type="file"
+									class="hidden"
+									accept="image/*, application/pdf, application/ms"
+									multiple
+								/>
+							</label>
+						</div>
+					{/snippet}
+				</Tooltip.Trigger>
+				<Tooltip.Content sideOffset={8}>
+					<div>Upload filer</div>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		</Tooltip.Provider>
+	</div>
 </div>

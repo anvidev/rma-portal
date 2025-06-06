@@ -31,6 +31,10 @@ func (api *api) postUpload(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
+	if api.isDevelopment() {
+		body.Key = fmt.Sprintf("dev/%s", body.Key)
+	}
+
 	presignedUrl, err := api.storage.PutPresign(ctx, body.Key, body.ContentType, body.ContentLength)
 	if err != nil {
 		api.internalServerError(w, r, err)
@@ -56,4 +60,8 @@ func (api *api) postUpload(w http.ResponseWriter, r *http.Request) {
 		api.internalServerError(w, r, err)
 		return
 	}
+}
+
+func (api *api) isDevelopment() bool {
+	return api.config.server.env == "development"
 }
