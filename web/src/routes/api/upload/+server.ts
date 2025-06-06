@@ -34,5 +34,5 @@ export const PUT: RequestHandler = async ({ request, locals, cookies }) => {
 		}
 	}
 
-	return new Response(presignedUrlData.presigned_url, { status: 201 })
+	return Response.json({ url: presignedUrlData.presigned_url }, { status: 201 })
 }
