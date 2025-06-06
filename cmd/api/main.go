@@ -98,6 +98,7 @@ func main() {
 
 	baseRateLimit := ratelimit.NewRateLimitContext(context.Background(), 0.5, 10)
 	storage, err := storage.NewR2Storage(
+		config.server.env,
 		config.r2Storage.bucketName,
 		config.r2Storage.accountID,
 		config.r2Storage.accessKeyID,

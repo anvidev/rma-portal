@@ -25,9 +25,10 @@ type R2Storage struct {
 	bucketName string
 	accountID  string
 	client     *s3.Client
+	env        string
 }
 
-func NewR2Storage(bucketName, accountID, accessKeyID, accessKeySecret string) (Storager, error) {
+func NewR2Storage(env, bucketName, accountID, accessKeyID, accessKeySecret string) (Storager, error) {
 	cfg, err := config.LoadDefaultConfig(
 		context.TODO(),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, accessKeySecret, "")),
@@ -45,6 +46,7 @@ func NewR2Storage(bucketName, accountID, accessKeyID, accessKeySecret string) (S
 		bucketName: bucketName,
 		accountID:  accountID,
 		client:     client,
+		env:        env,
 	}, nil
 }
 
@@ -53,6 +55,10 @@ func (s *R2Storage) PutPresign(ctx context.Context, key, contentType string, con
 
 	ctx, cancel := context.WithTimeout(ctx, storageContextTimeout)
 	defer cancel()
+
+	if s.isDevelopment() {
+		key = fmt.Sprintf("dev/%s", key)
+	}
 
 	obj := &s3.PutObjectInput{
 		Bucket:        &s.bucketName,
@@ -95,4 +101,8 @@ func (s *R2Storage) timestampedKey(v string) string {
 
 func (s *R2Storage) url(key string) string {
 	return fmt.Sprintf("https://anvi.dev/%s", key)
+}
+
+func (s *R2Storage) isDevelopment() bool {
+	return s.env == "development"
 }
