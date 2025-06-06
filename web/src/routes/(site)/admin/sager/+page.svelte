@@ -51,7 +51,6 @@
 		{clearFilters}
 	/>
 	<Table
-		{searchParams}
 		tickets={data.tickets}
 		bind:statusQuery
 		bind:categoriesQuery

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table/index.js'
-	import type { SvelteURLSearchParams } from 'svelte/reactivity'
 	import StatusBadge from '../common/status-badge.svelte'
 	import CategoryBadge from '../common/category-badge.svelte'
 	import type { Ticket } from '$lib/types'
@@ -16,7 +15,6 @@
 		directionQuery = $bindable(),
 	}: {
 		tickets: Ticket[]
-		searchParams: SvelteURLSearchParams
 		statusQuery: QueryState<string[]>
 		categoriesQuery: QueryState<string[]>
 		sortQuery: QueryState<string>
