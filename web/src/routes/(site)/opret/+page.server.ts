@@ -2,7 +2,6 @@ import type { Actions, PageServerLoad } from './$types'
 import { fail, superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { redirect } from '@sveltejs/kit'
-import { API_URL } from '$lib/server/env'
 import * as z from 'zod'
 import { ApiError } from '$lib/server/api'
 
@@ -61,12 +60,6 @@ const schema = z.object({
 		.max(500, { message: 'Må ikke være mere end 500 karaterer' }),
 	quote: radio.default('none'),
 	warranty: radio.default('none'),
-	files: z
-		.instanceof(File, { message: 'Foo' })
-		.refine(f => f.size < 4_000_000_000, 'Billederne må ikke være større end 4MB')
-		.array()
-		.max(4, { message: 'Maks. 4 billeder må uploades' })
-		.optional(),
 })
 
 export type NewTicket = z.infer<typeof schema>
@@ -82,18 +75,7 @@ export const actions: Actions = {
 		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return fail(400, { form })
 
-		const ticketFormData = {
-			sender: form.data.sender,
-			billing: form.data.billing,
-			model: form.data.model,
-			serial_number: form.data.serial_number,
-			categories: form.data.categories,
-			issue: form.data.issue,
-			quote: form.data.quote,
-			warranty: form.data.warranty,
-		}
-
-		const [ticketData, err] = await locals.api.createTicket(ticketFormData)
+		const [ticketData, err] = await locals.api.createTicket(form.data)
 		if (err != null) {
 			if (err instanceof ApiError) {
 				return fail(err.status, { form })
@@ -102,22 +84,6 @@ export const actions: Actions = {
 		}
 
 		const { ticket } = ticketData
-
-		if (form.data.files && form.data.files.length > 0) {
-			const formData = new FormData()
-			form.data.files.forEach(f => {
-				formData.append('files', f)
-			})
-
-			const [_filesData, err] = await locals.api.createTicketFiles(ticket.id, formData)
-			if (err != null) {
-				console.error(`fil upload fejlede for RMA #${ticket.id}: ${err.message}`)
-				if (err instanceof ApiError) {
-					return fail(err.status, { form })
-				}
-				return fail(500, { form })
-			}
-		}
 
 		const redirectUrl = locals.user ? `/admin/sager/${ticket.id}` : `sager/${ticket.id}/tak`
 

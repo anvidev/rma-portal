@@ -3,7 +3,6 @@ package storage
 import (
 	"context"
 	"fmt"
-	"io"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -25,10 +24,9 @@ type R2Storage struct {
 	bucketName string
 	accountID  string
 	client     *s3.Client
-	env        string
 }
 
-func NewR2Storage(env, bucketName, accountID, accessKeyID, accessKeySecret string) (Storager, error) {
+func NewR2Storage(bucketName, accountID, accessKeyID, accessKeySecret string) (Storager, error) {
 	cfg, err := config.LoadDefaultConfig(
 		context.TODO(),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, accessKeySecret, "")),
@@ -46,7 +44,6 @@ func NewR2Storage(env, bucketName, accountID, accessKeyID, accessKeySecret strin
 		bucketName: bucketName,
 		accountID:  accountID,
 		client:     client,
-		env:        env,
 	}, nil
 }
 
@@ -55,10 +52,6 @@ func (s *R2Storage) PutPresign(ctx context.Context, key, contentType string, con
 
 	ctx, cancel := context.WithTimeout(ctx, storageContextTimeout)
 	defer cancel()
-
-	if s.isDevelopment() {
-		key = fmt.Sprintf("dev/%s", key)
-	}
 
 	obj := &s3.PutObjectInput{
 		Bucket:        &s.bucketName,
@@ -73,36 +66,4 @@ func (s *R2Storage) PutPresign(ctx context.Context, key, contentType string, con
 	}
 
 	return request.URL, nil
-}
-
-func (s *R2Storage) Get() {}
-
-func (s *R2Storage) Put(ctx context.Context, body io.Reader, namespace, filename string) (*StorageResponse, error) {
-	key := aws.String(fmt.Sprintf("%s/%s/%s", folderName, namespace, s.timestampedKey(filename)))
-
-	_, err := s.client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket: &s.bucketName,
-		Key:    key,
-		Body:   body,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &StorageResponse{
-		Key: *key,
-		URL: s.url(*key),
-	}, nil
-}
-
-func (s *R2Storage) timestampedKey(v string) string {
-	return fmt.Sprintf("%d-%s", time.Now().Unix(), v)
-}
-
-func (s *R2Storage) url(key string) string {
-	return fmt.Sprintf("https://anvi.dev/%s", key)
-}
-
-func (s *R2Storage) isDevelopment() bool {
-	return s.env == "development"
 }

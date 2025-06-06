@@ -9,8 +9,6 @@
 
 	let { log, internal = false }: { log: Log; internal?: boolean } = $props()
 
-	console.log(log)
-
 	let files = $state(log.files ?? [])
 
 	function getStatusBorderColor(status: string): string {
@@ -70,8 +68,6 @@
 			}
 
 			const url = await presignResponse.text()
-			console.log('presigned url is: ', url)
-			console.log('log id is: ', log.id)
 
 			files.push({
 				id: Math.random() * Math.PI,
@@ -109,7 +105,7 @@
 >
 	<div class="space-y-2">
 		<div class="flex items-center justify-between">
-			<p class="text-sm font-medium capitalize leading-tight">{log.status} - {log.id}</p>
+			<p class="text-sm font-medium capitalize leading-tight">{log.status}</p>
 			<p class="text-sm leading-tight">{formatDate(log.inserted)}</p>
 		</div>
 		<small class="text-muted-foreground">{log.initiator}</small>
@@ -163,18 +159,18 @@
 					</Tooltip.Provider>
 				</div>
 			{/each}
+
+			<div class="flex items-center justify-center">
+				<label
+					for={`dropzone-log-${log.id}`}
+					class="flex size-12 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-800"
+				>
+					<div class="flex flex-col items-center justify-center">
+						<Upload class="text-muted-foreground size-5" />
+					</div>
+					<input {onchange} id={`dropzone-log-${log.id}`} type="file" class="hidden" multiple />
+				</label>
+			</div>
 		</div>
 	{/if}
-
-	<div class="flex w-full items-center justify-center">
-		<label
-			for={`dropzone-log-${log.id}`}
-			class="flex size-12 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-800"
-		>
-			<div class="flex flex-col items-center justify-center">
-				<Upload class="text-muted-foreground size-5" />
-			</div>
-			<input {onchange} id={`dropzone-log-${log.id}`} type="file" class="hidden" multiple />
-		</label>
-	</div>
 </div>

@@ -7,7 +7,7 @@
 	import { Button } from '$lib/components/ui/button/index.js'
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js'
 	import * as Dialog from '$lib/components/ui/dialog/index.js'
-	import { filesProxy, superForm } from 'sveltekit-superforms'
+	import { superForm } from 'sveltekit-superforms'
 
 	let { data } = $props()
 	let isBillingSame = $state(false)
@@ -47,8 +47,6 @@
 	function openModal(content: 'terms' | 'privacy') {
 		modalContent = content
 	}
-
-	const files = filesProxy(form, 'files')
 </script>
 
 <title>Opret RMA - Skancode RMA Service Portal</title>
@@ -374,20 +372,6 @@
 			aria-invalid={$errors?.issue ? 'true' : undefined}
 		/>
 		{#if $errors?.issue}<span class="text-sm text-destructive">{$errors.issue}</span>{/if}
-	</div>
-
-	<div class="grid gap-2">
-		<Label for="files">Billeder</Label>
-		<Input
-			placeholder="Der er ikke valgt nogen filer"
-			type="file"
-			multiple
-			name="files"
-			accept="image/png image/jpeg"
-			bind:files={$files}
-		/>
-		{#if $errors?.files}<span class="text-sm text-destructive">{$errors.files._errors[0]}</span
-			>{/if}
 	</div>
 
 	<div>

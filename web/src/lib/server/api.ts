@@ -1,6 +1,7 @@
 import type { Log, Ticket, TicketWithLogs } from '$lib/types'
 import type { NewTicketLog } from '../../routes/(site)/admin/sager/[id]/+page.server'
 import type { NewTicket } from '../../routes/(site)/opret/+page.server'
+import type { NewPresignedUrl } from '../../routes/api/upload/+server'
 import { API_URL } from './env'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -33,7 +34,6 @@ async function apiRequest<TOutput>(
 		headers: { ...headers },
 	}
 
-	// TODO: support formdata also???
 	if (methodsWithBody.has(method) && body !== undefined) {
 		if (body instanceof FormData) {
 			requestInit.body = body
@@ -108,21 +108,12 @@ export const api = {
 	async getPublicTicket(id: string) {
 		return apiRequest<{ ticket: TicketWithLogs }>(`${API_URL}/v1/tickets/${id}`, 'GET')
 	},
-	async createTicketFiles(id: string, data: FormData) {
-		return apiRequest<{ files: string[] }>(`${API_URL}/v1/tickets/${id}/files`, 'POST', {
-			body: data,
-		})
-	},
-	async createLogFiles(token: string, id: string, logID: number, data: FormData) {
-		return apiRequest<{ files: string[] }>(
-			`${API_URL}/v1/admin/tickets/${id}/logs/${logID}/files`,
-			'POST',
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-				body: data,
+	async getPresignedPutUrl(token: string, newPresignedUrl: NewPresignedUrl) {
+		return apiRequest<{ presigned_url: string }>(`${API_URL}/v1/admin/upload`, 'PUT', {
+			headers: {
+				Authorization: `Bearer ${token}`,
 			},
-		)
+			body: newPresignedUrl,
+		})
 	},
 } as const

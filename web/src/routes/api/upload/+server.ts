@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import type { RequestHandler } from './$types'
-import { API_URL } from '$lib/server/env'
+import { ApiError } from '$lib/server/api'
+import { error } from '@sveltejs/kit'
 
 const schema = z.object({
 	key: z.string().nonempty(),
@@ -11,7 +12,9 @@ const schema = z.object({
 	content_length: z.coerce.number().positive(),
 })
 
-export const PUT: RequestHandler = async ({ request, cookies, fetch }) => {
+export type NewPresignedUrl = z.infer<typeof schema>
+
+export const PUT: RequestHandler = async ({ request, locals, cookies }) => {
 	const token = cookies.get('token')
 	if (!token) {
 		return new Response('adgang nægtet', { status: 401 })
@@ -19,28 +22,17 @@ export const PUT: RequestHandler = async ({ request, cookies, fetch }) => {
 
 	const body = await schema.safeParseAsync(await request.json())
 	if (!body.success) {
-		console.error(body.error)
 		return new Response('ugyldig data sendt', { status: 400 })
 	}
 
-	try {
-		const response = await fetch(`${API_URL}/v1/admin/upload`, {
-			method: 'PUT',
-			headers: { Authorization: `Bearer ${token}` },
-			body: JSON.stringify(body.data),
-		})
-		if (!response.ok) {
-			return new Response('fejl på api server', {
-				status: response.status,
-			})
+	const [presignedUrlData, err] = await locals.api.getPresignedPutUrl(token, body.data)
+	if (err != null) {
+		if (err instanceof ApiError) {
+			return error(err.status, { message: err.message, requestId: err.requestID })
+		} else {
+			return error(500, { message: err.message })
 		}
-
-		const { presigned_url } = await response.json()
-
-		return new Response(presigned_url, { status: 201 })
-	} catch (error) {
-		return new Response('intern server fejl', {
-			status: 500,
-		})
 	}
+
+	return new Response(presignedUrlData.presigned_url, { status: 201 })
 }
