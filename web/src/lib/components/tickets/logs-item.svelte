@@ -63,11 +63,11 @@
 				}),
 			})
 			if (!presignResponse.ok) {
-				console.log('get response failed')
+				toast.error(`Kunne ikke hente en upload url for ${file.name}`)
 				return
 			}
 
-			const url = await presignResponse.text()
+			const { url } = await presignResponse.json()
 
 			files.push({
 				id: Math.random() * Math.PI,
@@ -88,7 +88,7 @@
 				body: file,
 			})
 			if (!putResponse.ok) {
-				console.log('put response failed')
+				toast.error(`${file.name} blev ikke uploadet til R2`)
 				return
 			}
 
@@ -141,11 +141,15 @@
 												<FileText class="size-5 fill-slate-200 text-slate-600" />
 											</a>
 										{:else if isImage(file.mime_type)}
-											<button type="button" onclick={() => lightbox.open(file.id)}>
+											<button
+												class="h-full w-full"
+												type="button"
+												onclick={() => lightbox.open(file.id)}
+											>
 												<img
 													alt={file.file_name}
 													src={file.file_url}
-													class="transition-transform group-hover:scale-105"
+													class="h-full w-full object-cover transition-transform group-hover:scale-105"
 												/>
 											</button>
 										{/if}
