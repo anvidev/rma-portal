@@ -7,8 +7,3 @@ import (
 type Storager interface {
 	PutPresign(ctx context.Context, key, contentType string, contentLength int64) (string, error)
 }
-
-type StorageResponse struct {
-	Key string
-	URL string
-}
