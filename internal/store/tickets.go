@@ -133,6 +133,8 @@ type TicketFilters struct {
 	Limit      int         `json:"limit"`
 	Offset     int         `json:"offset"`
 	Page       int         `json:"page"`
+	Sort       string      `json:"sort"`
+	Direction  string      `json:"direction"`
 }
 
 func (f *TicketFilters) Parse(r *http.Request) error {
@@ -140,6 +142,39 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 
 	f.Limit = 25
 	f.Offset = 0
+	f.Sort = "updated"
+	f.Direction = "DESC"
+
+	validSorts := map[string]bool{
+		"id":             true,
+		"status":         true,
+		"categories":     true,
+		"sender_company": true,
+		"sender_name":    true,
+		"inserted":       true,
+		"updated":        true,
+	}
+
+	validDirections := map[string]bool{
+		"asc":  true,
+		"desc": true,
+		"ASC":  true,
+		"DESC": true,
+	}
+
+	if q.Has("sort") {
+		sort := q.Get("sort")
+		if _, valid := validSorts[sort]; valid {
+			f.Sort = sort
+		}
+	}
+
+	if q.Has("direction") {
+		dir := q.Get("direction")
+		if _, valid := validDirections[dir]; valid {
+			f.Direction = strings.ToUpper(dir)
+		}
+	}
 
 	if q.Has("limit") {
 		max := 1000
@@ -475,7 +510,7 @@ func (s *ticketStore) List(ctx context.Context, filters TicketFilters) ([]Ticket
 			updated,
 			(SELECT COUNT(*) FROM filtered_tickets) AS total_count
 		FROM filtered_tickets
-		ORDER BY inserted DESC
+		ORDER BY ` + filters.Sort + " " + filters.Direction + `
 		LIMIT $6 OFFSET $7
     `
 

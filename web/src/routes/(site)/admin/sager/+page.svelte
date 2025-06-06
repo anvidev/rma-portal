@@ -20,6 +20,8 @@
 	let categoriesQuery = $state(stringArrayQueryState(searchParams, 'categories'))
 	let pageQuery = $state(numberQueryState(searchParams, 'page'))
 	let limitQuery = $state(numberQueryState(searchParams, 'limit'))
+	let sortQuery = $state(stringQueryState(searchParams, 'sort'))
+	let directionQuery = $state(stringQueryState(searchParams, 'direction'))
 
 	function clearFilters() {
 		searchQuery.set('')
@@ -36,7 +38,7 @@
 <section class="space-y-4">
 	<div>
 		<h1 class="text-lg font-semibold leading-tight">Sags oversigt</h1>
-		<p class="text-sm text-muted-foreground">
+		<p class="text-muted-foreground text-sm">
 			Se alle dine RMA-sager samlet ét sted, og brug filtre til hurtigt at finde det, du søger
 		</p>
 	</div>
@@ -48,6 +50,12 @@
 		bind:categoriesQuery
 		{clearFilters}
 	/>
-	<Table {searchParams} tickets={data.tickets} bind:statusQuery bind:categoriesQuery />
+	<Table
+		tickets={data.tickets}
+		bind:statusQuery
+		bind:categoriesQuery
+		bind:sortQuery
+		bind:directionQuery
+	/>
 	<Pagination total={data.total} limit={data.limit} {limitOptions} bind:pageQuery bind:limitQuery />
 </section>

@@ -14,8 +14,8 @@
 		total: number
 		limit: number
 		limitOptions: number[]
-		pageQuery: QueryState<number | null>
-		limitQuery: QueryState<number | null>
+		pageQuery: QueryState<number | undefined>
+		limitQuery: QueryState<number | undefined>
 	} = $props()
 
 	const totalPages = $derived(total > 0 ? Math.ceil(total / (limitQuery.value || 25)) : 1)

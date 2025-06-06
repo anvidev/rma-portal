@@ -2,7 +2,7 @@ import { goto } from '$app/navigation'
 import { SvelteURLSearchParams } from 'svelte/reactivity'
 
 export type QueryState<T> = {
-	set(v: T): void
+	set(v: T | undefined): void
 	value: T | undefined
 }
 
@@ -60,7 +60,7 @@ function createQueryState<T>(
 		set value(v) {
 			value = v
 		},
-		set(v: T) {
+		set(v: T | undefined) {
 			value = v
 		},
 	}
