@@ -6,8 +6,15 @@
 	import { Lightbox } from '$lib/lightbox/lightbox-state.svelte'
 	import { toast } from 'svelte-sonner'
 	import { flip } from 'svelte/animate'
+	import LogsDropdown from './logs-dropdown.svelte'
 
-	let { log, internal = false }: { log: Log; internal?: boolean } = $props()
+	let {
+		log,
+		internal = false,
+	}: {
+		log: Log
+		internal?: boolean
+	} = $props()
 
 	let files = $state(log.files ?? [])
 
@@ -106,9 +113,17 @@
 	<div class="space-y-2">
 		<div class="flex items-center justify-between">
 			<p class="text-sm font-medium capitalize leading-tight">{log.status}</p>
-			<p class="text-sm leading-tight">{formatDate(log.inserted)}</p>
+			<div class="flex items-center gap-2">
+				<p class="text-sm leading-tight">{formatDate(log.inserted)}</p>
+				<LogsDropdown {log} />
+			</div>
 		</div>
-		<small class="text-muted-foreground">{log.initiator}</small>
+		<div class="flex items-center gap-1">
+			<small class="text-muted-foreground">{log.initiator}</small>
+			{#if log.updated_by}
+				<small class="text-muted-foreground">(Opdateret af {log.updated_by})</small>
+			{/if}
+		</div>
 		<p class="whitespace-pre-line text-sm">{log.external_comment}</p>
 	</div>
 	{#if log.internal_comment}

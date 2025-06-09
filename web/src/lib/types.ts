@@ -41,6 +41,8 @@ export type Log = {
 	internal_comment?: string
 	inserted: string
 	files?: File[]
+	upadated?: string | null
+	updated_by?: string | null
 }
 
 export type File = {

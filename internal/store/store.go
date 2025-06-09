@@ -35,6 +35,7 @@ type ticketStorer interface {
 	List(ctx context.Context, filters TicketFilters) ([]Ticket, int, error)
 	DeleteByID(ctx context.Context, ID string) error
 	CreateLog(ctx context.Context, l *Log) error
+	UpdateLog(ctx context.Context, logID int64, l *Log) error
 	ListInternalLogs(ctx context.Context, ID string) ([]Log, error)
 	ListExternalLogs(ctx context.Context, ID string) ([]Log, error)
 	CreateFile(ctx context.Context, file *File) error

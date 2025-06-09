@@ -28,17 +28,18 @@
  - [x] Download PDF after ticket creation
  - [x] Email to skancode and customer when ticket is created
  - [x] Links in header to overview and create page
- - [ ] Add max height on ticket table
- - [ ] Add sorting/direction to filters
+ - [ ] ~Add max height on ticket table~
+ - [x] Add sorting/direction to filters
  - [x] Cache control for overview page
  - [x] Change redirect url for log out to login page
  - [x] Add a redirect searchparam to login page
  - [x] Fix caching after a ticket has been updated
- - [ ] Fix endpoints names with plural naming convention
+ - [x] Fix endpoints names with plural naming convention
  - [x] Fix pathname for ticket overview page to /admin/sager
  - [x] Rate limit middleware
  - [x] Abstract fetch call to api
  - [-] ~Censor customer information on public page~
  - [x] Add new "contact_person_name" field to tickets table
  - [x] File storage for tickets/logs
- - [ ] Edit log as admin (remember updated, updated_by)
+ - [x] Edit log as admin (remember updated, updated_by)
+ - [ ] Delete log as admin

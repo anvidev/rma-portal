@@ -11,12 +11,19 @@ const createLogSchema = z.object({
 	internal_comment: z.string().max(200),
 })
 
+const editLogSchema = z.object({
+	id: z.coerce.number(),
+	external_comment: z.string().max(200),
+	internal_comment: z.string().max(200),
+})
+
 export type NewTicketLog = z.infer<typeof createLogSchema>
 
 export const load: PageServerLoad = async ({ cookies, params, locals }) => {
 	const id = params.id
 
-	const emptyForm = await superValidate(zod(createLogSchema))
+	const createForm = await superValidate(zod(createLogSchema))
+	const editForm = await superValidate(zod(editLogSchema), { id: 'edit-form' })
 
 	const token = cookies.get('token') ?? ''
 
@@ -43,14 +50,15 @@ export const load: PageServerLoad = async ({ cookies, params, locals }) => {
 	const { statuses } = statusesData
 
 	return {
-		form: emptyForm,
+		createForm: createForm,
+		editForm: editForm,
 		ticket: ticket,
 		statuses: statuses,
 	}
 }
 
 export const actions: Actions = {
-	default: async ({ request, params, cookies, setHeaders, locals }) => {
+	create: async ({ request, params, cookies, setHeaders, locals }) => {
 		const form = await superValidate(request, zod(createLogSchema))
 
 		if (!form.valid) {
@@ -74,5 +82,28 @@ export const actions: Actions = {
 		})
 
 		return message(form, 'Opdatering tilføjet til RMA')
+	},
+	update: async ({ cookies, locals, request, params }) => {
+		const form = await superValidate(request, zod(editLogSchema))
+
+		if (!form.valid) {
+			return fail(400, { form })
+		}
+
+		const token = cookies.get('token') ?? ''
+		const id = params.id ?? ''
+
+		const { id: logID, ...updatedLog } = form.data
+
+		const [_logData, err] = await locals.api.updateTicketLog(token, id, logID, updatedLog)
+		if (err != null) {
+			if (err instanceof ApiError) {
+				return fail(err.status, { form })
+			} else {
+				return fail(500, { form })
+			}
+		}
+
+		return message(form, 'Status er blevet opdateret')
 	},
 }
