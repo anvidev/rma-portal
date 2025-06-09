@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/anvidev/rma-portal/internal/pdf"
 	"github.com/anvidev/rma-portal/internal/queue"
@@ -333,4 +334,39 @@ func (api *api) getPublicTicketLabel(w http.ResponseWriter, r *http.Request) {
 		api.internalServerError(w, r, err)
 		return
 	}
+}
+
+type putTicketLogsPayload struct {
+	ExternalComment string `json:"external_comment"`
+	InternalComment string `json:"internal_comment"`
+}
+
+func (api *api) putTicketLogs(w http.ResponseWriter, r *http.Request) {
+	logID, err := strconv.ParseInt(r.PathValue("logID"), 10, 64)
+	if err != nil {
+		api.badRequestError(w, r, err)
+		return
+	}
+
+	loggedInUser, _ := api.getAuthenticatedUser(r)
+
+	var body putTicketLogsPayload
+
+	if err := readJSON(w, r, &body); err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+
+	log := &store.Log{
+		ExternalComment: body.ExternalComment,
+		InternalComment: body.InternalComment,
+		UpdatedBy:       &loggedInUser.Name,
+	}
+
+	if err := api.store.Tickets.UpdateLog(r.Context(), logID, log); err != nil {
+		api.internalServerError(w, r, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

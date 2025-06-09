@@ -116,4 +116,17 @@ export const api = {
 			body: newPresignedUrl,
 		})
 	},
+	async uploadTicketLog(
+		token: string,
+		ticketID: string,
+		logID: number,
+		data: { external_comment: string; internal_comment: string },
+	) {
+		return apiRequest<undefined>(`${API_URL}/v1/admin/tickets/${ticketID}/logs/${logID}`, 'PUT', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			body: data,
+		})
+	},
 } as const

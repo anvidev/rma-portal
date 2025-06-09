@@ -15,19 +15,18 @@
 	let {
 		ticket,
 		statuses,
-		superform,
+		createForm,
 	}: {
 		ticket: TicketWithLogs
 		statuses: string[]
-		superform: SuperValidated<{
+		createForm: SuperValidated<{
 			status: string
 			external_comment: string
 			internal_comment: string
-			files?: File[]
 		}>
 	} = $props()
 
-	const { form, enhance, errors } = superForm(superform, {
+	const { form, enhance, errors } = superForm(createForm, {
 		resetForm: true,
 		clearOnSubmit: 'errors-and-message',
 		dataType: 'json',
@@ -56,7 +55,7 @@
 			{/snippet}
 		</Dialog.Trigger>
 		<Dialog.Content>
-			<form method="POST" use:enhance>
+			<form action="?/create" method="POST" use:enhance>
 				<Dialog.Header>
 					<Dialog.Title>Opdater RMA</Dialog.Title>
 					<Dialog.Description>

@@ -5,9 +5,10 @@
 	import Title from '$lib/components/tickets/title.svelte'
 
 	let { data } = $props()
+
 	const ticket = $derived(data.ticket)
 	const statuses = data.statuses
-	const form = data.form
+	const createForm = data.createForm
 </script>
 
 <svelte:head>
@@ -24,5 +25,5 @@
 			<ContactInformation contact={ticket.billing} title="Fakturering" sub="Faktureringsaddresse" />
 		</div>
 	</div>
-	<LogsListInternal {ticket} {statuses} superform={form} />
+	<LogsListInternal {ticket} {statuses} {createForm} />
 </article>

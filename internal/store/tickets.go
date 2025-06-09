@@ -333,14 +333,16 @@ type Ticket struct {
 }
 
 type Log struct {
-	ID              int64  `json:"id" apidoc:"ignore"`
-	TicketID        string `json:"ticket_id,omitempty"`
-	Status          Status `json:"status"`
-	Initiator       string `json:"initiator" description:"Name of the user. Sender name if triggered by ticket owner. User name if triggered by Admin user."`
-	ExternalComment string `json:"external_comment"`
-	InternalComment string `json:"internal_comment,omitempty"`
-	Inserted        string `json:"inserted" apidoc:"ignore"`
-	Files           []File `json:"files,omitempty"`
+	ID              int64   `json:"id" apidoc:"ignore"`
+	TicketID        string  `json:"ticket_id,omitempty"`
+	Status          Status  `json:"status"`
+	Initiator       string  `json:"initiator" description:"Name of the user. Sender name if triggered by ticket owner. User name if triggered by Admin user."`
+	ExternalComment string  `json:"external_comment"`
+	InternalComment string  `json:"internal_comment,omitempty"`
+	Inserted        string  `json:"inserted" apidoc:"ignore"`
+	Files           []File  `json:"files,omitempty"`
+	Updated         *string `json:"updated,omitempty"`
+	UpdatedBy       *string `json:"updated_by,omitempty"`
 }
 
 type ticketStore struct {
@@ -780,6 +782,8 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, e
 			l.external_comment,
 			l.internal_comment,
 			l.inserted,
+			l.updated,
+			l.updated_by,
 			COALESCE(
 				json_agg(
 				  json_build_object(
@@ -827,6 +831,8 @@ func (s *ticketStore) ListInternalLogs(ctx context.Context, ID string) ([]Log, e
 			&l.ExternalComment,
 			&l.InternalComment,
 			&l.Inserted,
+			&l.Updated,
+			&l.UpdatedBy,
 			&filesJSON,
 		); err != nil {
 			return nil, err
@@ -917,6 +923,34 @@ func (s *ticketStore) CreateFile(ctx context.Context, file *File) error {
 		file.ReferenceID,
 		file.MimeType,
 	).Scan(&file.ID, &file.Inserted)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *ticketStore) UpdateLog(ctx context.Context, logID int64, l *Log) error {
+	stmt := `
+		UPDATE logs
+		SET 
+			external_comment = $1,
+			internal_comment = $2,
+			updated_by = $3
+		WHERE id = $4
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, queryTimeoutDuration)
+	defer cancel()
+
+	_, err := s.db.ExecContext(
+		ctx,
+		stmt,
+		l.ExternalComment,
+		l.InternalComment,
+		l.UpdatedBy,
+		logID,
+	)
 	if err != nil {
 		return err
 	}
