@@ -116,7 +116,7 @@ export const api = {
 			body: newPresignedUrl,
 		})
 	},
-	async uploadTicketLog(
+	async updateTicketLog(
 		token: string,
 		ticketID: string,
 		logID: number,

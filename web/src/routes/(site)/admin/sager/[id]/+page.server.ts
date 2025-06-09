@@ -95,7 +95,7 @@ export const actions: Actions = {
 
 		const { id: logID, ...updatedLog } = form.data
 
-		const [_logData, err] = await locals.api.uploadTicketLog(token, id, logID, updatedLog)
+		const [_logData, err] = await locals.api.updateTicketLog(token, id, logID, updatedLog)
 		if (err != null) {
 			if (err instanceof ApiError) {
 				return fail(err.status, { form })
