@@ -2,6 +2,7 @@
 	import { fade, fly } from 'svelte/transition'
 	import { activeLightbox } from './lightbox-store'
 	import { onMount } from 'svelte'
+	import { outside } from '$lib/outside-event'
 
 	function handleKeyDown(e: KeyboardEvent) {
 		if (!$activeLightbox) return
@@ -36,6 +37,8 @@
 			in:fly={{ y: 50 }}
 			out:fly={{ y: -50 }}
 			class="mx-2 w-fit rounded-lg bg-white p-4 shadow-xl sm:mx-0 sm:max-w-3xl"
+			use:outside
+			onoutside={() => $activeLightbox.close()}
 		>
 			<img
 				class="h-auto w-full max-w-md rounded-md object-contain"

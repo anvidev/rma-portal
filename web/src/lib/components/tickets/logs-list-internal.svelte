@@ -50,7 +50,9 @@
 			{#snippet child({ props })}
 				<Button {...props} size="sm" variant="secondary" class="flex items-center gap-2">
 					<Plus class="size-3.5" />
-					Tilføj opdatering
+					<span class="hidden md:block">
+						Tilføj opdatering
+					</span>
 				</Button>
 			{/snippet}
 		</Dialog.Trigger>

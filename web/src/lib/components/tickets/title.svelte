@@ -36,12 +36,12 @@
 		</div>
 		<div>
 			<div class="flex items-center gap-2">
-				<Clock class="size-3.5 text-muted-foreground" />
-				<span class="text-sm text-muted-foreground">Oprettet: {formatDate(ticket.inserted)}</span>
+				<Clock class="text-muted-foreground size-3.5" />
+				<span class="text-muted-foreground text-sm">Oprettet: {formatDate(ticket.inserted)}</span>
 			</div>
 			<div class="flex items-center gap-2">
-				<Clock class="size-3.5 text-muted-foreground" />
-				<span class="text-sm text-muted-foreground"
+				<Clock class="text-muted-foreground size-3.5" />
+				<span class="text-muted-foreground text-sm"
 					>Sidst opdateret: {formatDate(ticket.updated)}</span
 				>
 			</div>
@@ -50,6 +50,6 @@
 
 	<Button size="sm" variant="secondary" onclick={downloadLabel}>
 		<Download class="size-3.5" />
-		Download RMA Label
+		<span class="hidden md:block"> Download RMA Label </span>
 	</Button>
 </div>
