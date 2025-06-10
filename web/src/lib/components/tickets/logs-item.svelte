@@ -115,7 +115,9 @@
 			<p class="text-sm font-medium capitalize leading-tight">{log.status}</p>
 			<div class="flex items-center gap-2">
 				<p class="text-sm leading-tight">{formatDate(log.inserted)}</p>
-				<LogsDropdown {log} />
+				{#if internal}
+				  <LogsDropdown {log} />
+				{/if}
 			</div>
 		</div>
 		<div class="flex items-center gap-1">
