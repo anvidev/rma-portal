@@ -142,7 +142,7 @@ func (f *TicketFilters) Parse(r *http.Request) error {
 
 	f.Limit = 25
 	f.Offset = 0
-	f.Sort = "updated"
+	f.Sort = "inserted"
 	f.Direction = "DESC"
 
 	validSorts := map[string]bool{
