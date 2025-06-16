@@ -43,3 +43,4 @@
  - [x] File storage for tickets/logs
  - [x] Edit log as admin (remember updated, updated_by)
  - [ ] Delete log as admin
+ - [x] Send email to customer when RMA is created

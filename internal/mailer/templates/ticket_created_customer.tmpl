@@ -11,14 +11,36 @@
 
 <body>
   <p>Kære {{.Sender.Name}},</p>
-  <p>Tak for din henvendelse! Din RMA sag ({{.ID}}) er nu registreret i vores system.</p>
-  <p>Du kan følge din RMA sag på linket nedenunder, så du altid kan være opdateret på forløbet.</p>
-  <p><a href="https://rma.anvi.dev/sager/{{.ID}}">Følg din RMA sag</a></p>
+
+  <p>Tak for din henvendelse. Din RMA-sag (#{{.ID}}) er nu blevet registreret i vores system.</p>
+
+  <p>Du kan følge status og opdateringer på din sag via følgende link:</p>
+
+  <p><a href="https://rma.anvi.dev/sager/{{.ID}}">Følg din RMA-sag</a></p>
+
+  <p>Vi beder dig venligst sende det defekte produkt til følgende adresse:</p>
+
+  <div style="line-height: 1.4; margin-top: 0.5em; margin-bottom: 1.5em;">
+    <p><strong>Skancode A/S</strong><br />
+    Hejrevang 13, 1. t.v.<br />
+    3450 Allerød<br />
+    Danmark</p>
+  </div>
+
+  <p>
+    Husk venligst at vedlægge eller fastgøre din RMA-label synligt på pakken, så vi nemt kan identificere din sag ved modtagelse.
+  </p>
+
+  <p>Har du spørgsmål, er du altid velkommen til at kontakte os:</p>
+
+  <div style="line-height: 1.4; margin-top: 0.5em;">
+    <p><a href="mailto:info@skancode.dk">info@skancode.dk</a><br />
+    +45 72 22 02 11</p>
+  </div>
 
   <p>Med venlig hilsen</p>
-  <p>Skancode /AS</p>
+  <p>Skancode A/S</p>
 </body>
 
 </html>
-
 {{end}}
