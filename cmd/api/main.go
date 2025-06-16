@@ -84,6 +84,9 @@ func main() {
 			if err := mail.Send([]string{config.resend.serviceEmail}, mailer.TicketCreatedSkancode, payload); err != nil {
 				return err
 			}
+			if err := mail.Send([]string{payload.Sender.Email}, mailer.TicketCreatedCustomer, payload); err != nil {
+				return err
+			}
 			return nil
 		}),
 	)
