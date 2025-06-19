@@ -7,14 +7,14 @@ import { z } from 'zod'
 
 const createLogSchema = z.object({
 	status: z.string(),
-	external_comment: z.string().max(200),
-	internal_comment: z.string().max(200),
+	external_comment: z.string().max(500),
+	internal_comment: z.string().max(500),
 })
 
 const editLogSchema = z.object({
 	id: z.coerce.number(),
-	external_comment: z.string().max(200),
-	internal_comment: z.string().max(200),
+	external_comment: z.string().max(500),
+	internal_comment: z.string().max(500),
 })
 
 export type NewTicketLog = z.infer<typeof createLogSchema>

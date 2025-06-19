@@ -61,7 +61,7 @@
 			<div class="my-4 space-y-4">
 				<div class="grid flex-1 gap-2">
 					<Label for="external">Ekstern kommentar<span class="text-red-500">*</span></Label>
-					<Textarea id="external" bind:value={$form.external_comment} />
+					<Textarea id="external" bind:value={$form.external_comment} maxlength={500} />
 					{#if $errors?.external_comment}<span class="text-destructive text-sm"
 							>{$errors.external_comment}</span
 						>{/if}
@@ -69,7 +69,7 @@
 
 				<div class="grid flex-1 gap-2">
 					<Label for="internal">Intern kommentar</Label>
-					<Textarea id="internal" bind:value={$form.internal_comment} />
+					<Textarea id="internal" bind:value={$form.internal_comment} maxlength={500} />
 					<p class="text-muted-foreground text-sm">
 						Denne kommentar er kun synlig for Skancode A/S
 					</p>
