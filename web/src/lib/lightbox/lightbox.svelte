@@ -36,12 +36,12 @@
 		<div
 			in:fly={{ y: 50 }}
 			out:fly={{ y: -50 }}
-			class="mx-2 w-fit rounded-lg bg-white p-4 shadow-xl sm:mx-0 sm:max-w-3xl"
+			class="mx-2 w-fit rounded-lg bg-white p-3 shadow-xl sm:mx-0"
 			use:outside
 			onoutside={() => $activeLightbox.close()}
 		>
 			<img
-				class="h-auto w-full max-w-md rounded-md object-contain"
+				class="h-auto w-full rounded-md object-contain max-w-[90vw] max-h-[90dvh]"
 				alt={$activeLightbox.current()?.id.toString()}
 				src={$activeLightbox.current()?.url}
 			/>
