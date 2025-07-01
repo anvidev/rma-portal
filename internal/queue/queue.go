@@ -9,6 +9,7 @@ import (
 const (
 	// events
 	TicketCreated = "ticket/created"
+	TicketClosed  = "ticket/closed"
 )
 
 type Queue struct {

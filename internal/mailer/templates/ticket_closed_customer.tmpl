@@ -1,0 +1,37 @@
+{{define "subject"}} Din RMA-sag (#{{.ID}}) er nu afsluttet {{end}}
+
+{{define "body"}}
+<!doctype html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+  <p>Kære {{.Sender.Name}},</p>
+
+  <p>Din RMA-sag (#{{.ID}}) er nu afsluttet.</p>
+
+  <p>
+    Du kan se status og afsluttende informationer om sagen via følgende link:
+  </p>
+
+  <p><a href="https://rma.skancode.dk/sager/{{.ID}}">Se din RMA-sag</a></p>
+
+  <p>Hvis du har spørgsmål til sagen, er du naturligvis altid velkommen til at kontakte os:</p>
+
+  <div style="line-height: 1.4; margin-top: 0.5em;">
+    <p><a href="mailto:rma@skancode.dk">rma@skancode.dk</a><br />
+    +45 72 22 02 11</p>
+  </div>
+
+  <p>Tak fordi du brugte vores RMA-service.</p>
+
+  <p>Med venlig hilsen</p>
+  <p>Skancode A/S</p>
+</body>
+
+</html>
+{{end}}

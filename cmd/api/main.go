@@ -89,6 +89,12 @@ func main() {
 			}
 			return nil
 		}),
+		queue.WithEvent(queue.TicketClosed, func(ctx context.Context, payload store.Ticket) error {
+			if err := mail.Send([]string{payload.Sender.Email}, mailer.TicketClosedCustomer, payload); err != nil {
+				return err
+			}
+			return nil
+		}),
 	)
 
 	store := store.NewStore(db)
