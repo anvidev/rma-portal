@@ -149,6 +149,24 @@ func (api *api) postCreateLog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	ticket, err := api.store.Tickets.GetByID(r.Context(), ticketID)
+	if err != nil {
+		switch err {
+		case store.ErrTicketNotFound:
+			api.notFoundError(w, r, err)
+		default:
+			api.internalServerError(w, r, err)
+		}
+		return
+	}
+
+	switch payload.Status {
+	case store.CLOSED:
+		api.queue.Enqueue(queue.TicketClosed, *ticket)
+	default:
+	// handle more status cases later when neeeded etc. REJECTED, QOUTE_SENT
+	}
+
 	if err := writeJSON(w, http.StatusCreated, createLogResponse{log}); err != nil {
 		api.internalServerError(w, r, err)
 		return

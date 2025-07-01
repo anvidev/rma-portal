@@ -9,6 +9,7 @@ import (
 const (
 	// events
 	TicketCreated = "ticket/created"
+	TicketClosed  = "ticket/closed"
 )
 
 type Queue struct {
@@ -64,8 +65,8 @@ func (q *Queue) Start(ctx context.Context) {
 								qj.currentTry,
 								"max_retries",
 								qj.maxRetries,
-								"payload",
-								qj.payload,
+								// "payload",
+								// qj.payload,
 								"error",
 								err,
 							)
