@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Clock, Download } from '@lucide/svelte'
+	import { Clock, Download, Package } from '@lucide/svelte'
 	import type { TicketWithLogs } from '$lib/types'
 	import { formatDate } from '$lib/utils.js'
 	import StatusBadge from '$lib/components/common/status-badge.svelte'
@@ -7,6 +7,7 @@
 	import { Button } from '../ui/button'
 	import { toast } from 'svelte-sonner'
 	import { page } from '$app/state'
+	import GlsModal from './gls-modal.svelte'
 
 	let { ticket }: { ticket: TicketWithLogs } = $props()
 
@@ -48,8 +49,12 @@
 		</div>
 	</div>
 
-	<Button size="sm" variant="secondary" onclick={downloadLabel}>
-		<Download class="size-3.5" />
-		<span class="hidden md:block"> Download RMA Label </span>
-	</Button>
+	<div class="flex items-center gap-2">
+		<GlsModal />
+
+		<Button size="sm" variant="secondary" onclick={downloadLabel} class="flex items-center gap-2">
+			<Download class="size-3.5" />
+			<span class="hidden md:block">Download RMA Label</span>
+		</Button>
+	</div>
 </div>
