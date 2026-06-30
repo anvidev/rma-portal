@@ -14,7 +14,7 @@
 <main class="relative flex min-h-screen w-full flex-col bg-muted/20">
 	{#if data.user}
 		<header
-			class="sticky top-4 mx-auto mt-4 flex w-full max-w-6xl items-center justify-between rounded-lg border-b bg-white px-3 py-2 shadow-sm"
+			class="sticky top-4 z-40 mx-auto mt-4 flex w-full max-w-6xl items-center justify-between rounded-lg border-b bg-white px-3 py-2 shadow-sm"
 		>
 			<div class="flex items-center gap-8">
 				<a href="/" class="flex items-center gap-2 font-medium">
