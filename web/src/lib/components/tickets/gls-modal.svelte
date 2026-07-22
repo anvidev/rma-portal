@@ -37,7 +37,7 @@
 				OBS: Pakken skal sendes direkte til vores adresse – <u>ikke</u> til en pakkeshop.
 			</p>
 			<address class="not-italic leading-tight">
-				Skancode A/S<br />Hejrevang 34, 1.tv<br />3450 Allerød<br />Danmark
+				Skancode A/S<br />Hejrevang 13, 1.tv<br />3450 Allerød<br />Danmark
 			</address>
 			<Button href="https://send.gls.dk" target="_blank">Gå til GLS’ sendeformular</Button>
 		</div>
