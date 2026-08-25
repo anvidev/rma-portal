@@ -12,11 +12,11 @@
 >
   <style>
     path {
-      stroke: red;
+      stroke: '#2463EB';
     }
     @media (prefers-color-scheme: dark) {
       path {
-        stroke: red;
+          stroke: '#2463EB';
       }
     }
   </style>
